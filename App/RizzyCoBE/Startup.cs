@@ -11,6 +11,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.EntityFrameworkCore;
+using RizzyCoBE.Models;
+using System.Text.Json;
+
 namespace RizzyCoBE
 {
     public class Startup
@@ -25,7 +29,28 @@ namespace RizzyCoBE
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<RizzyCoContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("RizzyCo"));
+            });
             services.AddControllers();
+            services.AddMvc().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
+            services.AddCors(options =>
+            {
+
+                options.AddPolicy("CORS", builder =>
+                {
+                    builder.AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .WithOrigins("http://127.0.0.1:5500",
+                                        "http://localhost:5500",
+                                        "http://127.0.0.1:8080",
+                                        "http://localhost:8080");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +64,8 @@ namespace RizzyCoBE
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CORS");
 
             app.UseAuthorization();
 
