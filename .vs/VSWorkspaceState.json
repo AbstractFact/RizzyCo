@@ -1,6 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\App",
+    "\\App\\RizzyCoBE",
+    "\\App\\RizzyCoBE\\Models"
   ],
+  "SelectedNode": "\\App\\RizzyCoBE\\Models\\Game.cs",
   "PreviewInSolutionExplorer": false
 }
