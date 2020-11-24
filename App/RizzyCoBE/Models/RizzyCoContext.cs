@@ -14,7 +14,7 @@ namespace RizzyCoBE.Models
         public DbSet<Map> Maps { get; set; }
         public DbSet<Mission> Missions { get; set; }
         public DbSet<Player> Players { get; set; }
-        public DbSet<PlayerColor> PlayerColor { get; set; }
+        public DbSet<PlayerColor> PlayerColors { get; set; }
         public DbSet<Territory> Territories { get; set; }
         public DbSet<User> Users { get; set; }
         public RizzyCoContext(DbContextOptions options) : base(options)
