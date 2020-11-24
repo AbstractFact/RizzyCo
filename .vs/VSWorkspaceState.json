@@ -1,7 +1,13 @@
 {
   "ExpandedNodes": [
+    "",
     "\\App",
-    "\\App\\RizzyCoBE"
+    "\\App\\RizzyCoBE",
+    "\\App\\RizzyCoBE\\Controllers",
+    "\\App\\RizzyCoBE\\Models",
+    "\\App\\RizzyCoBE\\Properties",
+    "\\App\\RizzyCoFE\\Properties"
   ],
+  "SelectedNode": "\\App\\RizzyCoBE\\Controllers\\MissionController.cs",
   "PreviewInSolutionExplorer": false
 }
