@@ -43,7 +43,7 @@ namespace RizzyCoBE.Controllers
         // id se prosleđuje preko URL-a i upisuje u parametar
         public async Task DeleteTerritory(int id)
         {
-            var territory = await rizzyCoContext.Territory.FindAsync(id);
+            var territory = await rizzyCoContext.Territories.FindAsync(id);
             rizzyCoContext.Territories.Remove(territory);
             await rizzyCoContext.SaveChangesAsync();
         }

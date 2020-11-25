@@ -50,10 +50,10 @@ namespace RizzyCoBE.Controllers
         // HTTP PUT
         [HttpPut]
         [Route("ChangePlayerColor/{id}/{newColor}")]
-        public async Task ChangeMission(int id, string newDescription)
+        public async Task ChangeColor(int id, string newColor)
         {
             var playerColor = await rizzyCoContext.PlayerColors.FindAsync(id);
-            playerColor.Color = newColor;
+            playerColor.Value = newColor;
             rizzyCoContext.PlayerColors.Update(playerColor);
             await rizzyCoContext.SaveChangesAsync();
         }
