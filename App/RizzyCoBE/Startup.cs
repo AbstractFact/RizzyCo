@@ -29,10 +29,21 @@ namespace RizzyCoBE
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<RizzyCoContext>(options =>
+            if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")=="Production")
             {
-                options.UseSqlServer(Configuration.GetConnectionString("RizzyCo"));
-            });
+                services.AddDbContext<RizzyCoContext>(options =>
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("RizzyCoProd"));
+                });
+            }
+            else
+            {
+                services.AddDbContext<RizzyCoContext>(options =>
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("RizzyCo"));
+                });
+            }
+            services.BuildServiceProvider().GetService<RizzyCoContext>().Database.Migrate();
             services.AddControllers();
             services.AddMvc().AddJsonOptions(options =>
             {
