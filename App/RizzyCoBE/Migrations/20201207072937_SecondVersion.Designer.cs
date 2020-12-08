@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RizzyCoBE.Models;
 
 namespace RizzyCoBE.Migrations
 {
     [DbContext(typeof(RizzyCoContext))]
-    partial class RizzyCoContextModelSnapshot : ModelSnapshot
+    [Migration("20201207072937_SecondVersion")]
+    partial class SecondVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,6 +118,9 @@ namespace RizzyCoBE.Migrations
 
                     b.Property<int?>("MapID")
                         .HasColumnType("int");
+
+                    b.Property<string>("Namse")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
