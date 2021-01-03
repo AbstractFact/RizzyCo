@@ -12,8 +12,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
-using RizzyCoBE.Models;
+using DataAccess.Models;
 using System.Text.Json;
+using DataAccess.Data.EFCore;
 
 namespace RizzyCoBE
 {
@@ -43,6 +44,7 @@ namespace RizzyCoBE
                     options.UseSqlServer(Configuration.GetConnectionString("RizzyCo"));
                 });
             }
+            services.AddScoped<EfCoreCardRepository>();
             services.BuildServiceProvider().GetService<RizzyCoContext>().Database.Migrate();
             services.AddControllers();
             services.AddMvc().AddJsonOptions(options =>

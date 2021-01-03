@@ -1,65 +1,22 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RizzyCoBE.Models;
+using DataAccess.Models;
+using DataAccess.Data.EFCore;
 
 namespace RizzyCoBE.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("[controller]")]
-    public class PlayerController : ControllerBase
+    public class PlayerController : MyMDBController<Player, EfCorePlayerRepository>
     {
-        private RizzyCoContext rizzyCoContext;
-
-        // Dependency Injection DB Context-a
-        public PlayerController(RizzyCoContext context)
+        public PlayerController(EfCorePlayerRepository repository) : base(repository)
         {
-            rizzyCoContext = context;
-        }
 
-        [HttpGet]
-        [Route("GetPlayers")]
-        public async Task<JsonResult> GetPlayers()
-        {
-            var player = await rizzyCoContext.Players
-                        .Include(p => p.User)
-                        .Include(p => p.PlayerColor)
-                        .Include(p => p.Game)
-                        .ToListAsync();
-
-            return new JsonResult(player);
-        }
-
-        [HttpPost]
-        [Route("AddPlayer")]
-        public async Task AddPlayer([FromBody]Player player)
-        {
-            rizzyCoContext.Players.Add(player);
-            await rizzyCoContext.SaveChangesAsync();
-        }
-
-        // HTTP DELETE
-        [HttpDelete]
-        [Route("DeletePlayer/{id}")]
-        // id se prosleđuje preko URL-a i upisuje u parametar
-        public async Task DeletePlayer(int id)
-        {
-            var player = await rizzyCoContext.Players.FindAsync(id);
-            rizzyCoContext.Players.Remove(player);
-            await rizzyCoContext.SaveChangesAsync();
-        }
-
-        // HTTP PUT
-        [HttpPut]
-        [Route("ChangePlayer/{id}/{finished}")]
-        public async Task ChangePlayer(int id)
-        {
-            var player = await rizzyCoContext.Players.FindAsync(id);
-            //player.Finished = finished;
-            rizzyCoContext.Players.Update(player);
-            await rizzyCoContext.SaveChangesAsync();
         }
     }
-
 }

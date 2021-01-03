@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace RizzyCoBE.Migrations
+namespace DataAccess.Migrations
 {
-    public partial class FirstVersion : Migration
+    public partial class NewMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -86,7 +86,7 @@ namespace RizzyCoBE.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PlayerColor",
+                name: "PlayerColors",
                 columns: table => new
                 {
                     ID = table.Column<int>(nullable: false)
@@ -96,9 +96,9 @@ namespace RizzyCoBE.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PlayerColor", x => x.ID);
+                    table.PrimaryKey("PK_PlayerColors", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_PlayerColor_Games_GameID",
+                        name: "FK_PlayerColors_Games_GameID",
                         column: x => x.GameID,
                         principalTable: "Games",
                         principalColumn: "ID",
@@ -132,9 +132,9 @@ namespace RizzyCoBE.Migrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Players_PlayerColor_PlayerColorID",
+                        name: "FK_Players_PlayerColors_PlayerColorID",
                         column: x => x.PlayerColorID,
-                        principalTable: "PlayerColor",
+                        principalTable: "PlayerColors",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -245,8 +245,8 @@ namespace RizzyCoBE.Migrations
                 column: "MapID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PlayerColor_GameID",
-                table: "PlayerColor",
+                name: "IX_PlayerColors_GameID",
+                table: "PlayerColors",
                 column: "GameID");
 
             migrationBuilder.CreateIndex(
@@ -300,7 +300,7 @@ namespace RizzyCoBE.Migrations
                 name: "Missions");
 
             migrationBuilder.DropTable(
-                name: "PlayerColor");
+                name: "PlayerColors");
 
             migrationBuilder.DropTable(
                 name: "Games");

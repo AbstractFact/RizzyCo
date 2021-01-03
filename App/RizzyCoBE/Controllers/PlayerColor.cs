@@ -12,9 +12,9 @@ namespace RizzyCoBE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CardController : MyMDBController<Card, EfCoreCardRepository>
+    public class PlayerColorController : MyMDBController<PlayerColor, EfCorePlayerColorRepository>
     {
-        public CardController(EfCoreCardRepository repository) : base(repository)
+        public PlayerColorController(EfCorePlayerColorRepository repository) : base(repository)
         {
 
         }

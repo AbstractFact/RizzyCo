@@ -1,9 +1,10 @@
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
+using DataAccess.Data;
 
-namespace RizzyCoBE.Models
+namespace DataAccess.Models
 {
-    public class Game
+    public class Game : IEntity
     {
         public int ID { get; set; }
         public int NumberOfPlayers { get; set; }

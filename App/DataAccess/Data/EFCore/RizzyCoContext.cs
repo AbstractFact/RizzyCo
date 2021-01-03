@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
+using DataAccess.Models;
 
-namespace RizzyCoBE.Models
+namespace DataAccess.Data.EFCore
 {
     public class RizzyCoContext : DbContext
     {
@@ -20,5 +21,6 @@ namespace RizzyCoBE.Models
         public RizzyCoContext(DbContextOptions options) : base(options)
         {
         }
+        
     }
 }
