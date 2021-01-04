@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Domain.Interfaces;
 
-namespace DataAccess.Data.EFCore
+namespace DataAccess.EFCore
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly RizzyCoContext _context;
+        private bool disposed = false;
 
-        private EfCoreCardRepository cards;
-        private EfCoreGameRepository games;
-        private EfCoreMapRepository maps;
-        private EfCoreMissionRepository missions;
-        private EfCorePlayerRepository players;
-        private EfCorePlayerColorRepository playerColors;
-        private EfCoreTerritoryRepository territories;
-        private EfCoreUserRepository users;
+        private IEfCoreCardRepository cards;
+        private IEfCoreGameRepository games;
+        private IEfCoreMapRepository maps;
+        private IEfCoreMissionRepository missions;
+        private IEfCorePlayerRepository players;
+        private IEfCorePlayerColorRepository playerColors;
+        private IEfCoreTerritoryRepository territories;
+        private IEfCoreUserRepository users;
 
-        //private bool disposed = false;
         public UnitOfWork(RizzyCoContext context)
         {
             _context = context;
@@ -31,7 +32,7 @@ namespace DataAccess.Data.EFCore
             Users = new EfCoreUserRepository(_context);
  
         }
-        public EfCoreCardRepository Cards
+        public IEfCoreCardRepository Cards
         {
             get
             {
@@ -41,7 +42,7 @@ namespace DataAccess.Data.EFCore
             }
             private set { }
         }
-        public EfCoreGameRepository Games
+        public IEfCoreGameRepository Games
         {
             get
             {
@@ -51,7 +52,7 @@ namespace DataAccess.Data.EFCore
             }
             private set { }
         }
-        public EfCoreMapRepository Maps
+        public IEfCoreMapRepository Maps
         {
             get
             {
@@ -61,7 +62,7 @@ namespace DataAccess.Data.EFCore
             }
             private set { }
         }
-        public EfCoreMissionRepository Missions
+        public IEfCoreMissionRepository Missions
         {
             get
             {
@@ -71,7 +72,7 @@ namespace DataAccess.Data.EFCore
             }
             private set { }
         }
-        public EfCorePlayerRepository Players 
+        public IEfCorePlayerRepository Players 
         {
             get
             {
@@ -81,7 +82,7 @@ namespace DataAccess.Data.EFCore
             }
             private set { }
         }
-        public EfCorePlayerColorRepository PlayerColors
+        public IEfCorePlayerColorRepository PlayerColors
         {
             get
             {
@@ -91,7 +92,7 @@ namespace DataAccess.Data.EFCore
             }
             private set { }
         }
-        public EfCoreTerritoryRepository Territories
+        public IEfCoreTerritoryRepository Territories
         {
             get
             {
@@ -101,7 +102,7 @@ namespace DataAccess.Data.EFCore
             }
             private set { }
         }
-        public EfCoreUserRepository Users
+        public IEfCoreUserRepository Users
         {
             get
             {
@@ -115,9 +116,27 @@ namespace DataAccess.Data.EFCore
         {
             return _context.SaveChanges();
         }
+        //public void Dispose()
+        //{
+        //    _context.Dispose();
+        //}
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
         public void Dispose()
         {
-            _context.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

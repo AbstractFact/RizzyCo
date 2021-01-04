@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DataAccess.Models;
-using DataAccess.Data.EFCore;
+using Domain.Models;
+using DataAccess.EFCore;
 
 namespace RizzyCoBE.Controllers
 {

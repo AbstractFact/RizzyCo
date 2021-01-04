@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
-using DataAccess.Data;
+using Domain.Interfaces;
 
-namespace DataAccess.Models
+namespace Domain.Models
 {
-    public class PlayerColor : IEntity
+    public class Mission : IEntity
     {
         public int ID { get; set; }
-        public string Value { get; set; }
+        public string Description { get; set; }
+
     }
 }

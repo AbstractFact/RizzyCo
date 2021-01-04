@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using DataAccess.Models;
-using DataAccess.Data.EFCore;
+using Domain.Models;
+using Domain.Interfaces;
 
-namespace DataAccess.Data.EFCore
+
+namespace DataAccess.EFCore
 {
-    public class EfCoreGameRepository : EfCoreRepository<Game, RizzyCoContext>
+    public class EfCoreGameRepository : EfCoreRepository<Game, RizzyCoContext>, IEfCoreGameRepository
     {
         public EfCoreGameRepository(RizzyCoContext context) : base(context)
         {

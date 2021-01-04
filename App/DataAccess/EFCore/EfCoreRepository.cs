@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccess.Data.EFCore
+using Domain.Interfaces;
+
+namespace DataAccess.EFCore
 {
     public class EfCoreRepository<TEntity, TContext> : IRepository<TEntity>
     where TEntity : class, IEntity
@@ -19,7 +21,6 @@ namespace DataAccess.Data.EFCore
         public async Task<TEntity> Add(TEntity entity)
         {
             context.Set<TEntity>().Add(entity);
-            await context.SaveChangesAsync();
             return entity;
         }
 
@@ -32,8 +33,6 @@ namespace DataAccess.Data.EFCore
             }
 
             context.Set<TEntity>().Remove(entity);
-            await context.SaveChangesAsync();
-
             return entity;
         }
 
@@ -50,7 +49,6 @@ namespace DataAccess.Data.EFCore
         public async Task<TEntity> Update(TEntity entity)
         {
             context.Entry(entity).State = EntityState.Modified;
-            await context.SaveChangesAsync();
             return entity;
         }
 

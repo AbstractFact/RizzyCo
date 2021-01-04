@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
-using DataAccess.Data;
+using Domain.Interfaces;
 
-namespace DataAccess.Models
+namespace Domain.Models
 {
     public class Game : IEntity
     {

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using DataAccess.Models;
-using DataAccess.Data.EFCore;
+using Domain.Models;
+using Domain.Interfaces;
 
-namespace DataAccess.Data.EFCore
+namespace DataAccess.EFCore
 {
-    public class EfCoreUserRepository : EfCoreRepository<User, RizzyCoContext>
+    public class EfCoreUserRepository : EfCoreRepository<User, RizzyCoContext>, IEfCoreUserRepository
     {
         public EfCoreUserRepository(RizzyCoContext context) : base(context)
         {

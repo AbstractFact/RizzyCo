@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
-using DataAccess.Models;
+using Domain.Models;
 
-namespace DataAccess.Data.EFCore
+namespace DataAccess.EFCore
 {
     public class RizzyCoContext : DbContext
     {
