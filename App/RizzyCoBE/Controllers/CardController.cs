@@ -7,14 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 using DataAccess.EFCore;
+using BussinesLogic.Services;
+
 
 namespace RizzyCoBE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CardController : MyMDBController<Card, EfCoreCardRepository>
+    public class CardController : MyMDBController<Card, CardService>
     {
-        public CardController(EfCoreCardRepository repository) : base(repository)
+        public CardController(CardService service /*EfCoreCardRepository repository*/) : base(service)
         {
 
         }
