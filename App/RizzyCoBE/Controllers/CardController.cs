@@ -16,7 +16,7 @@ namespace RizzyCoBE.Controllers
     [ApiController]
     public class CardController : MyMDBController<Card, CardService>
     {
-        public CardController(CardService service /*EfCoreCardRepository repository*/) : base(service)
+        public CardController(CardService service) : base(service)
         {
 
         }

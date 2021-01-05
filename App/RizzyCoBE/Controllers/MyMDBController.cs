@@ -13,7 +13,7 @@ namespace RizzyCoBE.Controllers
     [ApiController]
     public abstract class MyMDBController<TEntity, TService> : ControllerBase
         where TEntity : class, IEntity
-        where TService : class, ICardService
+        where TService : class, IService<TEntity>
     {
         private readonly TService service;
 
@@ -25,7 +25,7 @@ namespace RizzyCoBE.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<IEntity>>> Get()
         {
-            return await service.GetAllCards();
+            return await service.GetAll();
         }
 
     //    // GET: api/[controller]

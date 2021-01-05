@@ -45,8 +45,14 @@ namespace RizzyCoBE
                     options.UseSqlServer(Configuration.GetConnectionString("RizzyCo"));
                 });
             }
-            services.AddScoped<EfCoreCardRepository>();
             services.AddScoped<CardService>();
+            services.AddScoped<GameService>();
+            services.AddScoped<MapService>();
+            services.AddScoped<MissionService>();
+            services.AddScoped<PlayerColorService>();
+            services.AddScoped<PlayerService>();
+            services.AddScoped<TerritoryService>();
+            services.AddScoped<UserService>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.BuildServiceProvider().GetService<RizzyCoContext>().Database.Migrate();
             services.AddControllers();

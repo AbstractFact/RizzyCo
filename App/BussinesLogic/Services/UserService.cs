@@ -7,24 +7,23 @@ using Domain.Models;
 using Domain.Interfaces;
 using DataAccess.EFCore;
 
-
 namespace BussinesLogic.Services
 {
-    public class CardService : ICardService
+    public class UserService : IUserService
     {
         private readonly RizzyCoContext context;
 
-        public CardService(RizzyCoContext context)
+        public UserService(RizzyCoContext context)
         {
             this.context = context;
         }
-        public async Task<List<Card>> GetAll()
+        public async Task<List<User>> GetAll()
         {
             using (IUnitOfWork uw = new UnitOfWork(context))
             {
-                Task<List<Card>> cards = uw.Cards.GetAll();
+                Task<List<User>> users = uw.Users.GetAll();
 
-                return await cards;
+                return await users;
             }
         }
     }

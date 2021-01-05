@@ -6,8 +6,8 @@ using Domain.Models;
 
 namespace BussinesLogic.Services
 {
-    public interface ICardService
+    public interface ICardService : IService<Card>
     {
-        public Task<List<Card>> GetAllCards();
+
     }
 }
