@@ -19,11 +19,58 @@ namespace BussinesLogic.Services
         }
         public async Task<List<Player>> GetAll()
         {
-            using (IUnitOfWork uw = new UnitOfWork(context))
+            using (IUnitOfWork unit = new UnitOfWork(context))
             {
-                Task<List<Player>> players = uw.Players.GetAll();
+                Task<List<Player>> players = unit.Players.GetAll();
 
                 return await players;
+            }
+        }
+        public async Task<Player> Get(int id)
+        {
+            using (IUnitOfWork unit = new UnitOfWork(context))
+            {
+                Task<Player> player = unit.Players.Get(id);
+
+                if (player == null) return null;
+
+                return await player;
+            }
+        }
+
+        public async Task<Player> Put(Player entity)
+        {
+            using (IUnitOfWork unit = new UnitOfWork(context))
+            {
+                Task<Player> player = unit.Players.Update(entity);
+
+                unit.Complete();
+
+                return await player;
+            }
+        }
+
+        public async Task<Player> Post(Player entity)
+        {
+            using (IUnitOfWork unit = new UnitOfWork(context))
+            {
+                Task<Player> player = unit.Players.Add(entity);
+
+                unit.Complete();
+
+                return await player;
+            }
+        }
+
+        public async Task<Player> Delete(int id)
+        {
+            using (IUnitOfWork unit = new UnitOfWork(context))
+            {
+                Task<Player> player = unit.Players.Delete(id);
+
+                unit.Complete();
+
+                return await player;
             }
         }
     }

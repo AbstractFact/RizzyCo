@@ -28,56 +28,49 @@ namespace RizzyCoBE.Controllers
             return await service.GetAll();
         }
 
-    //    // GET: api/[controller]
-    //    [HttpGet]
-    //    public async Task<ActionResult<IEnumerable<TEntity>>> Get()
-    //    {
-    //        return await repository.GetAll();
-    //    }
+        // GET: api/[controller]/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TEntity>> Get(int id)
+        {
+            var entity = await service.Get(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return entity;
+        }
 
-    //    // GET: api/[controller]/5
-    //    [HttpGet("{id}")]
-    //    public async Task<ActionResult<TEntity>> Get(int id)
-    //    {
-    //        var movie = await repository.Get(id);
-    //        if (movie == null)
-    //        {
-    //            return NotFound();
-    //        }
-    //        return movie;
-    //    }
+        // PUT: api/[controller]/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, TEntity entity)
+        {
+            if (id != entity.ID)
+            {
+                return BadRequest();
+            }
+            await service.Put(entity);
 
-    //    // PUT: api/[controller]/5
-    //    [HttpPut("{id}")]
-    //    public async Task<IActionResult> Put(int id, TEntity movie)
-    //    {
-    //        if (id != movie.ID)
-    //        {
-    //            return BadRequest();
-    //        }
-    //        await repository.Update(movie);
-    //        return NoContent();
-    //    }
+            return NoContent();
+        }
 
-    //    // POST: api/[controller]
-    //    [HttpPost]
-    //    public async Task<ActionResult<TEntity>> Post(TEntity movie)
-    //    {
-    //        await repository.Add(movie);
-    //        return CreatedAtAction("Get", new { id = movie.ID }, movie);
-    //    }
+        // POST: api/[controller]
+        [HttpPost]
+        public async Task<ActionResult<TEntity>> Post(TEntity entity)
+        {
+            await service.Post(entity);
+            return CreatedAtAction("Get", new { id = entity.ID }, entity);
+        }
 
-    //    // DELETE: api/[controller]/5
-    //    [HttpDelete("{id}")]
-    //    public async Task<ActionResult<TEntity>> Delete(int id)
-    //    {
-    //        var movie = await repository.Delete(id);
-    //        if (movie == null)
-    //        {
-    //            return NotFound();
-    //        }
-    //        return movie;
-    //    }
-
+        // DELETE: api/[controller]/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<TEntity>> Delete(int id)
+        {
+            var entity = await service.Delete(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return entity;
+        }
     }
 }

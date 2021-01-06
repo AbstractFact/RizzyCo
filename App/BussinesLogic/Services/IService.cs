@@ -9,5 +9,9 @@ namespace BussinesLogic.Services
     public interface IService<T> where T : class, IEntity
     {
         public Task<List<T>> GetAll();
+        public Task<T> Get(int id);
+        public Task<T> Put(T entity);
+        public Task<T> Post(T entity);
+        public Task<T> Delete(int id);
     }
 }

@@ -51,7 +51,5 @@ namespace DataAccess.EFCore
             context.Entry(entity).State = EntityState.Modified;
             return entity;
         }
-
-        
     }
 }
