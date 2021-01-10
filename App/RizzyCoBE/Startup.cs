@@ -16,6 +16,13 @@ using System.Text.Json;
 using DataAccess.EFCore;
 using Domain.Interfaces;
 using BussinesLogic.Services;
+//using RizzyCoBE.Authentication;
+
+
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Identity;
+//using Microsoft.IdentityModel.Tokens;
+//using System.Text;
 
 namespace RizzyCoBE
 {
@@ -31,7 +38,7 @@ namespace RizzyCoBE
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")=="Production")
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
             {
                 services.AddDbContext<RizzyCoContext>(options =>
                 {
@@ -45,6 +52,36 @@ namespace RizzyCoBE
                     options.UseSqlServer(Configuration.GetConnectionString("RizzyCo"));
                 });
             }
+
+            //// For Identity  
+            //services.AddIdentity<ApplicationUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>()
+            //    .AddDefaultTokenProviders();
+
+            //// Adding Authentication  
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            //})
+
+            //// Adding Jwt Bearer  
+            //.AddJwtBearer(options =>
+            //{
+            //    options.SaveToken = true;
+            //    options.RequireHttpsMetadata = false;
+            //    options.TokenValidationParameters = new TokenValidationParameters()
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidAudience = Configuration["JWT:ValidAudience"],
+            //        ValidIssuer = Configuration["JWT:ValidIssuer"],
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+            //    };
+            //});
+
+
             services.AddScoped<CardService>();
             services.AddScoped<GameService>();
             services.AddScoped<MapService>();
@@ -53,6 +90,7 @@ namespace RizzyCoBE
             services.AddScoped<PlayerService>();
             services.AddScoped<TerritoryService>();
             services.AddScoped<UserService>();
+            services.AddScoped<NeighbourService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.BuildServiceProvider().GetService<RizzyCoContext>().Database.Migrate();
             services.AddControllers();
@@ -90,6 +128,7 @@ namespace RizzyCoBE
 
             app.UseCors("CORS");
 
+            //app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

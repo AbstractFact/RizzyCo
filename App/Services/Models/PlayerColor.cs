@@ -11,5 +11,7 @@ namespace Domain.Models
     {
         public int ID { get; set; }
         public string Value { get; set; }
+        public bool Available { get; set; }
+
     }
 }

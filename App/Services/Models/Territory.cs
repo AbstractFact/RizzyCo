@@ -13,7 +13,6 @@ namespace Domain.Models
         public string Name { get; set; }
         [JsonIgnore]
         public Player Player { get; set; }
-        public List<Territory> Neighbours { get; set; }
 
     }
 }

@@ -18,6 +18,7 @@ namespace DataAccess.EFCore
         private IEfCorePlayerColorRepository playerColors;
         private IEfCoreTerritoryRepository territories;
         private IEfCoreUserRepository users;
+        private IEfCoreNeighbourRepository neighbours;
 
         public UnitOfWork(RizzyCoContext context)
         {
@@ -30,7 +31,8 @@ namespace DataAccess.EFCore
             PlayerColors = new EfCorePlayerColorRepository(_context);
             Territories = new EfCoreTerritoryRepository(_context);
             Users = new EfCoreUserRepository(_context);
- 
+            Neighbours = new EfCoreNeighbourRepository(context);
+
         }
         public IEfCoreCardRepository Cards
         {
@@ -109,6 +111,17 @@ namespace DataAccess.EFCore
                 if (users == null)
                     users = new EfCoreUserRepository(_context);
                 return users;
+            }
+            private set { }
+        }
+
+        public IEfCoreNeighbourRepository Neighbours
+        {
+            get
+            {
+                if (neighbours == null)
+                    neighbours = new EfCoreNeighbourRepository(_context);
+                return neighbours;
             }
             private set { }
         }

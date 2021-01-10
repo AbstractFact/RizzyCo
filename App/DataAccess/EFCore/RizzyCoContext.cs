@@ -18,6 +18,7 @@ namespace DataAccess.EFCore
         public DbSet<PlayerColor> PlayerColors { get; set; }
         public DbSet<Territory> Territories { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Neighbour> Neighbours { get; set; }
         public RizzyCoContext(DbContextOptions options) : base(options)
         {
         }

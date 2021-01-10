@@ -14,6 +14,7 @@ namespace Domain.Interfaces
         IEfCorePlayerColorRepository PlayerColors { get; }
         IEfCoreTerritoryRepository Territories { get; }
         IEfCoreUserRepository Users { get; }
+        IEfCoreNeighbourRepository Neighbours { get; }
         public int Complete();
     }
 }
