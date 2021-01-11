@@ -3,37 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Domain.Models;
-using Domain.Interfaces;
-using DataAccess.EFCore;
+using DataAccess;
+using DataAccess.Models;
+using Domain;
+using Domain.ServiceInterfaces;
+
 
 
 namespace BussinesLogic.Services
 {
     public class CardService : ICardService
     {
-        private readonly RizzyCoContext context;
+        private readonly IUnitOfWork unit;
 
-        public CardService(RizzyCoContext context)
+        public CardService(IUnitOfWork unit)
         {
-            this.context = context;
+            this.unit = unit;
         }
 
-        public async Task<Card> Delete(int id)
+        public Card Delete(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<Card> card =  unit.Cards.Delete(id);
+                Card card =  unit.Cards.Delete(id);
 
                 unit.Complete();
 
-                return await card;
+                return card;
             }
         }
 
         public async Task<Card> Get(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<Card> card = unit.Cards.Get(id);
 
@@ -45,7 +47,7 @@ namespace BussinesLogic.Services
 
         public async Task<List<Card>> GetAll()
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<List<Card>> cards = unit.Cards.GetAll();
 
@@ -54,8 +56,8 @@ namespace BussinesLogic.Services
         }
 
         public async Task<Card> Post(Card entity)
-        { 
-            using (IUnitOfWork unit = new UnitOfWork(context))
+        {
+            using (unit)
             {
                 Task<Card> card = unit.Cards.Add(entity);
 
@@ -65,15 +67,15 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<Card> Put(Card entity)
+        public Card Put(Card entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<Card> card = unit.Cards.Update(entity);
+                Card card = unit.Cards.Update(entity);
 
                 unit.Complete();
 
-                return await card;
+                return card;
             }
         }
     }

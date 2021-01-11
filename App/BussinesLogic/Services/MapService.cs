@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Domain.Models;
-using Domain.Interfaces;
-using DataAccess.EFCore;
+using DataAccess;
+using DataAccess.Models;
+using Domain;
+using Domain.ServiceInterfaces;
 
 namespace BussinesLogic.Services
 {
     public class MapService : IMapService
     {
-        private readonly RizzyCoContext context;
+        private readonly IUnitOfWork unit;
 
-        public MapService(RizzyCoContext context)
+        public MapService(IUnitOfWork unit)
         {
-            this.context = context;
+            this.unit = unit;
         }
         public async Task<List<Map>> GetAll()
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<List<Map>> maps = unit.Maps.GetAll();
 
@@ -28,7 +29,7 @@ namespace BussinesLogic.Services
         }
         public async Task<Map> Get(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<Map> map = unit.Maps.Get(id);
 
@@ -38,21 +39,21 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<Map> Put(Map entity)
+        public Map Put(Map entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<Map> map = unit.Maps.Update(entity);
+                Map map = unit.Maps.Update(entity);
 
                 unit.Complete();
 
-                return await map;
+                return map;
             }
         }
 
         public async Task<Map> Post(Map entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<Map> map = unit.Maps.Add(entity);
 
@@ -62,15 +63,15 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<Map> Delete(int id)
+        public Map Delete(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<Map> map = unit.Maps.Delete(id);
+                Map map = unit.Maps.Delete(id);
 
                 unit.Complete();
 
-                return await map;
+                return  map;
             }
         }
     }

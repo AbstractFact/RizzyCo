@@ -3,22 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Domain.Models;
-using Domain.Interfaces;
-using DataAccess.EFCore;
+using DataAccess;
+using DataAccess.Models;
+using Domain;
+using Domain.ServiceInterfaces;
+
 namespace BussinesLogic.Services
 {
     public class TerritoryService : ITerritoryService
     {
-        private readonly RizzyCoContext context;
+        private readonly IUnitOfWork unit;
 
-        public TerritoryService(RizzyCoContext context)
+        public TerritoryService(IUnitOfWork unit)
         {
-            this.context = context;
+            this.unit = unit;
         }
         public async Task<List<Territory>> GetAll()
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<List<Territory>> territories = unit.Territories.GetAll();
 
@@ -27,7 +29,7 @@ namespace BussinesLogic.Services
         }
         public async Task<Territory> Get(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<Territory> territory = unit.Territories.Get(id);
 
@@ -37,21 +39,21 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<Territory> Put(Territory entity)
+        public Territory Put(Territory entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<Territory> territory = unit.Territories.Update(entity);
+                Territory territory = unit.Territories.Update(entity);
 
                 unit.Complete();
 
-                return await territory;
+                return territory;
             }
         }
 
         public async Task<Territory> Post(Territory entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<Territory> territory = unit.Territories.Add(entity);
 
@@ -61,15 +63,15 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<Territory> Delete(int id)
+        public Territory Delete(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<Territory> territory = unit.Territories.Delete(id);
+                Territory territory = unit.Territories.Delete(id);
 
                 unit.Complete();
 
-                return await territory;
+                return territory;
             }
         }
     }

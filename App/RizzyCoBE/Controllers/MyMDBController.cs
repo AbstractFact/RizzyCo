@@ -4,15 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Interfaces;
-using BussinesLogic.Services;
+using Domain.ServiceInterfaces;
 
 namespace RizzyCoBE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public abstract class MyMDBController<TEntity, TService> : ControllerBase
-        where TEntity : class, IEntity
+        where TEntity : class
         where TService : class, IService<TEntity>
     {
         private readonly TService service;
@@ -23,54 +22,58 @@ namespace RizzyCoBE.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IEntity>>> Get()
+        public async Task<ActionResult<IEnumerable<TEntity>>> Get()
         {
-            return await service.GetAll();
+            List<TEntity> result = await service.GetAll();
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
         }
 
         // GET: api/[controller]/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TEntity>> Get(int id)
         {
-            var entity = await service.Get(id);
-            if (entity == null)
-            {
-                return NotFound();
-            }
-            return entity;
+            var result = await service.Get(id);
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
         }
 
         // PUT: api/[controller]/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, TEntity entity)
+        [HttpPut]
+        public IActionResult Put(TEntity entity)
         {
-            if (id != entity.ID)
-            {
-                return BadRequest();
-            }
-            await service.Put(entity);
+            TEntity result =  service.Put(entity);
+            if (result != null)
+                return Ok(result);
 
-            return NoContent();
+            return BadRequest("Bad request!");
         }
 
         // POST: api/[controller]
         [HttpPost]
         public async Task<ActionResult<TEntity>> Post(TEntity entity)
         {
-            await service.Post(entity);
-            return CreatedAtAction("Get", new { id = entity.ID }, entity);
+            TEntity result = await service.Post(entity);
+            if (result != null)
+                return Ok(result);
+
+            return BadRequest("Bad request!");
         }
 
         // DELETE: api/[controller]/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<TEntity>> Delete(int id)
+        public ActionResult<TEntity> Delete(int id)
         {
-            var entity = await service.Delete(id);
+            var entity = service.Delete(id);
             if (entity == null)
             {
                 return NotFound();
             }
-            return entity;
+            return Ok();
         }
     }
 }

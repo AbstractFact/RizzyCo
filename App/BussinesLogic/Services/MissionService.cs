@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Domain.Models;
-using Domain.Interfaces;
-using DataAccess.EFCore;
+using DataAccess;
+using DataAccess.Models;
+using Domain;
+using Domain.ServiceInterfaces;
 
 namespace BussinesLogic.Services
 {
     public class MissionService : IMissionService
     {
-        private readonly RizzyCoContext context;
+        private readonly IUnitOfWork unit;
 
-        public MissionService(RizzyCoContext context)
+        public MissionService(IUnitOfWork unit)
         {
-            this.context = context;
+            this.unit = unit;
         }
         public async Task<List<Mission>> GetAll()
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<List<Mission>> missions = unit.Missions.GetAll();
 
@@ -28,7 +29,7 @@ namespace BussinesLogic.Services
         }
         public async Task<Mission> Get(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<Mission> mission = unit.Missions.Get(id);
 
@@ -38,21 +39,21 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<Mission> Put(Mission entity)
+        public Mission Put(Mission entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<Mission> mission = unit.Missions.Update(entity);
+                Mission mission = unit.Missions.Update(entity);
 
                 unit.Complete();
 
-                return await mission;
+                return mission;
             }
         }
 
         public async Task<Mission> Post(Mission entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<Mission> mission = unit.Missions.Add(entity);
 
@@ -62,15 +63,15 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<Mission> Delete(int id)
+        public Mission Delete(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<Mission> mission = unit.Missions.Delete(id);
+                Mission mission = unit.Missions.Delete(id);
 
                 unit.Complete();
 
-                return await mission;
+                return mission;
             }
         }
     }

@@ -3,23 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Domain.Models;
-using Domain.Interfaces;
-using DataAccess.EFCore;
+using DataAccess;
+using DataAccess.Models;
+using Domain;
+using Domain.ServiceInterfaces;
 
 namespace BussinesLogic.Services
 {
     public class GameService : IGameService
     {
         private readonly RizzyCoContext context;
+        private readonly IUnitOfWork unit;
 
-        public GameService(RizzyCoContext context)
+        public GameService(IUnitOfWork unit, RizzyCoContext context)
         {
             this.context = context;
+            this.unit = unit;
         }
         public async Task<List<Game>> GetAll()
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<List<Game>> games = unit.Games.GetAll();
 
@@ -28,7 +31,7 @@ namespace BussinesLogic.Services
         }
         public async Task<Game> Get(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<Game> game = unit.Games.Get(id);
 
@@ -37,20 +40,20 @@ namespace BussinesLogic.Services
                 return await game;
             }
         }
-        public async Task<Game> Put(Game entity)
+        public Game Put(Game entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<Game> game = unit.Games.Update(entity);
+                Game game = unit.Games.Update(entity);
 
                 unit.Complete();
 
-                return await game;
+                return  game;
             }
         }
         public async Task<Game> Post(Game entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<Game> game = unit.Games.Add(entity);
 
@@ -59,15 +62,15 @@ namespace BussinesLogic.Services
                 return await game;
             }
         }
-        public async Task<Game> Delete(int id)
+        public Game Delete(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<Game> game = unit.Games.Delete(id);
+                Game game = unit.Games.Delete(id);
 
                 unit.Complete();
 
-                return await game;
+                return  game;
             }
         }
     }

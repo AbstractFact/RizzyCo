@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Domain.Models;
-using Domain.Interfaces;
-using DataAccess.EFCore;
+using DataAccess;
+using DataAccess.Models;
+using Domain;
+using Domain.ServiceInterfaces;
 
 namespace BussinesLogic.Services
 {
     public class UserService : IUserService
     {
-        private readonly RizzyCoContext context;
+        private readonly IUnitOfWork unit;
 
-        public UserService(RizzyCoContext context)
+        public UserService(IUnitOfWork unit)
         {
-            this.context = context;
+            this.unit = unit;
         }
         public async Task<List<User>> GetAll()
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+           using (unit)
             {
                 Task<List<User>> users = unit.Users.GetAll();
 
@@ -28,7 +29,7 @@ namespace BussinesLogic.Services
         }
         public async Task<User> Get(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<User> user = unit.Users.Get(id);
 
@@ -38,21 +39,21 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<User> Put(User entity)
+        public User Put(User entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<User> user = unit.Users.Update(entity);
+                User user = unit.Users.Update(entity);
 
                 unit.Complete();
 
-                return await user;
+                return user;
             }
         }
 
         public async Task<User> Post(User entity)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
                 Task<User> user = unit.Users.Add(entity);
 
@@ -62,15 +63,15 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<User> Delete(int id)
+        public User Delete(int id)
         {
-            using (IUnitOfWork unit = new UnitOfWork(context))
+            using (unit)
             {
-                Task<User> user = unit.Users.Delete(id);
+                User user = unit.Users.Delete(id);
 
                 unit.Complete();
 
-                return await user;
+                return user;
             }
         }
     }

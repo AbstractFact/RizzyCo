@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Domain.Models;
-using DataAccess.EFCore;
+using DataAccess.Models;
 using BussinesLogic.Services;
 
 
