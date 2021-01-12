@@ -16,7 +16,30 @@ namespace RizzyCoBE.Controllers
     {
         public UserController(UserService service) : base(service)
         {
+           
+        }
 
+        [HttpGet("GetAllUsers")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        {
+            List<User> result = await service.GetAllUsers();
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
+        }
+
+
+        // POST: api/[controller]
+        [HttpPost("CreateGame/{userId}/{numPlayers}")]
+        public async Task<ActionResult> CreateGame(int userId, int numPlayers)
+        {
+            User result = await this.service.CreateGame(userId, numPlayers);
+
+            if (result != null)
+                return Ok();
+
+            return BadRequest("Bad request!");
         }
     }
 }

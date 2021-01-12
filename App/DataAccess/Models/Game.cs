@@ -11,6 +11,8 @@ namespace DataAccess.Models
 
         [JsonIgnore]
         public Map Map { get; set; }
+        [JsonIgnore]
+        public User User { get; set; }
         public List<Player> Players { get; set; }
         public List<PlayerColor> PlayerColors { get; set; }
 

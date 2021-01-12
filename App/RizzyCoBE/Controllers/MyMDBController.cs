@@ -14,7 +14,7 @@ namespace RizzyCoBE.Controllers
         where TEntity : class
         where TService : class, IService<TEntity>
     {
-        private readonly TService service;
+        protected readonly TService service;
 
         public MyMDBController(TService service)
         {

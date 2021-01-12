@@ -15,6 +15,7 @@ namespace Repository
         {
 
         }
+
         // We can add new methods specific to the movie repository here in the future
     }
 }

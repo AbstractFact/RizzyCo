@@ -19,5 +19,6 @@ namespace DataAccess.Models
         public string Role { get; set; }
         public string Token { get; set; }
         public List<Game> Games { get; set; }
+
     }
 }

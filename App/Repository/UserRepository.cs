@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DataAccess;
 using DataAccess.Models;
 using Domain.RepositoryInterfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
@@ -19,6 +20,11 @@ namespace Repository
         public List<User> GetAllSync()
         {
             return  context.Set<User>().ToList();
+        }
+
+        public async Task<List<User>> GetAllUsers()
+        {
+            return await context.Set<User>().Include(p => p.Games).ToListAsync();
         }
 
         // We can add new methods specific to the movie repository here in the future

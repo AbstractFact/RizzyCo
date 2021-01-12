@@ -18,5 +18,15 @@ namespace RizzyCoBE.Controllers
         {
 
         }
+
+        [HttpGet("GetAllGames")]
+        public async Task<ActionResult<IEnumerable<Game>>> GetAllUsers()
+        {
+            List<Game> result = await service.GetAllGames();
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
+        }
     }
 }
