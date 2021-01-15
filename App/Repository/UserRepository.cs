@@ -22,9 +22,9 @@ namespace Repository
             return  context.Set<User>().ToList();
         }
 
-        public async Task<List<User>> GetAllUsers()
+        public async Task<User> GetUserByUsername(string username)
         {
-            return await context.Set<User>().Include(p => p.Games).ToListAsync();
+            return await context.Set<User>().SingleOrDefaultAsync(u => u.Username == username);
         }
 
         // We can add new methods specific to the movie repository here in the future

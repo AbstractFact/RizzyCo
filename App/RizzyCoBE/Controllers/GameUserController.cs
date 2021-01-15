@@ -7,22 +7,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
+using Domain.ServiceInterfaces;
 
 namespace RizzyCoBE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GameController : MyMDBController<Game, GameService>
+    public class GameUserController : ControllerBase
     {
-        public GameController(GameService service) : base(service)
-        {
+        private GameUserService service;
 
+        public GameUserController(GameUserService service)
+        {
+            this.service = service;
         }
 
-        [HttpGet("GetAllGames")]
-        public async Task<ActionResult<IEnumerable<Game>>> GetAllGames()
+        [HttpGet("{userID}")]
+        public async Task<ActionResult<IEnumerable<Game>>> GetAllUserGames(int userID)
         {
-            List<Game> result = await service.GetAllGames();
+            List<GameUser> result = await service.GetAllUserGames(userID);
             if (result != null)
                 return Ok(result);
 

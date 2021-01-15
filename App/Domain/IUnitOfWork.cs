@@ -16,7 +16,8 @@ namespace Domain
         ITerritoryRepository Territories { get; }
         IUserRepository Users { get; }
         INeighbourRepository Neighbours { get; }
+        IGameUserRepository GamesUser { get; }
         public int Complete();
-    }
+        }
 }
 

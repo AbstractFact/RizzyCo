@@ -75,41 +75,59 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<List<User>> GetAllUsers()
-        {
-               return await unit.Users.GetAllUsers();
-        }
 
-        public async Task<User> CreateGame(int userId, int numPlayers)
+        public async Task<User> CreateGame(List<string> players, int userId, int numPlayers, int mapID)
         {
-            Task<User> user = unit.Users.Get(userId);
-            User realUser = await user;
+            Map map = new Map();
+
+            Task<User> uu = unit.Users.Get(userId);
+            User user = await uu;
+            
 
             Game realGame = new Game();
             realGame.NumberOfPlayers = numPlayers;
             realGame.Finished = false;
-            realGame.User = realUser;
+            realGame.Creator = user;
+            realGame.Map = map;
             await unit.Games.Add(realGame);
-            //unit.Complete();
-
-            realUser.Games.Add(realGame);
-            unit.Users.Update(realUser);
-
-            //unit.Complete();
 
             Player player = new Player();
-            player.User = realUser;
+            player.User = user;
             player.Game = realGame;
             await unit.Players.Add(player);
+
             realGame.Players.Add(player);
 
+            user.Games.Add(realGame);
+            user.Players.Add(player);
+            unit.Users.Update(user);
+
+            await unit.GamesUser.AddGameUser(realGame, user);
+
+            foreach (string playerUsername in players)
+            {
+                Task<User> u = unit.Users.GetUserByUsername(playerUsername);
+                User realU = await u;
+                Player invitedPlayer = new Player();
+                invitedPlayer.User = realU;
+                invitedPlayer.Game = realGame;
+                await unit.Players.Add(invitedPlayer);
+                realGame.Players.Add(invitedPlayer);
+
+                await unit.GamesUser.AddGameUser(realGame, realU);
+
+                realU.Players.Add(invitedPlayer);
+                unit.Users.Update(realU);
+
+            }
+
             unit.Complete();
+
             unit.Games.Update(realGame);
 
             unit.Complete();
 
-
-            return await user;
+            return await uu;
         }
     }
 }

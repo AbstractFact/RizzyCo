@@ -18,7 +18,9 @@ namespace DataAccess.Models
         public string Email { get; set; }
         public string Role { get; set; }
         public string Token { get; set; }
+        [JsonIgnore]
         public List<Game> Games { get; set; }
-
+        [JsonIgnore]
+        public List<Player> Players { get; set; }
     }
 }

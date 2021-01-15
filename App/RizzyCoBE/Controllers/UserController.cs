@@ -19,22 +19,11 @@ namespace RizzyCoBE.Controllers
            
         }
 
-        [HttpGet("GetAllUsers")]
-        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
-        {
-            List<User> result = await service.GetAllUsers();
-            if (result != null)
-                return Ok(result);
-
-            return NotFound();
-        }
-
-
         // POST: api/[controller]
-        [HttpPost("CreateGame/{userId}/{numPlayers}")]
-        public async Task<ActionResult> CreateGame(int userId, int numPlayers)
+        [HttpPost("CreateGame/{userId}/{numPlayers}/{mapID}")]
+        public async Task<ActionResult> CreateGame([FromBody] List<string> players, int userId, int numPlayers, int mapID)
         {
-            User result = await this.service.CreateGame(userId, numPlayers);
+            User result =  await this.service.CreateGame(players, userId, numPlayers, mapID);
 
             if (result != null)
                 return Ok();

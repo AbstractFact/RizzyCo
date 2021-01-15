@@ -6,9 +6,9 @@ using DataAccess.Models;
 
 namespace Domain.RepositoryInterfaces
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IGameUserRepository : IRepository<GameUser>
     {
-        List<User> GetAllSync();
-        Task<User> GetUserByUsername(string username);
+        Task<List<GameUser>> GetAllUserGames(User user);
+        Task<GameUser> AddGameUser(Game game, User user);
     }
 }

@@ -21,6 +21,7 @@ namespace Repository
         private ITerritoryRepository territories;
         private IUserRepository users;
         private INeighbourRepository neighbours;
+        private IGameUserRepository gamesUser;
 
         public UnitOfWork(RizzyCoContext context)
         {
@@ -34,6 +35,7 @@ namespace Repository
             Territories = new TerritoryRepository(_context);
             Users = new UserRepository(_context);
             Neighbours = new NeighbourRepository(context);
+            gamesUser = new GameUserRepository(context);
 
         }
         public ICardRepository Cards
@@ -124,6 +126,17 @@ namespace Repository
                 if (neighbours == null)
                     neighbours = new NeighbourRepository(_context);
                 return neighbours;
+            }
+            private set { }
+        }
+
+        public IGameUserRepository GamesUser
+        {
+            get
+            {
+                if (gamesUser == null)
+                    gamesUser = new GameUserRepository(_context);
+                return gamesUser;
             }
             private set { }
         }

@@ -4,14 +4,16 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(RizzyCoContext))]
-    partial class RizzyCoContextModelSnapshot : ModelSnapshot
+    [Migration("20210114191707_FifthVersion")]
+    partial class FifthVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,7 +61,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CreatorID")
+                    b.Property<int>("Creator")
                         .HasColumnType("int");
 
                     b.Property<bool>("Finished")
@@ -71,35 +73,16 @@ namespace DataAccess.Migrations
                     b.Property<int>("NumberOfPlayers")
                         .HasColumnType("int");
 
-                    b.HasKey("ID");
-
-                    b.HasIndex("CreatorID");
-
-                    b.HasIndex("MapID");
-
-                    b.ToTable("Games");
-                });
-
-            modelBuilder.Entity("DataAccess.Models.GameUser", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("GameID")
-                        .HasColumnType("int");
-
                     b.Property<int?>("UserID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("GameID");
+                    b.HasIndex("MapID");
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("GamesUser");
+                    b.ToTable("Games");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Map", b =>
@@ -295,23 +278,12 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Models.Game", b =>
                 {
-                    b.HasOne("DataAccess.Models.User", "Creator")
-                        .WithMany("Games")
-                        .HasForeignKey("CreatorID");
-
                     b.HasOne("DataAccess.Models.Map", "Map")
                         .WithMany()
                         .HasForeignKey("MapID");
-                });
 
-            modelBuilder.Entity("DataAccess.Models.GameUser", b =>
-                {
-                    b.HasOne("DataAccess.Models.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameID");
-
-                    b.HasOne("DataAccess.Models.User", "User")
-                        .WithMany()
+                    b.HasOne("DataAccess.Models.User", null)
+                        .WithMany("Games")
                         .HasForeignKey("UserID");
                 });
 

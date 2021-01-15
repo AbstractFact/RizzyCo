@@ -4,14 +4,16 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(RizzyCoContext))]
-    partial class RizzyCoContextModelSnapshot : ModelSnapshot
+    [Migration("20210114225538_SeventhVersion")]
+    partial class SeventhVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,28 +80,6 @@ namespace DataAccess.Migrations
                     b.HasIndex("MapID");
 
                     b.ToTable("Games");
-                });
-
-            modelBuilder.Entity("DataAccess.Models.GameUser", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("GameID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("GameID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("GamesUser");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Map", b =>
@@ -302,17 +282,6 @@ namespace DataAccess.Migrations
                     b.HasOne("DataAccess.Models.Map", "Map")
                         .WithMany()
                         .HasForeignKey("MapID");
-                });
-
-            modelBuilder.Entity("DataAccess.Models.GameUser", b =>
-                {
-                    b.HasOne("DataAccess.Models.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameID");
-
-                    b.HasOne("DataAccess.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Mission", b =>

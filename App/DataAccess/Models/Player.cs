@@ -15,7 +15,6 @@ namespace DataAccess.Models
 
         [JsonIgnore]
         public Mission Mission { get; set; }
-
         [JsonIgnore]
         public User User { get; set; }
         public PlayerColor PlayerColor { get; set; }
