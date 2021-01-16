@@ -16,7 +16,7 @@ namespace DataAccess.Models
 
         public List<Mission> Missions { get; set; }
         public List<Card> Cards { get; set; }
-        public List<Territory> Territories { get; set; }
+        public List<Continent> Continents { get; set; }
 
     }
 }

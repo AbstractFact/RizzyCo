@@ -14,6 +14,12 @@ namespace BussinesLogic.Services
     {
         private readonly IUnitOfWork unit;
 
+        private AbstractMissionStrategy strategy;
+        public void SetStrategy(AbstractMissionStrategy strategy)
+        {
+            this.strategy = strategy;
+        }
+
         public MissionService(IUnitOfWork unit)
         {
             this.unit = unit;

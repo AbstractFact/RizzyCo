@@ -12,6 +12,8 @@ namespace DataAccess.Models
         public string Type { get; set; }
         public string Picture { get; set; }
 
+        public bool Taken { get; set; }
+
         [JsonIgnore]
         public Player Player { get; set; }
 

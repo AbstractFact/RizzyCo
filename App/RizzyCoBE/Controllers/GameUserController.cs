@@ -31,5 +31,15 @@ namespace RizzyCoBE.Controllers
 
             return NotFound();
         }
+        [HttpDelete("{id}")]
+        public ActionResult<GameUser> Delete(int id)
+        {
+            var entity = service.Delete(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return Ok();
+        }
     }
 }

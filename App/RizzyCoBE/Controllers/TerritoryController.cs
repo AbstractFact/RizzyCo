@@ -18,5 +18,16 @@ namespace RizzyCoBE.Controllers
         {
 
         }
+
+        // POST: api/[controller]
+        [HttpPost("AddTerritory/{continentID}")]
+        public async Task<ActionResult<Territory>> AddTerritory([FromBody] Territory entity, int continentID)
+        {
+            Territory result = await service.Post(entity, continentID);
+            if (result != null)
+                return Ok(result);
+
+            return BadRequest("Bad request!");
+        }
     }
 }

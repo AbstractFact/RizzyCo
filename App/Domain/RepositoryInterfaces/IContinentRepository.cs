@@ -6,8 +6,8 @@ using DataAccess.Models;
 
 namespace Domain.RepositoryInterfaces
 {
-    public interface INeighbourRepository : IRepository<Neighbour>
+    public interface IContinentRepository : IRepository<Continent>
     {
-        Task<List<Neighbour>> GetTerritoryNeighbours(Territory terr);
+        Task<List<Continent>> GetAllContinents();
     }
 }

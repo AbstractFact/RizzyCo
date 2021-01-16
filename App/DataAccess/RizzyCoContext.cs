@@ -20,6 +20,7 @@ namespace DataAccess
         public DbSet<User> Users { get; set; }
         public DbSet<Neighbour> Neighbours { get; set; }
         public DbSet<GameUser> GamesUser { get; set; }
+        public DbSet<Continent> Continents { get; set; }
         public RizzyCoContext(DbContextOptions options) : base(options)
         {
         }

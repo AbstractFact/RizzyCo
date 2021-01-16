@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DataAccess;
 using DataAccess.Models;
 using Domain.RepositoryInterfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
@@ -15,6 +16,10 @@ namespace Repository
         {
 
         }
-        // We can add new methods specific to the movie repository here in the future
+        
+        public async Task<List<Neighbour>> GetTerritoryNeighbours(Territory terr)
+        {
+            return await context.Set<Neighbour>().Include(p => p.Src).Include(p => p.Dst).Where(p => p.Src == terr).ToListAsync();
+        }
     }
 }

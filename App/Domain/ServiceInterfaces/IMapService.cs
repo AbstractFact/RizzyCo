@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using DataAccess.Models;
 
 namespace Domain.ServiceInterfaces
 {
     public interface IMapService : IService<Map>
     {
+        Task<List<Map>> GetAllMaps();
     }
 }

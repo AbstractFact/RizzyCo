@@ -13,28 +13,29 @@ namespace RizzyCoBE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NeighbourController : MyMDBController<Neighbour, NeighbourService>
+    public class ContinentController : MyMDBController<Continent, ContinentService>
     {
-        public NeighbourController(NeighbourService service) : base(service)
+        public ContinentController(ContinentService service) : base(service)
         {
+           
 
         }
 
         // POST: api/[controller]
-        [HttpPost("AddNeighbour/{srcID}/{dstID}")]
-        public async Task<ActionResult<Neighbour>> AddNeighbour(int srcID, int dstID)
+        [HttpPost("AddContinent/{mapID}")]
+        public async Task<ActionResult<Continent>> AddContinent([FromBody] Continent entity, int mapID)
         {
-            Neighbour result = await service.Post(srcID, dstID);
+            Continent result = await service.Post(entity, mapID);
             if (result != null)
                 return Ok(result);
 
             return BadRequest("Bad request!");
         }
 
-        [HttpGet("GetTerritoryNeighbours/{terrID}")]
-        public async Task<ActionResult<IEnumerable<Neighbour>>> GetTerritoryNeighbours(int terrID)
+        [HttpGet("GetAllContinents")]
+        public async Task<ActionResult<IEnumerable<Continent>>> GetAllContinents()
         {
-            List<Neighbour> result = await service.GetTerritoryNeighbours(terrID);
+            List<Continent> result = await service.GetAllContinents();
             if (result != null)
                 return Ok(result);
 

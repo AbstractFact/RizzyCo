@@ -74,5 +74,43 @@ namespace BussinesLogic.Services
                 return neighbour;
             }
         }
+
+        public async Task<Neighbour> Post(int srcID, int dstID)
+        {
+            using (unit)
+            {
+                Territory src = await unit.Territories.Get(srcID);
+                Territory dst = await unit.Territories.Get(dstID);
+               
+                Neighbour neighbour1 = new Neighbour();
+                neighbour1.Src = src;
+                neighbour1.Dst = dst;
+
+                await unit.Neighbours.Add(neighbour1);
+
+                Neighbour neighbour2 = new Neighbour();
+                neighbour2.Src = dst;
+                neighbour2.Dst = src;
+
+                await unit.Neighbours.Add(neighbour2);
+
+                unit.Complete();
+
+                return neighbour2;
+            }
+        }
+
+        public async Task<List<Neighbour>> GetTerritoryNeighbours(int terrID)
+        {
+            using (unit)
+            {
+                Task<Territory> terr = unit.Territories.Get(terrID);
+                Territory t = await terr;
+                Task<List<Neighbour>> games = unit.Neighbours.GetTerritoryNeighbours(t);
+
+                return await games;
+            }
+        }
+
     }
 }

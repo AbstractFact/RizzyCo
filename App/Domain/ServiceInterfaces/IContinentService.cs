@@ -6,9 +6,9 @@ using DataAccess.Models;
 
 namespace Domain.ServiceInterfaces
 {
-    public interface IGameUserService
+    public interface IContinentService : IService<Continent>
     {
-        public Task<List<GameUser>> GetAllUserGames(int userID);
-        public GameUser Delete(int id);
+        Task<Continent> Post(Continent entity, int mapID);
+        Task<List<Continent>> GetAllContinents();
     }
 }

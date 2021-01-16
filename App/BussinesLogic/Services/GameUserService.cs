@@ -29,5 +29,17 @@ namespace BussinesLogic.Services
             }
         }
 
+        public GameUser Delete(int id)
+        {
+            using (unit)
+            {
+                GameUser gameUser = unit.GamesUser.Delete(id);
+
+                unit.Complete();
+
+                return gameUser;
+            }
+        }
+
     }
 }

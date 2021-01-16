@@ -17,6 +17,7 @@ namespace Domain
         IUserRepository Users { get; }
         INeighbourRepository Neighbours { get; }
         IGameUserRepository GamesUser { get; }
+        IContinentRepository Continents { get; }
         public int Complete();
         }
 }

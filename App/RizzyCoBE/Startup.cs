@@ -86,6 +86,7 @@ namespace RizzyCoBE
             services.AddScoped<UserService>();
             services.AddScoped<NeighbourService>();
             services.AddScoped<GameUserService>();
+            services.AddScoped<ContinentService>();
             services.BuildServiceProvider().GetService<RizzyCoContext>().Database.Migrate();
             services.AddControllers();
             services.AddMvc().AddJsonOptions(options =>

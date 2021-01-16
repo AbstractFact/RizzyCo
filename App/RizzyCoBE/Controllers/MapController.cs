@@ -18,5 +18,15 @@ namespace RizzyCoBE.Controllers
         {
 
         }
+
+        [HttpGet("GetAllMaps")]
+        public async Task<ActionResult<IEnumerable<Map>>> GetAllMaps()
+        {
+            List<Map> result = await service.GetAllMaps();
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
+        }
     }
 }

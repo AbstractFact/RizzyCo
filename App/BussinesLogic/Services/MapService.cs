@@ -74,5 +74,10 @@ namespace BussinesLogic.Services
                 return  map;
             }
         }
+
+        public async Task<List<Map>> GetAllMaps()
+        {
+            return await unit.Maps.GetAllMaps();
+        }
     }
 }

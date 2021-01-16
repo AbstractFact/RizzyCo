@@ -74,5 +74,22 @@ namespace BussinesLogic.Services
                 return territory;
             }
         }
+
+        public async Task<Territory> Post(Territory entity, int continentID)
+        {
+            using (unit)
+            {
+                Continent continent = await unit.Continents.Get(continentID);
+                entity.Continent = continent;
+                Task<Territory> territory = unit.Territories.Add(entity);
+
+                continent.Territories.Add(entity);
+                unit.Continents.Update(continent);
+
+                unit.Complete();
+
+                return await territory;
+            }
+        }
     }
 }

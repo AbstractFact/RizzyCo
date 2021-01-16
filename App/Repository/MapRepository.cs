@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using DataAccess;
 using DataAccess.Models;
 using Domain.RepositoryInterfaces;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
@@ -16,6 +16,10 @@ namespace Repository
         {
 
         }
-        // We can add new methods specific to the movie repository here in the future
+
+        public async Task<List<Map>> GetAllMaps()
+        {
+            return await context.Set<Map>().Include(p => p.Continents).ToListAsync();
+        }
     }
 }
