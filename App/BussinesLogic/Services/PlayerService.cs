@@ -39,6 +39,18 @@ namespace BussinesLogic.Services
             }
         }
 
+        public async Task<Player> GetPlayer(int id)
+        {
+            using (unit)
+            {
+                Task<Player> player = unit.Players.GetPlayer(id);
+
+                if (player == null) return null;
+
+                return await player;
+            }
+        }
+
         public Player Put(Player entity)
         {
             using (unit)

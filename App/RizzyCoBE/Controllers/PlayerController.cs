@@ -18,5 +18,15 @@ namespace RizzyCoBE.Controllers
         {
 
         }
+
+        [HttpGet("GetPlayer/{id}")]
+        public async Task<ActionResult<Player>> GetPlayer(int id)
+        {
+            var result = await service.GetPlayer(id);
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace Repository
         private INeighbourRepository neighbours;
         private IGameUserRepository gamesUser;
         private IContinentRepository continent;
-
+        private IGamePlayerColorRepository gamePlayerColors;
         public UnitOfWork(RizzyCoContext context)
         {
             _context = context;
@@ -38,6 +38,7 @@ namespace Repository
             Neighbours = new NeighbourRepository(context);
             gamesUser = new GameUserRepository(context);
             continent = new ContinentRepository(context);
+            gamePlayerColors = new GamePlayerColorRepository(context);
 
         }
         public ICardRepository Cards
@@ -149,6 +150,16 @@ namespace Repository
                 if (continent == null)
                     continent = new ContinentRepository(_context);
                 return continent;
+            }
+            private set { }
+        }
+        public IGamePlayerColorRepository GamePlayerColors
+        {
+            get
+            {
+                if (gamePlayerColors == null)
+                    gamePlayerColors = new GamePlayerColorRepository(_context);
+                return gamePlayerColors;
             }
             private set { }
         }

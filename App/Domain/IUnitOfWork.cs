@@ -18,7 +18,9 @@ namespace Domain
         INeighbourRepository Neighbours { get; }
         IGameUserRepository GamesUser { get; }
         IContinentRepository Continents { get; }
+        IGamePlayerColorRepository GamePlayerColors { get; }
         public int Complete();
-        }
+
+    }
 }
 

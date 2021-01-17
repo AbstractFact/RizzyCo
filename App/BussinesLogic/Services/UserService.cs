@@ -78,11 +78,12 @@ namespace BussinesLogic.Services
 
         public async Task<User> CreateGame(List<string> players, int userId, int numPlayers, int mapID)
         {
-            Map map = new Map();
+            
+            Map map = await unit.Maps.Get(mapID);
+            
 
             Task<User> uu = unit.Users.Get(userId);
             User user = await uu;
-            
 
             Game realGame = new Game();
             realGame.NumberOfPlayers = numPlayers;
@@ -104,6 +105,20 @@ namespace BussinesLogic.Services
 
             await unit.GamesUser.AddGameUser(realGame, user);
 
+            Stack<PlayerColor> colors = new Stack<PlayerColor>();
+            (await unit.PlayerColors.GetAll()).ForEach(elem =>
+            {
+                colors.Push(elem);
+            });
+
+            GamePlayerColor gamePlayerColor = new GamePlayerColor();
+            PlayerColor color = colors.Pop();
+            gamePlayerColor.PlayerColor = color;
+            gamePlayerColor.Game = realGame;
+            await unit.GamePlayerColors.Add(gamePlayerColor);
+            player.PlayerColor = color;
+            
+
             foreach (string playerUsername in players)
             {
                 Task<User> u = unit.Users.GetUserByUsername(playerUsername);
@@ -119,10 +134,21 @@ namespace BussinesLogic.Services
                 realU.Players.Add(invitedPlayer);
                 unit.Users.Update(realU);
 
+                GamePlayerColor gamePlayerColor1 = new GamePlayerColor();
+                PlayerColor color1 = colors.Pop();
+                gamePlayerColor1.PlayerColor = color1;
+                gamePlayerColor1.Game = realGame;
+                await unit.GamePlayerColors.Add(gamePlayerColor1);
+                invitedPlayer.PlayerColor = color1;
+
+                unit.Complete();
+                unit.Players.Update(invitedPlayer);
+
             }
 
             unit.Complete();
 
+            unit.Players.Update(player);
             unit.Games.Update(realGame);
 
             unit.Complete();

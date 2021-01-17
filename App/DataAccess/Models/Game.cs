@@ -16,7 +16,6 @@ namespace DataAccess.Models
         public User Creator { get; set; }
 
         public List<Player> Players { get; set; }
-        public List<PlayerColor> PlayerColors { get; set; }
 
     }
 }
