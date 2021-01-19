@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Domain.ServiceInterfaces
 {
-    public interface IGamePlayerColorService : IService<GamePlayerColor>
+    public interface IPlayerTerritoryService : IService<PlayerTerritory>
     {
-        Task<GamePlayerColor> AddGamePlayerColor(int gameID, int playerColorID);
+        Task<List<PlayerTerritory>> GetPlayerTerritories(int playerID);
     }
 }

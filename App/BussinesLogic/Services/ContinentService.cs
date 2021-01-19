@@ -75,9 +75,6 @@ namespace BussinesLogic.Services
                 entity.Map = map;
                 Task<Continent> continent = unit.Continents.Add(entity);
 
-                map.Continents.Add(entity);
-                unit.Maps.Update(map);
-
                 unit.Complete();
 
                 return await continent;
@@ -95,9 +92,14 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<List<Continent>> GetAllContinents()
+        public async Task<List<Continent>> GetMapContinents(int mapID)
         {
-            return await unit.Continents.GetAllContinents();
+            using (unit)
+            {
+                Task<List<Continent>> territories = unit.Continents.GetMapContinents(mapID);
+
+                return await territories;
+            }
         }
     }
 }

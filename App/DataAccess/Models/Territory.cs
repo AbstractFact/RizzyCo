@@ -10,8 +10,6 @@ namespace DataAccess.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        [JsonIgnore]
-        public Player Player { get; set; }
 
         [JsonIgnore]
         public Continent Continent { get; set; }

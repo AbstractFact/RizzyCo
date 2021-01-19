@@ -32,14 +32,16 @@ namespace RizzyCoBE.Controllers
             return BadRequest("Bad request!");
         }
 
-        [HttpGet("GetAllContinents")]
-        public async Task<ActionResult<IEnumerable<Continent>>> GetAllContinents()
+        [HttpGet("GetMapContinents/{mapID}")]
+        public async Task<ActionResult<IEnumerable<Continent>>> GetMapContinents(int mapID)
         {
-            List<Continent> result = await service.GetAllContinents();
+            List<Continent> result = await service.GetMapContinents(mapID);
             if (result != null)
                 return Ok(result);
 
             return NotFound();
         }
+
+
     }
 }

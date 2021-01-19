@@ -83,12 +83,19 @@ namespace BussinesLogic.Services
                 entity.Continent = continent;
                 Task<Territory> territory = unit.Territories.Add(entity);
 
-                continent.Territories.Add(entity);
-                unit.Continents.Update(continent);
-
                 unit.Complete();
 
                 return await territory;
+            }
+        }
+
+        public async Task<List<Territory>> GetContinentTerritories(int continentID)
+        {
+            using (unit)
+            {
+                Task<List<Territory>> territories = unit.Territories.GetContinentTerritories(continentID);
+
+                return await territories;
             }
         }
     }

@@ -8,6 +8,5 @@ namespace Domain.RepositoryInterfaces
 {
     public interface IMapRepository : IRepository<Map>
     {
-       Task<List<Map>> GetAllMaps();
     }
 }

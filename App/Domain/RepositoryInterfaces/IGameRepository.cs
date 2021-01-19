@@ -8,6 +8,5 @@ namespace Domain.RepositoryInterfaces
 {
     public interface IGameRepository : IRepository<Game>
     {
-        Task<List<Game>> GetAllGames();
     }
 }

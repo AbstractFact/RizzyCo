@@ -26,7 +26,6 @@ namespace Repository
         {
             return await context.Set<User>().SingleOrDefaultAsync(u => u.Username == username);
         }
-
-        // We can add new methods specific to the movie repository here in the future
+  
     }
 }

@@ -12,10 +12,5 @@ namespace DataAccess.Models
         [JsonIgnore]
         public Map Map { get; set; }
 
-        [JsonIgnore]
-        public User Creator { get; set; }
-
-        public List<Player> Players { get; set; }
-
     }
 }

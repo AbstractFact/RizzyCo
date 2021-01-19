@@ -9,16 +9,12 @@ namespace DataAccess.Models
     public class Player 
     {
         public int ID { get; set; }
-
-        [JsonIgnore]
-        public Game Game { get; set; }
-
-        [JsonIgnore]
-        public Mission Mission { get; set; }
-        [JsonIgnore]
+        public bool Creator { get; set; }
+        public bool OnTurn { get; set; }
         public User User { get; set; }
-        public PlayerColor PlayerColor { get; set; }
-        public List<Territory> Territories { get; set; }
-        public List<Card> Cards { get; set; }
+        public Game Game { get; set; }
+        public PlayerColor PlayerColor { get; set; }    
+        public Mission Mission { get; set; }
+       
     }
 }

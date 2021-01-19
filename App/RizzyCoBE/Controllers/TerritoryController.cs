@@ -29,5 +29,17 @@ namespace RizzyCoBE.Controllers
 
             return BadRequest("Bad request!");
         }
+
+        [HttpGet("GetContinentTerritories/{continentID}")]
+        public async Task<ActionResult<IEnumerable<Territory>>> GetContinentTerritories(int continentID)
+        {
+            List<Territory> result = await service.GetContinentTerritories(continentID);
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
+        }
+
+     
     }
 }

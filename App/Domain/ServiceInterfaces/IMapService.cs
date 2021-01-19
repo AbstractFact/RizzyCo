@@ -8,6 +8,5 @@ namespace Domain.ServiceInterfaces
 {
     public interface IMapService : IService<Map>
     {
-        Task<List<Map>> GetAllMaps();
     }
 }

@@ -18,7 +18,7 @@ namespace Repository
         }
         public async Task<Player> GetPlayer(int id)
         {
-            return (await context.Set<Player>().Where(p=>p.ID==id).Include(p=>p.PlayerColor).Include(p=>p.Territories).Include(p => p.Cards).ToListAsync()).FirstOrDefault();
+            return (await context.Set<Player>().Where(p=>p.ID==id).Include(p=>p.User).Include(p => p.Game).Include(p => p.PlayerColor).Include(p => p.Mission).ToListAsync()).FirstOrDefault();
         }
     }
 }

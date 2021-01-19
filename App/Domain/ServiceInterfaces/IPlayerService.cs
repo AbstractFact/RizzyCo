@@ -9,5 +9,6 @@ namespace Domain.ServiceInterfaces
     public interface IPlayerService : IService<Player>
     {
         Task<Player> GetPlayer(int id);
+        
     }
 }

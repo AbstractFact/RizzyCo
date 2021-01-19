@@ -4,14 +4,16 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(RizzyCoContext))]
-    partial class RizzyCoContextModelSnapshot : ModelSnapshot
+    [Migration("20210118135815_13")]
+    partial class _13
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,6 +82,9 @@ namespace DataAccess.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("CreatorID")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Finished")
                         .HasColumnType("bit");
 
@@ -91,9 +96,137 @@ namespace DataAccess.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("CreatorID");
+
                     b.HasIndex("MapID");
 
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.GameCard", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("CardID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GameID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PlayerID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CardID");
+
+                    b.HasIndex("GameID");
+
+                    b.HasIndex("PlayerID");
+
+                    b.ToTable("GameCards");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.GameMission", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("GameID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MissionID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("GameID");
+
+                    b.HasIndex("MissionID");
+
+                    b.ToTable("GameMissions");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.GamePlayerColor", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Available")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("GameID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PlayerColorID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("GameID");
+
+                    b.HasIndex("PlayerColorID");
+
+                    b.ToTable("GamePlayerColors");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.GamePlayerTerritory", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Armies")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GameID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PlayerID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TerritoryID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("GameID");
+
+                    b.HasIndex("PlayerID");
+
+                    b.HasIndex("TerritoryID");
+
+                    b.ToTable("GamePlayerTerritories");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.GameUser", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("GameID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("GameID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("GamesUser");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Map", b =>
@@ -172,17 +305,11 @@ namespace DataAccess.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Creator")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("GameID")
                         .HasColumnType("int");
 
                     b.Property<int?>("MissionID")
                         .HasColumnType("int");
-
-                    b.Property<bool>("OnTurn")
-                        .HasColumnType("bit");
 
                     b.Property<int?>("PlayerColorID")
                         .HasColumnType("int");
@@ -203,28 +330,6 @@ namespace DataAccess.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.PlayerCard", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("CardID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PlayerID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("CardID");
-
-                    b.HasIndex("PlayerID");
-
-                    b.ToTable("PlayerCards");
-                });
-
             modelBuilder.Entity("DataAccess.Models.PlayerColor", b =>
                 {
                     b.Property<int>("ID")
@@ -238,31 +343,6 @@ namespace DataAccess.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("PlayerColors");
-                });
-
-            modelBuilder.Entity("DataAccess.Models.PlayerTerritory", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Armies")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PlayerID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TerritoryID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("PlayerID");
-
-                    b.HasIndex("TerritoryID");
-
-                    b.ToTable("PlayerTerritories");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Territory", b =>
@@ -317,8 +397,8 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Models.Card", b =>
                 {
-                    b.HasOne("DataAccess.Models.Map", "Map")
-                        .WithMany()
+                    b.HasOne("DataAccess.Models.Map", null)
+                        .WithMany("Cards")
                         .HasForeignKey("MapID");
 
                     b.HasOne("DataAccess.Models.Territory", "Territory")
@@ -328,22 +408,89 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Models.Continent", b =>
                 {
-                    b.HasOne("DataAccess.Models.Map", "Map")
-                        .WithMany()
+                    b.HasOne("DataAccess.Models.Map", null)
+                        .WithMany("Continents")
                         .HasForeignKey("MapID");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Game", b =>
                 {
+                    b.HasOne("DataAccess.Models.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorID");
+
                     b.HasOne("DataAccess.Models.Map", "Map")
                         .WithMany()
                         .HasForeignKey("MapID");
                 });
 
+            modelBuilder.Entity("DataAccess.Models.GameCard", b =>
+                {
+                    b.HasOne("DataAccess.Models.Card", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardID");
+
+                    b.HasOne("DataAccess.Models.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameID");
+
+                    b.HasOne("DataAccess.Models.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("PlayerID");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.GameMission", b =>
+                {
+                    b.HasOne("DataAccess.Models.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameID");
+
+                    b.HasOne("DataAccess.Models.Mission", "Mission")
+                        .WithMany()
+                        .HasForeignKey("MissionID");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.GamePlayerColor", b =>
+                {
+                    b.HasOne("DataAccess.Models.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameID");
+
+                    b.HasOne("DataAccess.Models.PlayerColor", "PlayerColor")
+                        .WithMany()
+                        .HasForeignKey("PlayerColorID");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.GamePlayerTerritory", b =>
+                {
+                    b.HasOne("DataAccess.Models.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameID");
+
+                    b.HasOne("DataAccess.Models.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("PlayerID");
+
+                    b.HasOne("DataAccess.Models.Territory", "Territory")
+                        .WithMany()
+                        .HasForeignKey("TerritoryID");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.GameUser", b =>
+                {
+                    b.HasOne("DataAccess.Models.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameID");
+
+                    b.HasOne("DataAccess.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+                });
+
             modelBuilder.Entity("DataAccess.Models.Mission", b =>
                 {
-                    b.HasOne("DataAccess.Models.Map", "Map")
-                        .WithMany()
+                    b.HasOne("DataAccess.Models.Map", null)
+                        .WithMany("Missions")
                         .HasForeignKey("MapID");
                 });
 
@@ -361,7 +508,7 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.Models.Player", b =>
                 {
                     b.HasOne("DataAccess.Models.Game", "Game")
-                        .WithMany()
+                        .WithMany("Players")
                         .HasForeignKey("GameID");
 
                     b.HasOne("DataAccess.Models.Mission", "Mission")
@@ -377,32 +524,10 @@ namespace DataAccess.Migrations
                         .HasForeignKey("UserID");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.PlayerCard", b =>
-                {
-                    b.HasOne("DataAccess.Models.Card", "Card")
-                        .WithMany()
-                        .HasForeignKey("CardID");
-
-                    b.HasOne("DataAccess.Models.Player", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerID");
-                });
-
-            modelBuilder.Entity("DataAccess.Models.PlayerTerritory", b =>
-                {
-                    b.HasOne("DataAccess.Models.Player", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerID");
-
-                    b.HasOne("DataAccess.Models.Territory", "Territory")
-                        .WithMany()
-                        .HasForeignKey("TerritoryID");
-                });
-
             modelBuilder.Entity("DataAccess.Models.Territory", b =>
                 {
                     b.HasOne("DataAccess.Models.Continent", "Continent")
-                        .WithMany()
+                        .WithMany("Territories")
                         .HasForeignKey("ContinentID");
                 });
 #pragma warning restore 612, 618

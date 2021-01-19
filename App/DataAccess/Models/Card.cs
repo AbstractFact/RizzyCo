@@ -12,12 +12,10 @@ namespace DataAccess.Models
         public string Type { get; set; }
         public string Picture { get; set; }
 
-        public bool Taken { get; set; }
-
-        [JsonIgnore]
-        public Player Player { get; set; }
-
         [JsonIgnore]
         public Territory Territory { get; set; }
+
+        [JsonIgnore]
+        public Map Map { get; set; }
     }
 }

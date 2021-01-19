@@ -8,6 +8,6 @@ namespace Domain.RepositoryInterfaces
 {
     public interface IContinentRepository : IRepository<Continent>
     {
-        Task<List<Continent>> GetAllContinents();
+        Task<List<Continent>> GetMapContinents(int mapID);
     }
 }

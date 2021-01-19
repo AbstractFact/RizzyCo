@@ -8,6 +8,5 @@ namespace Domain.ServiceInterfaces
 {
     public interface IGameService : IService<Game>
     {
-        Task<List<Game>> GetAllGames();
     }
 }

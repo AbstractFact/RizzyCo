@@ -10,6 +10,7 @@ namespace DataAccess.Models
     public class User 
     {
         public int ID { get; set; }
+
         [Required]
         public string Username { get; set; }
         [Required]
@@ -18,9 +19,6 @@ namespace DataAccess.Models
         public string Email { get; set; }
         public string Role { get; set; }
         public string Token { get; set; }
-        [JsonIgnore]
-        public List<Game> Games { get; set; }
-        [JsonIgnore]
-        public List<Player> Players { get; set; }
+        
     }
 }

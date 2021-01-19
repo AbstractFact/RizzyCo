@@ -75,85 +75,123 @@ namespace BussinesLogic.Services
             }
         }
 
-
-        public async Task<User> CreateGame(List<string> players, int userId, int numPlayers, int mapID)
+        public async Task<List<Territory>> GetMapTerritories(int mapID)
         {
-            
-            Map map = await unit.Maps.Get(mapID);
-            
-
-            Task<User> uu = unit.Users.Get(userId);
-            User user = await uu;
-
-            Game realGame = new Game();
-            realGame.NumberOfPlayers = numPlayers;
-            realGame.Finished = false;
-            realGame.Creator = user;
-            realGame.Map = map;
-            await unit.Games.Add(realGame);
-
-            Player player = new Player();
-            player.User = user;
-            player.Game = realGame;
-            await unit.Players.Add(player);
-
-            realGame.Players.Add(player);
-
-            user.Games.Add(realGame);
-            user.Players.Add(player);
-            unit.Users.Update(user);
-
-            await unit.GamesUser.AddGameUser(realGame, user);
-
-            Stack<PlayerColor> colors = new Stack<PlayerColor>();
-            (await unit.PlayerColors.GetAll()).ForEach(elem =>
+            using (unit)
             {
-                colors.Push(elem);
-            });
+                List<Continent> mapContinents = await unit.Continents.GetMapContinents(mapID);
+                List<Territory> territories = new List<Territory>();
 
-            GamePlayerColor gamePlayerColor = new GamePlayerColor();
-            PlayerColor color = colors.Pop();
-            gamePlayerColor.PlayerColor = color;
-            gamePlayerColor.Game = realGame;
-            await unit.GamePlayerColors.Add(gamePlayerColor);
-            player.PlayerColor = color;
-            
+                foreach (Continent continent in mapContinents)
+                {
 
-            foreach (string playerUsername in players)
+                    List<Territory> territories1 = await unit.Territories.GetContinentTerritories(continent.ID);
+                    territories.AddRange(territories1);
+
+                };
+
+                return territories;
+            }
+        }
+
+        public async Task<User> CreateGame(List<string> users, int creatorId, int mapID)
+        {
+            using (unit)
             {
-                Task<User> u = unit.Users.GetUserByUsername(playerUsername);
-                User realU = await u;
-                Player invitedPlayer = new Player();
-                invitedPlayer.User = realU;
-                invitedPlayer.Game = realGame;
-                await unit.Players.Add(invitedPlayer);
-                realGame.Players.Add(invitedPlayer);
+                List<Player> players = new List<Player>();
 
-                await unit.GamesUser.AddGameUser(realGame, realU);
+                Map map = await unit.Maps.Get(mapID);
+                Task<User> uu = unit.Users.Get(creatorId);
+                User user = await uu;
 
-                realU.Players.Add(invitedPlayer);
-                unit.Users.Update(realU);
+                Stack<PlayerColor> colors = new Stack<PlayerColor>();
+                (await unit.PlayerColors.GetAll()).ForEach(elem =>
+                {
+                    colors.Push(elem);
+                });
 
-                GamePlayerColor gamePlayerColor1 = new GamePlayerColor();
-                PlayerColor color1 = colors.Pop();
-                gamePlayerColor1.PlayerColor = color1;
-                gamePlayerColor1.Game = realGame;
-                await unit.GamePlayerColors.Add(gamePlayerColor1);
-                invitedPlayer.PlayerColor = color1;
+                List<Mission> missions = await unit.Missions.GetMapMissions(mapID);
+                int missonCount = missions.Count + 1;
+                Random rnd = new Random();
+                int randomInd = rnd.Next(0, missonCount - 1);
+
+                Mission mission = missions.ElementAt(randomInd);
+                missions.RemoveAt(randomInd);
+
+                Game game = new Game();
+                game.NumberOfPlayers = users.Count + 1;
+                game.Finished = false;
+                game.Map = map;
+                await unit.Games.Add(game);
+
+
+                Player player = new Player();
+                player.Creator = true;
+                player.OnTurn = true;
+                player.User = user;
+                player.Game = game;
+                player.PlayerColor = colors.Pop();
+                player.Mission = mission;
+                await unit.Players.Add(player);
+                players.Add(player);
+
+                foreach (string username in users)
+                {
+                    User u = await unit.Users.GetUserByUsername(username);
+
+                    Player invitedPlayer = new Player();
+                    invitedPlayer.Creator = false;
+                    invitedPlayer.OnTurn = false;
+                    invitedPlayer.User = u;
+                    invitedPlayer.Game = game;
+                    invitedPlayer.PlayerColor = colors.Pop();
+
+                    missonCount = missions.Count;
+                    randomInd = rnd.Next(0, missonCount - 1);
+
+                    Mission invitedPlayerMission = missions.ElementAt(randomInd);
+                    missions.RemoveAt(randomInd);
+
+                    invitedPlayer.Mission = invitedPlayerMission;
+                    await unit.Players.Add(invitedPlayer);
+                    players.Add(invitedPlayer);
+
+                }
+
+                //List<Territory> territories = await GetMapTerritories(mapID);
+
+                List<Continent> mapContinents = await unit.Continents.GetMapContinents(mapID);
+                List<Territory> territories = new List<Territory>();
+
+                foreach (Continent continent in mapContinents)
+                {
+
+                    List<Territory> territories1 = await unit.Territories.GetContinentTerritories(continent.ID);
+                    territories.AddRange(territories1);
+
+                };
+
+                int playersCount = players.Count;
+                int i = 0;
+                while (territories.Count > 0)
+                {
+                    PlayerTerritory playerTerritory = new PlayerTerritory();
+                    randomInd = rnd.Next(0, territories.Count - 1);
+
+                    playerTerritory.Armies = 1;
+                    playerTerritory.Player = players.ElementAt(i % playersCount);
+                    playerTerritory.Territory = territories.ElementAt(randomInd);
+                    territories.RemoveAt(randomInd);
+
+                    await unit.PlayerTerritories.Add(playerTerritory);
+
+                    i++;
+                }
 
                 unit.Complete();
-                unit.Players.Update(invitedPlayer);
 
+                return await uu;
             }
-
-            unit.Complete();
-
-            unit.Players.Update(player);
-            unit.Games.Update(realGame);
-
-            unit.Complete();
-
-            return await uu;
         }
     }
 }

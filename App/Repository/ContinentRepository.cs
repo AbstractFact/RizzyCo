@@ -16,10 +16,9 @@ namespace Repository
         {
 
         }
-
-        public async Task<List<Continent>> GetAllContinents()
+        public async Task<List<Continent>> GetMapContinents(int mapID)
         {
-            return await context.Set<Continent>().Include(p => p.Territories).ToListAsync();
+            return await context.Set<Continent>().Where(t => t.Map.ID == mapID).ToListAsync();
         }
     }
 }

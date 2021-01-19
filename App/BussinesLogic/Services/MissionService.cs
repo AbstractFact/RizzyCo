@@ -80,5 +80,29 @@ namespace BussinesLogic.Services
                 return mission;
             }
         }
+
+        public async Task<Mission> Post(Mission entity, int mapID)
+        {
+            using (unit)
+            {
+                Map map = await unit.Maps.Get(mapID);
+                entity.Map = map;
+                Task<Mission> continent = unit.Missions.Add(entity);
+
+                unit.Complete();
+
+                return await continent;
+            }
+        }
+
+        public async Task<List<Mission>> GetMapMissions(int mapID)
+        {
+            using (unit)
+            {
+                Task<List<Mission>> missions = unit.Missions.GetMapMissions(mapID);
+
+                return await missions;
+            }
+        }
     }
 }

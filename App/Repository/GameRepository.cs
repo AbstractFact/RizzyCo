@@ -16,11 +16,6 @@ namespace Repository
         {
 
         }
-
-        public async Task<List<Game>> GetAllGames()
-        {
-            return await context.Set<Game>().Include(p => p.Players).ToListAsync();
-        }
       
     }
 }

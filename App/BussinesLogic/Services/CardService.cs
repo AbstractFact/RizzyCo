@@ -78,5 +78,40 @@ namespace BussinesLogic.Services
                 return card;
             }
         }
+
+        public async Task<Card> AddCard(Card entity, int mapID, int territoryID)
+        {
+            using (unit)
+            {
+                Map map = await unit.Maps.Get(mapID);
+                Territory territory = await unit.Territories.Get(territoryID);
+
+                entity.Map = map;
+                entity.Territory = territory;
+
+                await unit.Cards.Add(entity);
+
+                unit.Complete();
+
+                return entity;
+            }
+        }
+
+        public async Task<Card> AddJokerCard(Card entity, int mapID)
+        {
+            using (unit)
+            {
+                Map map = await unit.Maps.Get(mapID);
+
+                entity.Map = map;
+                entity.Territory = null;
+
+                await unit.Cards.Add(entity);
+
+                unit.Complete();
+
+                return entity;
+            }
+        }
     }
 }

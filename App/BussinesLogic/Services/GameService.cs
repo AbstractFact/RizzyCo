@@ -74,9 +74,5 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<List<Game>> GetAllGames()
-        {
-            return await unit.Games.GetAllGames();
-        }
     }
 }

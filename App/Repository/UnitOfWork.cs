@@ -21,9 +21,9 @@ namespace Repository
         private ITerritoryRepository territories;
         private IUserRepository users;
         private INeighbourRepository neighbours;
-        private IGameUserRepository gamesUser;
+        private IPlayerCardRepository playerCard;
         private IContinentRepository continent;
-        private IGamePlayerColorRepository gamePlayerColors;
+        private IPlayerTerritoryRepository playerTerritory;
         public UnitOfWork(RizzyCoContext context)
         {
             _context = context;
@@ -36,9 +36,9 @@ namespace Repository
             Territories = new TerritoryRepository(_context);
             Users = new UserRepository(_context);
             Neighbours = new NeighbourRepository(context);
-            gamesUser = new GameUserRepository(context);
+            playerCard = new PlayerCardRepository(context);
             continent = new ContinentRepository(context);
-            gamePlayerColors = new GamePlayerColorRepository(context);
+            playerTerritory = new PlayerTerritoryRepository(context);
 
         }
         public ICardRepository Cards
@@ -133,13 +133,13 @@ namespace Repository
             private set { }
         }
 
-        public IGameUserRepository GamesUser
+        public IPlayerCardRepository PlayerCards
         {
             get
             {
-                if (gamesUser == null)
-                    gamesUser = new GameUserRepository(_context);
-                return gamesUser;
+                if (playerCard == null)
+                    playerCard = new PlayerCardRepository(_context);
+                return playerCard;
             }
             private set { }
         }
@@ -153,13 +153,13 @@ namespace Repository
             }
             private set { }
         }
-        public IGamePlayerColorRepository GamePlayerColors
+        public IPlayerTerritoryRepository PlayerTerritories
         {
             get
             {
-                if (gamePlayerColors == null)
-                    gamePlayerColors = new GamePlayerColorRepository(_context);
-                return gamePlayerColors;
+                if (playerTerritory == null)
+                    playerTerritory = new PlayerTerritoryRepository(_context);
+                return playerTerritory;
             }
             private set { }
         }

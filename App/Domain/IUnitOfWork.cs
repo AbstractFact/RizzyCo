@@ -16,9 +16,9 @@ namespace Domain
         ITerritoryRepository Territories { get; }
         IUserRepository Users { get; }
         INeighbourRepository Neighbours { get; }
-        IGameUserRepository GamesUser { get; }
         IContinentRepository Continents { get; }
-        IGamePlayerColorRepository GamePlayerColors { get; }
+        IPlayerCardRepository PlayerCards { get; }
+        IPlayerTerritoryRepository PlayerTerritories { get; }
         public int Complete();
 
     }

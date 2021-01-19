@@ -16,10 +16,5 @@ namespace Repository
         {
 
         }
-
-        public async Task<List<Map>> GetAllMaps()
-        {
-            return await context.Set<Map>().Include(p => p.Continents).ToListAsync();
-        }
     }
 }

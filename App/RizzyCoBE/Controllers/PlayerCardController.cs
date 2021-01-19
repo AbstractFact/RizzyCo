@@ -12,17 +12,17 @@ namespace RizzyCoBE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MissionController : MyMDBController<Mission, MissionService>
+    public class PlayerCardController : MyMDBController<PlayerCard, PlayerCardService>
     {
-        public MissionController(MissionService service) : base(service)
+        public PlayerCardController(PlayerCardService service) : base(service)
         {
 
         }
 
-        [HttpPost("AddMission/{mapID}")]
-        public async Task<ActionResult<Mission>> AddMission([FromBody] Mission entity, int mapID)
+        [HttpPost("AddPlayerCard/{playerID}/{cardID}")]
+        public async Task<ActionResult<PlayerCard>> AddPlayerCard(int playerID, int cardID)
         {
-            Mission result = await service.Post(entity, mapID);
+            PlayerCard result = await service.AddPlayerCard(playerID, cardID);
             if (result != null)
                 return Ok(result);
 

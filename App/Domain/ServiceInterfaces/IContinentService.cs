@@ -9,6 +9,6 @@ namespace Domain.ServiceInterfaces
     public interface IContinentService : IService<Continent>
     {
         Task<Continent> Post(Continent entity, int mapID);
-        Task<List<Continent>> GetAllContinents();
+        Task<List<Continent>> GetMapContinents(int mapID);
     }
 }

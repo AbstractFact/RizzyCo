@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Domain.RepositoryInterfaces
 {
-    public interface IGamePlayerColorRepository : IRepository<GamePlayerColor>
+    public interface IPlayerTerritoryRepository : IRepository<PlayerTerritory>
     {
-        
+        Task<List<PlayerTerritory>> GetPlayerTerritories(int playerID);
     }
 }

@@ -12,5 +12,8 @@ namespace DataAccess.Models
         public string Description { get; set; }
         public int MissionNum { get; set; }
 
+        [JsonIgnore]
+        public Map Map { get; set; }
+
     }
 }
