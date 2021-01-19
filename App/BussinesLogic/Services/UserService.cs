@@ -7,6 +7,7 @@ using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
+using DTOs;
 
 namespace BussinesLogic.Services
 {
@@ -18,52 +19,110 @@ namespace BussinesLogic.Services
         {
             this.unit = unit;
         }
-        public async Task<List<User>> GetAll()
-        {
-           using (unit)
-            {
-                Task<List<User>> users = unit.Users.GetAll();
+        //public async Task<List<User>> GetAll()
+        //{
+        //    using (unit)
+        //    {
+        //        Task<List<User>> users = unit.Users.GetAll();
 
-                return await users;
-            }
-        }
-        public async Task<User> Get(int id)
+        //        return await users;
+        //    }
+        //}
+        //public async Task<User> Get(int id)
+        //{
+        //    using (unit)
+        //    {
+        //        Task<User> user = unit.Users.Get(id);
+
+        //        if (user == null) return null;
+
+        //        return await user;
+        //    }
+        //}
+
+        //public User Put(User entity)
+        //{
+        //    using (unit)
+        //    {
+        //        User user = unit.Users.Update(entity);
+
+        //        unit.Complete();
+
+        //        return user;
+        //    }
+        //}
+
+        //public async Task<User> Post(User entity)
+        //{
+        //    using (unit)
+        //    {
+        //        Task<User> user = unit.Users.Add(entity);
+
+        //        unit.Complete();
+
+        //        return await user;
+        //    }
+        //}
+
+        //public User Delete(int id)
+        //{
+        //    using (unit)
+        //    {
+        //        User user = unit.Users.Delete(id);
+
+        //        unit.Complete();
+
+        //        return user;
+        //    }
+        //}
+
+        public async Task<List<UserDTO>> GetAll()
         {
             using (unit)
             {
-                Task<User> user = unit.Users.Get(id);
+                List<User> users = await unit.Users.GetAll();
+
+                return UserDTO.FromEntityList(users);
+            }
+        }
+        public async Task<UserDTO> Get(int id)
+        {
+            using (unit)
+            {
+                User user = await unit.Users.Get(id);
 
                 if (user == null) return null;
 
-                return await user;
+                return new UserDTO(user);
             }
         }
 
-        public User Put(User entity)
+        public UserDTO Put(UserDTO entity)
         {
             using (unit)
             {
-                User user = unit.Users.Update(entity);
+
+                User user = unit.Users.Update(UserDTO.FromDTO(entity));
 
                 unit.Complete();
 
-                return user;
+                return new UserDTO(user);
             }
         }
 
-        public async Task<User> Post(User entity)
+        public async Task<UserDTO> Post(UserDTO entity)
         {
             using (unit)
             {
-                Task<User> user = unit.Users.Add(entity);
+                User user = await unit.Users.Add(UserDTO.FromDTO(entity));
 
                 unit.Complete();
 
-                return await user;
+                return new UserDTO(user);
             }
         }
 
-        public User Delete(int id)
+        public UserDTO Delete(int id)
         {
             using (unit)
             {
@@ -71,13 +130,12 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
-                return user;
+                return new UserDTO(user);
             }
         }
-
         public async Task<List<Territory>> GetMapTerritories(int mapID)
         {
-            using (unit)
+           using (unit)
             {
                 List<Continent> mapContinents = await unit.Continents.GetMapContinents(mapID);
                 List<Territory> territories = new List<Territory>();

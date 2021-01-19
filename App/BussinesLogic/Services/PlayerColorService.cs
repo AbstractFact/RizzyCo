@@ -7,6 +7,7 @@ using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
+using DTOs;
 
 namespace BussinesLogic.Services
 {
@@ -18,51 +19,53 @@ namespace BussinesLogic.Services
         {
             this.unit = unit;
         }
-        public async Task<List<PlayerColor>> GetAll()
+        public async Task<List<PlayerColorDTO>> GetAll()
         {
             using (unit)
             {
-                Task<List<PlayerColor>> playerColors = unit.PlayerColors.GetAll();
+                List<PlayerColor> playerColors = await unit.PlayerColors.GetAll();
 
-                return await playerColors;
+                return PlayerColorDTO.FromEntityList(playerColors);
+                
             }
         }
-        public async Task<PlayerColor> Get(int id)
+        public async Task<PlayerColorDTO> Get(int id)
         {
             using (unit)
             {
-                Task<PlayerColor> playerColor = unit.PlayerColors.Get(id);
+                PlayerColor playerColor = await unit.PlayerColors.Get(id);
 
                 if (playerColor == null) return null;
 
-                return await playerColor;
+                return new PlayerColorDTO(playerColor);
             }
         }
 
-        public PlayerColor Put(PlayerColor entity)
+        public PlayerColorDTO Put(PlayerColorDTO entity)
         {
             using (unit)
             {
-                PlayerColor playerColor = unit.PlayerColors.Update(entity);
+                PlayerColor playerColor = unit.PlayerColors.Update(PlayerColorDTO.FromDTO(entity));
 
                 unit.Complete();
 
-                return playerColor;
+                return new PlayerColorDTO(playerColor);
             }
         }
-        public async Task<PlayerColor> Post(PlayerColor entity)
+        public async Task<PlayerColorDTO> Post(PlayerColorDTO entity)
         {
             using (unit)
             {
-                Task<PlayerColor> playerColor = unit.PlayerColors.Add(entity);
+
+                PlayerColor playerColor = await unit.PlayerColors.Add(PlayerColorDTO.FromDTO(entity));
 
                 unit.Complete();
 
-                return await playerColor;
+                return  new PlayerColorDTO(playerColor);
             }
         }
 
-        public PlayerColor Delete(int id)
+        public PlayerColorDTO Delete(int id)
         {
             using (unit)
             {
@@ -70,7 +73,7 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
-                return playerColor;
+                return new PlayerColorDTO(playerColor);
             }
         }
     }
