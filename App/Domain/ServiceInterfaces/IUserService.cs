@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccess.Models;
-using DTOs;
 
 namespace Domain.ServiceInterfaces
 {
-    public interface IUserService : IService<UserDTO>
+    public interface IUserService : IService<User>
     {
         Task<User> CreateGame(List<string> users, int creatorId, int mapID);
     }

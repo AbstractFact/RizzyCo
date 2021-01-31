@@ -7,13 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
-using DTOs;
 
 namespace RizzyCoBE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MapController : MyMDBController<MapDTO, MapService>
+    public class MapController : MyMDBController<Map, MapService>
     {
         public MapController(MapService service) : base(service)
         {

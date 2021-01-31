@@ -7,7 +7,6 @@ using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
-using DTOs;
 
 namespace BussinesLogic.Services
 {
@@ -19,17 +18,17 @@ namespace BussinesLogic.Services
         {
             this.unit = unit;
         }
-        public async Task<List<MapDTO>> GetAll()
+        public async Task<List<Map>> GetAll()
         {
             using (unit)
             {
                 List<Map> maps = await unit.Maps.GetAll();
 
-                return MapDTO.FromEntityList(maps);
+                return maps;
 
             }
         }
-        public async Task<MapDTO> Get(int id)
+        public async Task<Map> Get(int id)
         {
             using (unit)
             {
@@ -37,37 +36,37 @@ namespace BussinesLogic.Services
 
                 if (map == null) return null;
 
-                return new MapDTO(map);
+                return map;
             }
         }
 
-        public MapDTO Put(MapDTO entity)
+        public Map Put(Map entity)
         {
             using (unit)
             {
-                Map map = unit.Maps.Update(MapDTO.FromDTO(entity));
+                Map map = unit.Maps.Update(entity);
 
                 unit.Complete();
 
-                return new MapDTO(map);
+                return map;
 
             }
         }
 
-        public async Task<MapDTO> Post(MapDTO entity)
+        public async Task<Map> Post(Map entity)
         {
             using (unit)
             {
-                Map map = await unit.Maps.Add(MapDTO.FromDTO(entity));
+                Map map = await unit.Maps.Add(entity);
 
                 unit.Complete();
 
-                return new MapDTO(map);
+                return map;
    
             }
         }
 
-        public MapDTO Delete(int id)
+        public Map Delete(int id)
         {
             using (unit)
             {
@@ -75,12 +74,9 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
-                return new MapDTO(map);
+                return map;
  
             }
         }
-
-      
-
     }
 }

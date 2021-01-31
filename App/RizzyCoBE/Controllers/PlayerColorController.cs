@@ -7,13 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
-using DTOs;
 
 namespace RizzyCoBE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PlayerColorController : MyMDBController<PlayerColorDTO, PlayerColorService>
+    public class PlayerColorController : MyMDBController<PlayerColor, PlayerColorService>
     {
         public PlayerColorController(PlayerColorService service) : base(service)
         {

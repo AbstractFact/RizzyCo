@@ -7,7 +7,6 @@ using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
-using DTOs;
 
 namespace BussinesLogic.Services
 {
@@ -19,17 +18,17 @@ namespace BussinesLogic.Services
         {
             this.unit = unit;
         }
-        public async Task<List<PlayerColorDTO>> GetAll()
+        public async Task<List<PlayerColor>> GetAll()
         {
             using (unit)
             {
                 List<PlayerColor> playerColors = await unit.PlayerColors.GetAll();
 
-                return PlayerColorDTO.FromEntityList(playerColors);
+                return playerColors;
                 
             }
         }
-        public async Task<PlayerColorDTO> Get(int id)
+        public async Task<PlayerColor> Get(int id)
         {
             using (unit)
             {
@@ -37,35 +36,35 @@ namespace BussinesLogic.Services
 
                 if (playerColor == null) return null;
 
-                return new PlayerColorDTO(playerColor);
+                return playerColor;
             }
         }
 
-        public PlayerColorDTO Put(PlayerColorDTO entity)
+        public PlayerColor Put(PlayerColor entity)
         {
             using (unit)
             {
-                PlayerColor playerColor = unit.PlayerColors.Update(PlayerColorDTO.FromDTO(entity));
+                PlayerColor playerColor = unit.PlayerColors.Update(entity);
 
                 unit.Complete();
 
-                return new PlayerColorDTO(playerColor);
+                return playerColor;
             }
         }
-        public async Task<PlayerColorDTO> Post(PlayerColorDTO entity)
+        public async Task<PlayerColor> Post(PlayerColor entity)
         {
             using (unit)
             {
 
-                PlayerColor playerColor = await unit.PlayerColors.Add(PlayerColorDTO.FromDTO(entity));
+                PlayerColor playerColor = await unit.PlayerColors.Add(entity);
 
                 unit.Complete();
 
-                return  new PlayerColorDTO(playerColor);
+                return  playerColor;
             }
         }
 
-        public PlayerColorDTO Delete(int id)
+        public PlayerColor Delete(int id)
         {
             using (unit)
             {
@@ -73,7 +72,7 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
-                return new PlayerColorDTO(playerColor);
+                return playerColor;
             }
         }
     }
