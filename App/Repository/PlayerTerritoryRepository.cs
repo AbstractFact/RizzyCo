@@ -19,7 +19,7 @@ namespace Repository
         public async Task<List<PlayerTerritory>> GetPlayerTerritories(int playerID)
         {
             
-            return await context.Set<PlayerTerritory>().Where(t => t.Player.ID == playerID).Include(p => p.Player).Include(p => p.Territory).ToListAsync();
+            return await context.Set<PlayerTerritory>().Where(t => t.Player.ID == playerID).Include(p => p.Territory).ToListAsync();
             
         }
     }

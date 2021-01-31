@@ -9,5 +9,6 @@ namespace Domain.RepositoryInterfaces
     public interface IPlayerRepository : IRepository<Player>
     {
         Task<Player> GetPlayer(int id);
+        Task<List<Player>> GetPlayers(int gameID);
     }
 }

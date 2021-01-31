@@ -28,5 +28,15 @@ namespace RizzyCoBE.Controllers
 
             return NotFound();
         }
+
+        [HttpGet("GetPlayers/{gameID}")]
+        public async Task<ActionResult<List<Player>>> GetPlayers(int gameID)
+        {
+            var result = await service.GetPlayers(gameID);
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
+        }
     }
 }

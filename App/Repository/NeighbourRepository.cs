@@ -19,7 +19,7 @@ namespace Repository
         
         public async Task<List<Neighbour>> GetTerritoryNeighbours(Territory terr)
         {
-            return await context.Set<Neighbour>().Include(p => p.Src).Include(p => p.Dst).Where(p => p.Src == terr).ToListAsync();
+            return await context.Set<Neighbour>().Include(p => p.Dst).Where(p => p.Src == terr).ToListAsync();
         }
     }
 }
