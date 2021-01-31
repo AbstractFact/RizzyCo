@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
+using DTOs;
 
 namespace RizzyCoBE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : MyMDBController<User, UserService>
+    public class UserController : MyMDBController<UserDTO, UserService>
     {
         public UserController(UserService service) : base(service)
         {

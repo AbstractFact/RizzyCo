@@ -7,6 +7,7 @@ using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
+using DTOs;
 
 namespace BussinesLogic.Services
 {
@@ -18,52 +19,55 @@ namespace BussinesLogic.Services
         {
             this.unit = unit;
         }
-        public async Task<List<Map>> GetAll()
+        public async Task<List<MapDTO>> GetAll()
         {
             using (unit)
             {
-                Task<List<Map>> maps = unit.Maps.GetAll();
+                List<Map> maps = await unit.Maps.GetAll();
 
-                return await maps;
+                return MapDTO.FromEntityList(maps);
+
             }
         }
-        public async Task<Map> Get(int id)
+        public async Task<MapDTO> Get(int id)
         {
             using (unit)
             {
-                Task<Map> map = unit.Maps.Get(id);
+                Map map = await unit.Maps.Get(id);
 
                 if (map == null) return null;
 
-                return await map;
+                return new MapDTO(map);
             }
         }
 
-        public Map Put(Map entity)
+        public MapDTO Put(MapDTO entity)
         {
             using (unit)
             {
-                Map map = unit.Maps.Update(entity);
+                Map map = unit.Maps.Update(MapDTO.FromDTO(entity));
 
                 unit.Complete();
 
-                return map;
+                return new MapDTO(map);
+
             }
         }
 
-        public async Task<Map> Post(Map entity)
+        public async Task<MapDTO> Post(MapDTO entity)
         {
             using (unit)
             {
-                Task<Map> map = unit.Maps.Add(entity);
+                Map map = await unit.Maps.Add(MapDTO.FromDTO(entity));
 
                 unit.Complete();
 
-                return await map;
+                return new MapDTO(map);
+   
             }
         }
 
-        public Map Delete(int id)
+        public MapDTO Delete(int id)
         {
             using (unit)
             {
@@ -71,7 +75,8 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
-                return  map;
+                return new MapDTO(map);
+ 
             }
         }
 
