@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using BussinesLogic.Messaging.Sender;
 using DataAccess;
 using DataAccess.Models;
 using Domain;
@@ -12,12 +12,11 @@ namespace BussinesLogic.Services
 {
     public class GameService : IGameService
     {
-        private readonly RizzyCoContext context;
         private readonly IUnitOfWork unit;
+       
 
-        public GameService(IUnitOfWork unit, RizzyCoContext context)
-        {
-            this.context = context;
+        public GameService(IUnitOfWork unit)
+        { 
             this.unit = unit;
         }
         public async Task<List<Game>> GetAll()

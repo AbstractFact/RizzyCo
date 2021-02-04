@@ -11,12 +11,14 @@ using BussinesLogic.Services;
 using DataAccess;
 using Domain;
 using Repository;
+using BussinesLogic.Messaging.Options;
 
 using BussinesLogic.Helpers;
 using BussinesLogic.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using BussinesLogic.Messaging.Sender;
 
 namespace RizzyCoBE
 {
@@ -108,6 +110,9 @@ namespace RizzyCoBE
                                         "http://localhost:56593");
                 });
             });
+
+            services.Configure<RabbitMqConfiguration>(Configuration.GetSection("RabbitMq"));
+            services.AddTransient<IUserSender, UserSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

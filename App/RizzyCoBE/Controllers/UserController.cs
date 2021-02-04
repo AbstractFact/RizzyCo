@@ -30,5 +30,13 @@ namespace RizzyCoBE.Controllers
 
             return BadRequest("Bad request!");
         }
+
+        // POST: api/[controller]
+        [HttpPost("SendInvitation")]
+        public ActionResult SendInvitation([FromBody] User user)
+        {
+            service.SendInvitation(user);
+            return Ok();
+        }
     }
 }
