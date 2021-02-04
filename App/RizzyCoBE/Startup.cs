@@ -19,6 +19,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using BussinesLogic.Messaging.Sender;
+using BussinesLogic.Messaging.Receiver;
+using BussinesLogic.Services.RabbitMQ;
 
 namespace RizzyCoBE
 {
@@ -111,8 +113,17 @@ namespace RizzyCoBE
                 });
             });
 
-            services.Configure<RabbitMqConfiguration>(Configuration.GetSection("RabbitMq"));
+            var serviceClientSettingsConfig = Configuration.GetSection("RabbitMq");
+            var serviceClientSettings = serviceClientSettingsConfig.Get<RabbitMqConfiguration>();
+            services.Configure<RabbitMqConfiguration>(serviceClientSettingsConfig);
+
             services.AddTransient<IUserSender, UserSender>();
+            services.AddTransient<IUserServiceMsg, UserServiceMsg>();
+
+            if (serviceClientSettings.Enabled)
+            {
+                services.AddHostedService<UserReceiver>();
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
