@@ -1,13 +1,15 @@
 import React, {useState, useRef, useEffect } from 'react';
 import MsgList from './MsgList'
-import Signup from "./signup"
-import Login from "./login"
+import Signup from "./Signup"
+import Login from "./Login"
+import Home from "./Home"
 import './style/index.css'
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  Redirect
 } from "react-router-dom";
 //const LOCAL_STORAGE_KEY = 'todoApp.todos'
 
@@ -40,28 +42,7 @@ function App (){
   // //   setTodos(newTodos)
   // // }
 
-  // function handleSend() {
-
-  //   // const msg = msgNameRef.current.value
-  //   // if (msg === '') return
-  //   console.log("vdvd")
-  //   fetch(CONTROLLER + "/SendInvitation", {method:"POST", 
-  //     headers: {"Content-Type": "application/json"},
-  //     body: JSON.stringify({ 
-  //       "id": 14,
-  //       "username": "proba",
-  //       "password": "maremare",
-  //       "email": "mare@gmail.com",
-  //       "role": "User",
-  //       "token": null })
-  //   })
-  //   .then(response => console.log(response.status))
-
-  //   // setMessage(prevMessages => {
-  //   //   return [...prevMessages, { msg: msg}]
-  //   // })
-  //   // msgNameRef.current.value = null
-  // }
+  
 
   // // function handleClearTodos() {
   // //   const newTodos = todos.filter(todo => !todo.complete)
@@ -73,16 +54,13 @@ function App (){
   // }
 
    return (
-    // <>
-    //   <MuiThemeProvider>
-    //   <SignUpContainer />
-    //   </MuiThemeProvider>
-    // </>
     <Router>
-        <Switch>
-        {/* <Route exact path="/">
+        <Switch>   
+        <Route exact path="/" component={()=>(<Redirect to="/signup" />)}>
+        </Route> 
+        <Route path="/home">
           <Home />
-        </Route> */}
+        </Route>
         <Route path="/login">
           <Login />
         </Route>

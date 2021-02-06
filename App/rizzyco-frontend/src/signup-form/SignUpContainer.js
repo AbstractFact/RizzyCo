@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import SignUpForm from "./SignUpForm.js";
-const axios = require("axios");
 const FormValidators = require("./Validate");
 const validateSignUpForm = FormValidators.validateSignUpForm;
 const zxcvbn = require("zxcvbn");
@@ -64,6 +63,36 @@ export default class SignUpContainer extends Component {
     }
   }
 
+  async handleGetMaps(){
+    var existingEntries = JSON.parse(localStorage.getItem("allMaps"));
+    if(existingEntries.length === 0)
+    {
+        existingEntries = [];
+        await fetch("https://localhost:44348/api/Map", { method: "GET"}).then(res => {
+        if (res.ok) {
+          res.json().then(d=>{
+                d.forEach(element => {
+                    var entry = {
+                        "id": element.id,
+                        "name": element.name
+                    };
+                    localStorage.setItem("entry", JSON.stringify(entry));
+                    existingEntries.push(entry);
+                });
+                localStorage.setItem("allMaps", JSON.stringify(existingEntries));
+          })    
+        } else {
+          this.setState({
+            errors: { message: res.message }
+          });
+        }
+        })
+        .catch(err => {
+          console.log("Get maps error: ", err);
+        });  
+    }    
+  }
+  
   submitSignup(user) {
     fetch("https://localhost:44348/api/User/Signup", { method: "POST",
         headers: {
@@ -71,15 +100,19 @@ export default class SignUpContainer extends Component {
         },
         body: JSON.stringify({ "username": user.usr, "password": user.pw, "email": user.email, "role": "User" })
     }).then(res => {
-        if (res.ok) {
-          localStorage.token = res.json().token;
+      if (res.ok) {
+        res.json().then(d=>{
+          localStorage.token = d.token;
+          localStorage.userID=d.id;
           localStorage.isAuthenticated = true;
-          window.location.href="/";
-        } else {
-          this.setState({
-            errors: { message: res.message }
-          });
-        }
+          this.handleGetMaps();
+          window.location.href="/home";
+        })    
+      } else {
+        this.setState({
+          errors: { message: res.message }
+        });
+      }
       })
       .catch(err => {
         console.log("Sign up data submit error: ", err);
