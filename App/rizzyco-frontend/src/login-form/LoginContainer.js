@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import LoginForm from "./LoginForm.js";
-const axios = require("axios");
 const FormValidators = require("./Validate");
 const validateLoginForm = FormValidators.validateLoginForm;
-const zxcvbn = require("zxcvbn");
 
 export default class LoginContainer extends Component {
   constructor(props) {
@@ -46,6 +44,36 @@ export default class LoginContainer extends Component {
     });
   }
 
+  async handleGetMaps(){
+    var existingEntries = JSON.parse(localStorage.getItem("allMaps"));
+    if(existingEntries.length === 0)
+    {
+        existingEntries = [];
+        await fetch("https://localhost:44348/api/Map", { method: "GET"}).then(res => {
+        if (res.ok) {
+          res.json().then(d=>{
+                d.forEach(element => {
+                    var entry = {
+                        "id": element.id,
+                        "name": element.name
+                    };
+                    localStorage.setItem("entry", JSON.stringify(entry));
+                    existingEntries.push(entry);
+                });
+                localStorage.setItem("allMaps", JSON.stringify(existingEntries));
+          })    
+        } else {
+          this.setState({
+            errors: { message: res.message }
+          });
+        }
+        })
+        .catch(err => {
+          console.log("Get maps error: ", err);
+        });  
+    }    
+  }
+
   submitLogin(user) {
     fetch("https://localhost:44348/api/User/Authenticate", { method: "POST",
         headers: {
@@ -54,9 +82,14 @@ export default class LoginContainer extends Component {
         body: JSON.stringify({ "username": user.usr, "password": user.pw })
     }).then(res => {
         if (res.ok) {
-          localStorage.token = res.json().token;
-          localStorage.isAuthenticated = true;
-          window.location.href="/";
+          res.json().then(d=>{
+            localStorage.token = d.token;
+            localStorage.userID=d.id;
+            localStorage.isAuthenticated = true;
+            localStorage.setItem("allMaps", JSON.stringify([]));
+            this.handleGetMaps();
+            window.location.href="/home";
+          })    
         } else {
           this.setState({
             errors: { message: res.message }
@@ -66,22 +99,6 @@ export default class LoginContainer extends Component {
       .catch(err => {
         console.log("Log in data submit error: ", err);
     });  
-    // axios
-    //   .post("https://ouramazingserver.com/api/signup/submit", params)
-    //   .then(res => {
-    //     if (res.data.success === true) {
-    //       localStorage.token = res.data.token;
-    //       localStorage.isAuthenticated = true;
-    //       window.location.reload();
-    //     } else {
-    //       this.setState({
-    //         errors: { message: res.data.message }
-    //       });
-    //     }
-    //   })
-    //   .catch(err => {
-    //     console.log("Login data submit error: ", err);
-    //   });
   }
 
   validateForm(event) {
