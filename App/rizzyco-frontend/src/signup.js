@@ -7,7 +7,7 @@ function Signup (){
    return (
     <>
       <MuiThemeProvider>
-      <SignUpContainer />
+          <SignUpContainer />
       </MuiThemeProvider>
     </>
    )

@@ -17,7 +17,6 @@ export default class LoginContainer extends Component {
       },
       btnTxt: "show",
       type: "password",
-      score: "0"
     };
 
     this.pwMask = this.pwMask.bind(this);
@@ -45,41 +44,44 @@ export default class LoginContainer extends Component {
     this.setState({
       user
     });
-
-    if (event.target.value === "") {
-      this.setState(state =>
-        Object.assign({}, state, {
-          score: "null"
-        })
-      );
-    } else {
-      var pw = zxcvbn(event.target.value);
-      this.setState(state =>
-        Object.assign({}, state, {
-          score: pw.score + 1
-        })
-      );
-    }
   }
 
   submitLogin(user) {
-    var params = { username: user.usr, password: user.pw, email: user.email };
-    axios
-      .post("https://ouramazingserver.com/api/signup/submit", params)
-      .then(res => {
-        if (res.data.success === true) {
-          localStorage.token = res.data.token;
+    fetch("https://localhost:44348/api/User/Authenticate", { method: "POST",
+        headers: {
+        "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ "username": user.usr, "password": user.pw })
+    }).then(res => {
+        if (res.ok) {
+          localStorage.token = res.json().token;
           localStorage.isAuthenticated = true;
-          window.location.reload();
+          window.location.href="/";
         } else {
           this.setState({
-            errors: { message: res.data.message }
+            errors: { message: res.message }
           });
         }
       })
       .catch(err => {
-        console.log("Login data submit error: ", err);
-      });
+        console.log("Log in data submit error: ", err);
+    });  
+    // axios
+    //   .post("https://ouramazingserver.com/api/signup/submit", params)
+    //   .then(res => {
+    //     if (res.data.success === true) {
+    //       localStorage.token = res.data.token;
+    //       localStorage.isAuthenticated = true;
+    //       window.location.reload();
+    //     } else {
+    //       this.setState({
+    //         errors: { message: res.data.message }
+    //       });
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.log("Login data submit error: ", err);
+    //   });
   }
 
   validateForm(event) {
@@ -121,7 +123,6 @@ export default class LoginContainer extends Component {
           onPwChange={this.pwHandleChange}
           errors={this.state.errors}
           user={this.state.user}
-          score={this.state.score}
           btnTxt={this.state.btnTxt}
           type={this.state.type}
           pwMask={this.pwMask}

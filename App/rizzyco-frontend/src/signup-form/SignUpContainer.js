@@ -65,23 +65,25 @@ export default class SignUpContainer extends Component {
   }
 
   submitSignup(user) {
-    var params = { username: user.usr, password: user.pw, email: user.email };
-    axios
-      .post("https://ouramazingserver.com/api/signup/submit", params)
-      .then(res => {
-        if (res.data.success === true) {
-          localStorage.token = res.data.token;
+    fetch("https://localhost:44348/api/User/Signup", { method: "POST",
+        headers: {
+        "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ "username": user.usr, "password": user.pw, "email": user.email, "role": "User" })
+    }).then(res => {
+        if (res.ok) {
+          localStorage.token = res.json().token;
           localStorage.isAuthenticated = true;
-          window.location.reload();
+          window.location.href="/";
         } else {
           this.setState({
-            errors: { message: res.data.message }
+            errors: { message: res.message }
           });
         }
       })
       .catch(err => {
         console.log("Sign up data submit error: ", err);
-      });
+    });  
   }
 
   validateForm(event) {

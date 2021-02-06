@@ -77,7 +77,7 @@ namespace RizzyCoBE
             });
 
             // configure DI for application services
-            services.AddScoped<IUserAuthService, UserAuthService>();
+            services.AddTransient<IUserAuthService,UserAuthService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<CardService>();

@@ -1,7 +1,7 @@
 import React from "react";
 import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
-import "./style.css";
+import "../style/style.css";
 
 const LoginForm = ({
   history,
@@ -9,10 +9,7 @@ const LoginForm = ({
   onChange,
   errors,
   user,
-  score,
-  btnTxt,
   type,
-  pwMask,
   onPwChange
 }) => {
   return (
@@ -23,7 +20,7 @@ const LoginForm = ({
       <form onSubmit={onSubmit}>
         <TextField
           name="username"
-          floatingLabelText="user name"
+          floatingLabelText="Username"
           value={user.username}
           onChange={onChange}
           errorText={errors.username}
@@ -31,7 +28,7 @@ const LoginForm = ({
         <TextField
           type={type}
           name="password"
-          floatingLabelText="password"
+          floatingLabelText="Password"
           value={user.password}
           onChange={onPwChange}
           errorText={errors.password}

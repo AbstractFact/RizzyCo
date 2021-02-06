@@ -3,8 +3,8 @@ import FlatButton from "material-ui/FlatButton";
 import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
 import PasswordStr from "./PasswordStr";
-import "./style.css";
 import { useHistory } from "react-router-dom";
+import "../style/style.css";
 
 const SignUpForm = ({
   history,
@@ -27,14 +27,14 @@ const SignUpForm = ({
       <form onSubmit={onSubmit}>
         <TextField
           name="username"
-          floatingLabelText="user name"
+          floatingLabelText="Username"
           value={user.username}
           onChange={onChange}
           errorText={errors.username}
         />
         <TextField
           name="email"
-          floatingLabelText="email"
+          floatingLabelText="Email"
           value={user.email}
           onChange={onChange}
           errorText={errors.email}
@@ -42,7 +42,7 @@ const SignUpForm = ({
         <TextField
           type={type}
           name="password"
-          floatingLabelText="password"
+          floatingLabelText="Password"
           value={user.password}
           onChange={onPwChange}
           errorText={errors.password}
@@ -63,7 +63,7 @@ const SignUpForm = ({
         <TextField
           type={type}
           name="pwconfirm"
-          floatingLabelText="confirm password"
+          floatingLabelText="Confirm password"
           value={user.pwconfirm}
           onChange={onChange}
           errorText={errors.pwconfirm}
@@ -77,7 +77,7 @@ const SignUpForm = ({
         />
       </form>
       <p>
-        Aleady have an account? <br />
+        Already have an account? <br />
         <a href="/login" >Log in here</a>
       </p>
     </div>
