@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BussinesLogic.Messaging.Sender;
 using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
+using DTOs;
 
 namespace BussinesLogic.Services
 {
     public class UserService : IUserService
     {
         private readonly IUnitOfWork unit;
-        private readonly IUserSender userSender;
 
-        public UserService(IUnitOfWork unit, IUserSender userSender)
+        public UserService(IUnitOfWork unit)
         {
             this.unit = unit;
-            this.userSender = userSender;
         }
         public async Task<List<User>> GetAll()
         {
@@ -197,9 +195,5 @@ namespace BussinesLogic.Services
             }
         }
 
-        public void SendInvitation(User user)
-        {
-            userSender.SendInvitation(user);
-        }
     }
 }

@@ -4,23 +4,20 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+using RizzyCoBE.MessagingService;
+using RizzyCoBE.MessagingService.Options;
 using BussinesLogic.Services;
 using DataAccess;
 using Domain;
 using Repository;
-using BussinesLogic.Messaging.Options;
-
 using BussinesLogic.Helpers;
 using BussinesLogic.Authentication;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using BussinesLogic.Messaging.Sender;
-using BussinesLogic.Messaging.Receiver;
-using BussinesLogic.Services.RabbitMQ;
 
 namespace RizzyCoBE
 {
@@ -92,20 +89,31 @@ namespace RizzyCoBE
             services.AddScoped<ContinentService>();
             services.AddScoped<PlayerTerritoryService>();
             services.AddScoped<PlayerCardService>();
+
             services.BuildServiceProvider().GetService<RizzyCoContext>().Database.Migrate();
+
             services.AddControllers();
+
+            services.AddSignalR(options =>
+            {
+                options.EnableDetailedErrors = true;
+            });
+
             services.AddMvc().AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.WriteIndented = true;
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
+
             services.AddCors(options =>
             {
 
                 options.AddPolicy("CORS", builder =>
                 {
-                    builder.AllowAnyHeader()
-                           .AllowAnyMethod()
-                           .AllowAnyOrigin();
+                    builder.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed((host) => true).AllowCredentials();
+                    //builder.AllowAnyHeader()
+                    //       .AllowAnyMethod()
+                    //       .AllowAnyOrigin();
                 });
             });
 
@@ -113,13 +121,17 @@ namespace RizzyCoBE
             var serviceClientSettings = serviceClientSettingsConfig.Get<RabbitMqConfiguration>();
             services.Configure<RabbitMqConfiguration>(serviceClientSettingsConfig);
 
-            services.AddTransient<IUserSender, UserSender>();
-            services.AddTransient<IUserServiceMsg, UserServiceMsg>();
+            //services.AddTransient<IUserSender, UserSender>();
+            //services.AddTransient<IUserServiceMsg, UserServiceMsg>();
 
-            if (serviceClientSettings.Enabled)
-            {
-                services.AddHostedService<UserReceiver>();
-            }
+            //if (serviceClientSettings.Enabled)
+            //{
+            //    services.AddHostedService<UserReceiver>();
+            //}
+
+            services.AddSingleton<Sender>();
+            services.AddSingleton<Receiver>();
+            services.AddSingleton<MessageHub>(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -142,7 +154,9 @@ namespace RizzyCoBE
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<MessageHub>("/RizzyCoHub");
             });
+
         }
     }
 }

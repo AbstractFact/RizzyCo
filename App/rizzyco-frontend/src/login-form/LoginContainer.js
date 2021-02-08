@@ -1,3 +1,4 @@
+import { ActionViewCarousel } from "material-ui/svg-icons";
 import React, { Component } from "react";
 import LoginForm from "./LoginForm.js";
 const FormValidators = require("./Validate");
@@ -49,9 +50,9 @@ export default class LoginContainer extends Component {
     if(existingEntries.length === 0)
     {
         existingEntries = [];
-        await fetch("https://localhost:44348/api/Map", { method: "GET"}).then(res => {
+        const res = await fetch("https://localhost:44348/api/Map", { method: "GET"})
         if (res.ok) {
-          res.json().then(d=>{
+          const d = await res.json()
                 d.forEach(element => {
                     var entry = {
                         "id": element.id,
@@ -60,34 +61,29 @@ export default class LoginContainer extends Component {
                     localStorage.setItem("entry", JSON.stringify(entry));
                     existingEntries.push(entry);
                 });
-                localStorage.setItem("allMaps", JSON.stringify(existingEntries));
-          })    
+                localStorage.setItem("allMaps", JSON.stringify(existingEntries));  
         } else {
           this.setState({
             errors: { message: res.message }
           });
-        }
-        })
-        .catch(err => {
-          console.log("Get maps error: ", err);
-        });  
+        }  
     }    
   }
-
-  submitLogin(user) {
-    fetch("https://localhost:44348/api/User/Authenticate", { method: "POST",
+  
+  async submitLogin(user) {
+    localStorage.setItem("allMaps", JSON.stringify([]));
+    await this.handleGetMaps();
+    await fetch("https://localhost:44348/api/User/Authenticate", { method: "POST",
         headers: {
         "Content-Type": "application/json"
         },
         body: JSON.stringify({ "username": user.usr, "password": user.pw })
     }).then(res => {
         if (res.ok) {
-          res.json().then(d=>{
+          res.json().then(d=> {
             localStorage.token = d.token;
             localStorage.userID=d.id;
             localStorage.isAuthenticated = true;
-            localStorage.setItem("allMaps", JSON.stringify([]));
-            this.handleGetMaps();
             window.location.href="/home";
           })    
         } else {

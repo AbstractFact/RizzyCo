@@ -7,7 +7,7 @@ class DynamicSelect extends Component {
   }
 
   onChangeMap(event) {
-    console.log(event.target.value);
+    localStorage.mapID = parseInt(event.target.value);
   }
 
   render() {
@@ -20,7 +20,9 @@ class DynamicSelect extends Component {
             <div>
               <select onChange={this.onChangeMap}>
                 {(JSON.parse(maps)).map((m, index) => {
-                  return <option key={m.id}>{m.name}</option>;
+                  if(index===0)
+                    localStorage.mapID = m.id;
+                  return <option key={m.id} value={m.id}>{m.name}</option>;
                 })}
               </select>
             </div>

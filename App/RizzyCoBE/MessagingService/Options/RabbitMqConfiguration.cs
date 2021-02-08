@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BussinesLogic.Messaging.Options
+namespace RizzyCoBE.MessagingService.Options
 {
     public class RabbitMqConfiguration
     {

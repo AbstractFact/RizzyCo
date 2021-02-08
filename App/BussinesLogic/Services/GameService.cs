@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BussinesLogic.Messaging.Sender;
 using DataAccess;
 using DataAccess.Models;
 using Domain;

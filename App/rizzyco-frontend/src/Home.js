@@ -1,31 +1,18 @@
 import React, {useState, useRef, useEffect } from 'react';
 import PlayerList from './PlayerList'
 import DynamicSelect from "./DynamicSelect";
-import axios from "axios";
-
 
 const LOCAL_STORAGE_KEY = 'home.players'
 const LOCAL_STORAGE_KEY1 = 'home.maps'
 
 function Home (){
-    const CONTROLLER = 'https://localhost:44348/api/User'
     const [players, setPlayers] = useState([])
     const [maps, setMaps] = useState([])
     const playerUsernameRef = useRef()
 
-    // function handleSend() {
-    // fetch(CONTROLLER + "/SendInvitation", {method:"POST", 
-    //   headers: {"Content-Type": "application/json"},
-    //   body: JSON.stringify({ 
-    //     "id": 14,
-    //     "username": "proba",
-    //     "password": "maremare",
-    //     "email": "mare@gmail.com",
-    //     "role": "User",
-    //     "token": null })
-    // })
-    // .then(response => console.log(response.status))
-    // }
+    function handleSend() {
+        window.location.href="/msg";
+    }
 
     useEffect(() => {
         const storedPlayers = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
@@ -53,7 +40,6 @@ function Home (){
     }
 
     function handleAddPlayer(e) {
-        console.log("uslo")
         const username = playerUsernameRef.current.value
         if (username === '') return
         if (players.filter(player => player.complete===true).length===5)
@@ -83,14 +69,14 @@ function Home (){
         players.filter(player => player.complete===true).forEach(element => {
            usernames.push(element.username);
         });
-        fetch("https://localhost:44348/api/User/CreateGame/"+localStorage.userID+"/5", { method: "POST",
+        fetch("https://localhost:44348/api/User/CreateGame/"+localStorage.userID+"/"+localStorage.mapID, { method: "POST",
         headers: {
         "Content-Type": "application/json"
         },
         body: JSON.stringify(usernames)
         }).then(res => {
             if (res.ok) {
-                console.log("Uspesno");
+                alert("Game created");
             } else {
                 this.setState({
                     errors: { message: res.message }
@@ -121,6 +107,7 @@ function Home (){
         <p>{players.filter(player => player.complete).length} players invited</p>
         <br />
         <button onClick={handleCreateGame}>Create game</button>
+        <button onClick={handleSend}>Test</button>
     </>
    )
 }

@@ -9,6 +9,8 @@ using DataAccess.Models;
 using BussinesLogic.Services;
 using BussinesLogic.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using DTOs;
+using RizzyCoBE.MessagingService;
 
 namespace RizzyCoBE.Controllers
 {
@@ -18,9 +20,11 @@ namespace RizzyCoBE.Controllers
     public class UserController : MyMDBController<User, UserService>
     {
         private IUserAuthService _userService;
-        public UserController(UserService service, IUserAuthService userService) : base(service)
+        private Sender _sender;
+        public UserController(UserService service, IUserAuthService userService, Sender sender) : base(service)
         {
             _userService = userService;
+            _sender = sender;
         }
 
         // POST: api/[controller]
@@ -33,14 +37,6 @@ namespace RizzyCoBE.Controllers
                 return Ok();
 
             return BadRequest("Bad request!");
-        }
-
-        // POST: api/[controller]
-        [HttpPost("SendInvitation")]
-        public ActionResult SendInvitation([FromBody] User user)
-        {
-            service.SendInvitation(user);
-            return Ok();
         }
 
         [AllowAnonymous]
@@ -91,6 +87,14 @@ namespace RizzyCoBE.Controllers
                 return Ok(user);
             }
             return BadRequest("Bad request!");
+        }
+
+        // POST: api/[controller]
+        [HttpPost("SendInvitation")]
+        public ActionResult SendInvitation([FromBody] TestDTO msg)
+        {
+            _sender.PushMessageToQ(msg);
+            return Ok();
         }
     }
 }
