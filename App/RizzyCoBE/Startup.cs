@@ -10,14 +10,13 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-using RizzyCoBE.MessagingService;
-using RizzyCoBE.MessagingService.Options;
 using BussinesLogic.Services;
 using DataAccess;
 using Domain;
 using Repository;
 using BussinesLogic.Helpers;
 using BussinesLogic.Authentication;
+using RizzyCoBE.Messaging.Hubs;
 
 namespace RizzyCoBE
 {
@@ -48,7 +47,6 @@ namespace RizzyCoBE
                 });
             }
 
-            // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
@@ -111,26 +109,9 @@ namespace RizzyCoBE
                 options.AddPolicy("CORS", builder =>
                 {
                     builder.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed((host) => true).AllowCredentials();
-                    //builder.AllowAnyHeader()
-                    //       .AllowAnyMethod()
-                    //       .AllowAnyOrigin();
                 });
             });
 
-            var serviceClientSettingsConfig = Configuration.GetSection("RabbitMq");
-            var serviceClientSettings = serviceClientSettingsConfig.Get<RabbitMqConfiguration>();
-            services.Configure<RabbitMqConfiguration>(serviceClientSettingsConfig);
-
-            //services.AddTransient<IUserSender, UserSender>();
-            //services.AddTransient<IUserServiceMsg, UserServiceMsg>();
-
-            //if (serviceClientSettings.Enabled)
-            //{
-            //    services.AddHostedService<UserReceiver>();
-            //}
-
-            services.AddSingleton<Sender>();
-            services.AddSingleton<Receiver>();
             services.AddSingleton<MessageHub>(); 
         }
 
@@ -154,7 +135,7 @@ namespace RizzyCoBE
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<MessageHub>("/RizzyCoHub");
+                endpoints.MapHub<MessageHub>("RizzyCoHub");
             });
 
         }

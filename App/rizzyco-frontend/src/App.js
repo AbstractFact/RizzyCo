@@ -2,7 +2,7 @@ import React from 'react';
 import Signup from "./Signup"
 import Login from "./Login"
 import Home from "./Home"
-import FetchRabbitMQMassages from "./FetchRabbitMQMassages"
+import Chat from "./Chat"
 import './style/index.css'
 import {
   BrowserRouter as Router,
@@ -10,22 +10,7 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-import { createStore, applyMiddleware, combineReducers, bindActionCreators } from 'redux';
-import { Provider, connect }  from 'react-redux';
-import { actionCreators, reducer } from './RabbitMQ';
 
-const ConnectedRoot = connect(
-  (state) => ({
-    state: state.rabbitMQMessages
-  }),
-  (dispatch) => ({
-    dispatch: bindActionCreators(actionCreators, dispatch)
-  })
-)(FetchRabbitMQMassages);
-
-
-// const reducer = combineReducers(reducer);
-const store = createStore(reducer);
 function App (){
    return (
     <Router>
@@ -41,11 +26,8 @@ function App (){
         <Route path="/signup">
           <Signup />
         </Route>
-        <Route path="/msg">
-          {/* <Provider store={store}>
-            <ConnectedRoot />
-          </Provider> */}
-          <FetchRabbitMQMassages store={store}/>
+        <Route path="/msg"> 
+          <Chat />
         </Route>
         </Switch>
     </Router>
