@@ -1,6 +1,7 @@
 import React from 'react';
 import Signup from "./Signup"
 import Login from "./Login"
+import Lobby from "./Lobby"
 import Home from "./Home"
 import Chat from "./Chat"
 import './style/index.css'
@@ -19,6 +20,9 @@ function App (){
         </Route>
         <Route path="/home">
           <Home />
+        </Route>
+        <Route path="/lobby">
+          <Lobby />
         </Route>
         <Route path="/login">
           <Login />

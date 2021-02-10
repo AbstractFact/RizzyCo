@@ -112,6 +112,7 @@ namespace RizzyCoBE
                 });
             });
 
+            services.AddMemoryCache();
             services.AddSingleton<MessageHub>(); 
         }
 

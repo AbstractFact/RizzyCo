@@ -1,4 +1,4 @@
-import { ActionViewCarousel } from "material-ui/svg-icons";
+import { ActionViewCarousel, NavigationFullscreen } from "material-ui/svg-icons";
 import React, { Component } from "react";
 import LoginForm from "./LoginForm.js";
 const FormValidators = require("./Validate");
@@ -83,8 +83,13 @@ export default class LoginContainer extends Component {
           res.json().then(d=> {
             localStorage.token = d.token;
             localStorage.userID=d.id;
+            localStorage.username=d.username;
             localStorage.isAuthenticated = true;
-            window.location.href="/home";
+            console.log(localStorage.getItem("redirect"));
+            if(localStorage.getItem("redirect")!=="")
+              window.location.href=localStorage.getItem("redirect"); 
+            else
+              window.location.href="/home";
           })    
         } else {
           this.setState({

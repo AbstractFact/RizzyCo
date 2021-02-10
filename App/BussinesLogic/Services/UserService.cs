@@ -125,7 +125,6 @@ namespace BussinesLogic.Services
                 game.Map = map;
                 await unit.Games.Add(game);
 
-
                 Player player = new Player();
                 player.Creator = true;
                 player.OnTurn = true;

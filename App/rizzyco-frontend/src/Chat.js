@@ -14,7 +14,6 @@ const Chat = () => {
     useEffect(() => {
         const newConnection = new HubConnectionBuilder()
             .withUrl('https://localhost:44348/RizzyCoHub')
-            //.withAutomaticReconnect()
             .configureLogging(LogLevel.Debug)
             .build()
 
@@ -71,6 +70,20 @@ const Chat = () => {
         else {
             alert('No connection to server yet.');
         }
+
+
+        // try {
+        //     await  fetch('https://localhost:5001/chat/messages', { 
+        //         method: 'POST', 
+        //         body: JSON.stringify(chatMessage),
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         }
+        //     });
+        // }
+        // catch(e) {
+        //     console.log('Sending message failed.', e);
+        // }
     }
 
     return (
