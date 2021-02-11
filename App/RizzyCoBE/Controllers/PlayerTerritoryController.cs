@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
+using DTOs;
 
 namespace RizzyCoBE.Controllers
 {
@@ -20,9 +21,9 @@ namespace RizzyCoBE.Controllers
         }
 
         [HttpGet("GetPlayerTerritories/{playerID}")]
-        public async Task<ActionResult<IEnumerable<PlayerTerritory>>> GetPlayerTerritories(int playerID)
+        public async Task<ActionResult<IEnumerable<PlayerTerritoryDTO>>> GetPlayerTerritories(int playerID)
         {
-            List<PlayerTerritory> result = await service.GetPlayerTerritories(playerID);
+            List<PlayerTerritoryDTO> result = await service.GetPlayerTerritories(playerID);
             if (result != null)
                 return Ok(result);
 

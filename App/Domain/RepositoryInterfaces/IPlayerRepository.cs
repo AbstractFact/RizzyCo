@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccess.Models;
+using DTOs;
 
 namespace Domain.RepositoryInterfaces
 {
@@ -10,5 +11,7 @@ namespace Domain.RepositoryInterfaces
     {
         Task<Player> GetPlayer(int id);
         Task<List<Player>> GetPlayers(int gameID);
+
+        Task<Player> GetPlayerInfo(int gameID, int userID);
     }
 }

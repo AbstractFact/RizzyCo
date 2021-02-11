@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
+using DTOs;
 
 namespace RizzyCoBE.Controllers
 {
@@ -33,6 +34,16 @@ namespace RizzyCoBE.Controllers
         public async Task<ActionResult<List<Player>>> GetPlayers(int gameID)
         {
             var result = await service.GetPlayers(gameID);
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
+        }
+
+        [HttpGet("GetPlayerInfo/{gameID}/{userID}")]
+        public async Task<ActionResult<PlayerInfoDTO>> GetPlayerInfo(int gameID, int userID)
+        {
+            var result = await service.GetPlayerInfo(gameID, userID);
             if (result != null)
                 return Ok(result);
 

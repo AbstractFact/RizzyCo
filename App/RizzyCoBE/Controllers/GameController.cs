@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
+using DTOs;
 
 namespace RizzyCoBE.Controllers
 {
@@ -16,7 +17,18 @@ namespace RizzyCoBE.Controllers
     {
         public GameController(GameService service) : base(service)
         {
+          
 
+        }
+
+        [HttpGet("GetGameTerritories/{gameID}")]
+        public async Task<ActionResult<List<PlayerTerritoryDTO>>> GetGameTerritories(int gameID)
+        {
+            var result = await service.GetGameTerritories(gameID);
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
         }
     }
 }

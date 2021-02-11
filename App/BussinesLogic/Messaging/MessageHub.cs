@@ -30,11 +30,6 @@ namespace BussinesLogic.Messaging
             await Clients.All.SendAsync("ReceiveListMessage", messages);
         }
 
-        public async Task SendMessage(TestDTO message)
-        {
-            await Clients.All.SendAsync("ReceiveTestMessage", message);
-        }
-
         public async Task<string> JoinGameGroup(CreateGameMsgDTO msg)
         {
             Dictionary<string, List<dictionaryValue>> dictionary = null;

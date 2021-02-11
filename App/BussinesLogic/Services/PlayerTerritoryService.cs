@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
+using DTOs;
 
 namespace BussinesLogic.Services
 {
@@ -75,13 +76,20 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<List<PlayerTerritory>> GetPlayerTerritories(int playerID)
+        public async Task<List<PlayerTerritoryDTO>> GetPlayerTerritories(int playerID)
         {
             using (unit)
             {
-                Task<List<PlayerTerritory>> territories = unit.PlayerTerritories.GetPlayerTerritories(playerID);
+                List<PlayerTerritory> territories = await unit.PlayerTerritories.GetPlayerTerritories(playerID);
+                List<PlayerTerritoryDTO> territoriesDTO = new List<PlayerTerritoryDTO>();
 
-                return await territories;
+                territories.ForEach(element =>
+                {
+                    territoriesDTO.Add(new PlayerTerritoryDTO(element));
+
+                });
+
+                return territoriesDTO;
             }
         }
     }

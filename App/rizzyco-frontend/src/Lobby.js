@@ -1,6 +1,6 @@
 import React, {useState, useEffect } from 'react';
 import PlayerList from './PlayerList'
-import DynamicSelect from "./DynamicSelect";
+import MapSelect from "./MapSelect";
 
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
@@ -21,15 +21,6 @@ function Lobby (){
 
     const [ connection, setConnection ] = useState(null);
     const [players, setPlayers] = useState([])
-
-    useEffect(() => {
-        const storedPlayers = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
-        if (storedPlayers) setPlayers(storedPlayers)
-    }, [])
-
-    useEffect(() => {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(players))
-    }, [players])
 
     useEffect(() => {
         const newConnection = new HubConnectionBuilder()
@@ -54,9 +45,11 @@ function Lobby (){
                         
                     });
 
-                    connection.on('ReceiveGameStarted', message => {
+                    connection.on('ReceiveGameStarted', async message => {
                         localStorage.gameID=message;
-                        console.log(localStorage.gameID);
+                        await getPlayer();
+                        await getPlayerTerritories();
+                        await getAllTerritories();
                         window.location.href="/game";
                     });
 
@@ -66,7 +59,6 @@ function Lobby (){
     }, [connection]);
 
     const sendLobbyMessage = async (lobbyID, username) => {
-        console.log("uso u send msg");
         const msg = {
             lobbyID: lobbyID,
             username: username
@@ -86,7 +78,6 @@ function Lobby (){
     }
 
     const sendCreateGameMessage = async (lobbyID, gameID) => {
-        console.log("uso u send msg");
         const msg = {
             lobbyID: lobbyID,
             gameID: gameID
@@ -144,7 +135,6 @@ function Lobby (){
 
         var msg = {
             "users" :usernames,
-            "creatorID" : parseInt(localStorage.userID),
             "mapID" : parseInt(localStorage.mapID),
             "lobbyID" : localStorage.lobbyID
         }
@@ -157,6 +147,7 @@ function Lobby (){
         }).then(res => {
             if (res.ok) {
                 res.json().then(async result=>{
+                    localStorage.gameID = result;
                     await sendCreateGameMessage(localStorage.lobbyID, result);
                     alert("Game created");
                 });
@@ -172,6 +163,64 @@ function Lobby (){
         });
     }
 
+    const getPlayer = async function getPlayerInfo (){
+        const res =  await fetch("https://localhost:44348/api/Player/GetPlayerInfo/"+localStorage.gameID+"/"+localStorage.userID, { method: "GET"}); 
+        if (res.ok) {
+            const result = await res.json();
+
+            var entity = {
+                playerID:result.playerID,
+                playerColor:result.playerColor,
+                mission:result.mission,
+                availableArmies:result.availableArmies
+                }; 
+            localStorage.setItem("playerInfo", JSON.stringify(entity)) 
+        }
+        else {
+            this.setState({
+                errors: { message: res.message }
+            });
+        }
+    }
+
+    const getPlayerTerritories = async function getPlayerTerritories(){
+        const res = await fetch("https://localhost:44348/api/PlayerTerritory/GetPlayerTerritories/"+(JSON.parse(localStorage.getItem("playerInfo"))).playerID, { method: "GET"})
+        if (res.ok) {
+            var array = [];
+            const d = await res.json()
+            d.forEach(element => {
+                var entry = {
+                    territoryID: element.territoryID,
+                    territoryName: element.territoryName,
+                    numArmies : element.numArmies
+                };
+                array.push(entry);
+            }); 
+            localStorage.setItem("playerTerritories", JSON.stringify(array)) 
+        } else {
+            console.log(res.message);
+        }  
+    }
+
+    const getAllTerritories = async function getAllTerritories(){
+        const res = await fetch("https://localhost:44348/api/Game/GetGameTerritories/"+localStorage.gameID, { method: "GET"})
+        if (res.ok) {
+            var array = [];
+            const d = await res.json()
+            d.forEach(element => {
+                var entry = {
+                    territoryID: element.territoryID,
+                    territoryName: element.territoryName,
+                    numArmies : element.numArmies
+                };
+                array.push(entry);
+            }); 
+            localStorage.setItem("allTerritories", JSON.stringify(array)) 
+        } else {
+            console.log(res.message);
+        }  
+      }
+
     if(!localStorage.token)
     {
         localStorage.setItem("redirect", window.location.href);
@@ -185,7 +234,7 @@ function Lobby (){
                 localStorage.lobbyID=window.location.href;
         return (
             <>
-                <DynamicSelect maps={localStorage.getItem("allMaps")}/>
+                <MapSelect maps={localStorage.getItem("allMaps")}/>
                 <br />
                 <label>Players:</label>
                 <PlayerList players={players} togglePlayer={togglePlayer} />
@@ -196,7 +245,7 @@ function Lobby (){
                 <button onClick={handleCreateGame}>Create game</button>
                 <br />
                 <br />
-                <a href={localStorage.lobbyID}>{localStorage.lobbyID}</a>
+                <label>{localStorage.lobbyID}</label>
             </>
             )
     }

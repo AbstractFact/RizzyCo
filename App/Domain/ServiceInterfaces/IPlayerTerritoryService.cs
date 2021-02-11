@@ -1,4 +1,5 @@
 ﻿using DataAccess.Models;
+using DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,6 @@ namespace Domain.ServiceInterfaces
 {
     public interface IPlayerTerritoryService : IService<PlayerTerritory>
     {
-        Task<List<PlayerTerritory>> GetPlayerTerritories(int playerID);
+        Task<List<PlayerTerritoryDTO>> GetPlayerTerritories(int playerID);
     }
 }

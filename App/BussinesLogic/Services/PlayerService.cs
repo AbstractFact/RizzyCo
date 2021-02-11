@@ -7,6 +7,7 @@ using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
+using DTOs;
 
 namespace BussinesLogic.Services
 {
@@ -99,6 +100,16 @@ namespace BussinesLogic.Services
             }
         }
 
-     
+        public async Task<PlayerInfoDTO> GetPlayerInfo(int gameID, int userID)
+        {
+            using (unit)
+            {
+                Player player = await unit.Players.GetPlayerInfo(gameID, userID);
+
+                if (player == null) return null;
+
+                return new PlayerInfoDTO(player);
+            }
+        }
     }
 }

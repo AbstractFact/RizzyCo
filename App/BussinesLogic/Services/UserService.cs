@@ -15,12 +15,10 @@ namespace BussinesLogic.Services
     public class UserService : IUserService
     {
         private readonly IUnitOfWork unit;
-        private HubService _hubService;
 
-        public UserService(IUnitOfWork unit, IHubContext<MessageHub> hubContext)
+        public UserService(IUnitOfWork unit)
         {
             this.unit = unit;
-            _hubService = new HubService(hubContext);
         }
         public async Task<List<User>> GetAll()
         {
@@ -79,10 +77,9 @@ namespace BussinesLogic.Services
             }
         }
 
-
         public async Task<List<Territory>> GetMapTerritories(int mapID)
         {
-           using (unit)
+            using (unit)
             {
                 List<Continent> mapContinents = await unit.Continents.GetMapContinents(mapID);
                 List<Territory> territories = new List<Territory>();
@@ -99,15 +96,15 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<int> CreateGame(List<string> users, int creatorId, int mapID, string lobbyID)
+        public async Task<int> CreateGame(List<string> users, int mapID, string lobbyID)
         {
             using (unit)
             {
                 List<Player> players = new List<Player>();
 
                 Map map = await unit.Maps.Get(mapID);
-                Task<User> uu = unit.Users.Get(creatorId);
-                User user = await uu;
+                User user = await unit.Users.GetUserByUsername(users.ElementAt(0));
+                users.RemoveAt(0);
 
                 Stack<PlayerColor> colors = new Stack<PlayerColor>();
                 (await unit.PlayerColors.GetAll()).ForEach(elem =>
@@ -129,6 +126,24 @@ namespace BussinesLogic.Services
                 game.Map = map;
                 await unit.Games.Add(game);
 
+                int availableArmies;
+
+                switch (game.NumberOfPlayers)
+                {
+                    case 3:
+                        availableArmies = 35;
+                        break;
+                    case 4:
+                        availableArmies = 30;
+                        break;
+                    case 5:
+                        availableArmies = 25;
+                        break;
+                    default:
+                        availableArmies = 20;
+                        break;
+                }
+
                 Player player = new Player();
                 player.Creator = true;
                 player.OnTurn = true;
@@ -136,6 +151,7 @@ namespace BussinesLogic.Services
                 player.Game = game;
                 player.PlayerColor = colors.Pop();
                 player.Mission = mission;
+                player.AvailableArmies = availableArmies;
                 await unit.Players.Add(player);
                 players.Add(player);
 
@@ -149,6 +165,7 @@ namespace BussinesLogic.Services
                     invitedPlayer.User = u;
                     invitedPlayer.Game = game;
                     invitedPlayer.PlayerColor = colors.Pop();
+                    invitedPlayer.AvailableArmies = availableArmies;
 
                     missonCount = missions.Count;
                     randomInd = rnd.Next(0, missonCount - 1);
@@ -181,10 +198,11 @@ namespace BussinesLogic.Services
                     randomInd = rnd.Next(0, territories.Count - 1);
 
                     playerTerritory.Armies = 1;
-                    playerTerritory.Player = players.ElementAt(i % playersCount);
+                    Player p= players.ElementAt(i % playersCount);
+                    playerTerritory.Player = p;
+                    players.ElementAt(i % playersCount).AvailableArmies--;
                     playerTerritory.Territory = territories.ElementAt(randomInd);
                     territories.RemoveAt(randomInd);
-
                     await unit.PlayerTerritories.Add(playerTerritory);
 
                     i++;
@@ -192,11 +210,15 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
+                players.ForEach(element => {
+                    unit.Players.Update(element);
+                });
+
+                unit.Complete();
+
                 CreateGameMsgDTO msg = new CreateGameMsgDTO();
                 msg.GameID = game.ID;
                 msg.LobbyID = lobbyID;
-
-                //await _hubService.GameStartedAsync(msg);
 
                 return game.ID;
             }

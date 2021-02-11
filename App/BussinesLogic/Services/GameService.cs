@@ -6,6 +6,7 @@ using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
+using DTOs;
 
 namespace BussinesLogic.Services
 {
@@ -71,6 +72,32 @@ namespace BussinesLogic.Services
                 return  game;
             }
         }
+
+        public async Task<List<PlayerTerritoryDTO>> GetGameTerritories(int id)
+        {
+            using (unit)
+            {
+                List<Player> players = await unit.Players.GetPlayers(id);
+                List<PlayerTerritory> territories = new List<PlayerTerritory>();
+                List<PlayerTerritoryDTO> territoriesDTO = new List<PlayerTerritoryDTO>();
+
+                foreach (Player player in players)
+                {
+                    List<PlayerTerritory> list = await unit.PlayerTerritories.GetPlayerTerritories(player.ID);
+                    territories.AddRange(list);
+
+                };
+
+                territories.ForEach(element =>
+                {
+                    territoriesDTO.Add(new PlayerTerritoryDTO(element));
+                });
+
+                return territoriesDTO;
+            }
+        }
+
+        
 
     }
 }

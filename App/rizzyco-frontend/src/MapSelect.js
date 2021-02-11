@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-class DynamicSelect extends Component {
+class MapSelect extends Component {
   constructor() {
     super();
     this.onChangeMap = this.onChangeMap.bind(this);
@@ -33,4 +33,4 @@ class DynamicSelect extends Component {
   }
 }
 
-export default DynamicSelect;
+export default MapSelect;

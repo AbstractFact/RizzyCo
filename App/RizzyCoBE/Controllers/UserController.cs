@@ -28,7 +28,7 @@ namespace RizzyCoBE.Controllers
         [HttpPost("CreateGame")]
         public async Task<ActionResult<int>> CreateGame([FromBody] CreateGameDTO entity)
         {
-            int result =  await this.service.CreateGame(entity.Users, entity.CreatorID, entity.MapID, entity.LobbyID);
+            int result =  await this.service.CreateGame(entity.Users, entity.MapID, entity.LobbyID);
 
             if (result != -1)
                 return Ok(result);
@@ -84,14 +84,6 @@ namespace RizzyCoBE.Controllers
                 return Ok(user);
             }
             return BadRequest("Bad request!");
-        }
-
-        // POST: api/[controller]
-        [HttpPost("SendInvitation")]
-        public ActionResult SendInvitation([FromBody] TestDTO msg)
-        {
-            //_sender.PushMessageToQ(msg);
-            return Ok();
         }
     }
 }

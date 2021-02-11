@@ -21,6 +21,13 @@ namespace Repository
             return (await context.Set<Player>().Where(p=>p.ID==id).Include(p=>p.User).Include(p => p.Game).Include(p => p.PlayerColor).Include(p => p.Mission).ToListAsync()).FirstOrDefault();
         }
 
+        public async Task<Player> GetPlayerInfo(int gameID, int userID)
+        {
+            return (await context.Set<Player>().Where(p => p.Game.ID == gameID).Where(p => p.User.ID == userID).Include(p => p.PlayerColor).Include(p => p.Mission).ToListAsync()).FirstOrDefault();
+            
+            
+        }
+
         public async Task<List<Player>> GetPlayers(int gameID)
         {
             return await context.Set<Player>().Where(p => p.Game.ID == gameID).Include(p => p.User).Include(p => p.PlayerColor).Include(p => p.Mission).ToListAsync();

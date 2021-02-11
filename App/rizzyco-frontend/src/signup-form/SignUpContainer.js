@@ -101,6 +101,7 @@ export default class SignUpContainer extends Component {
         res.json().then(d=>{
           localStorage.token = d.token;
           localStorage.userID=d.id;
+          localStorage.username=d.username;
           localStorage.isAuthenticated = true;
           console.log(localStorage.getItem("redirect"));
             if(localStorage.getItem("redirect")!=="")
