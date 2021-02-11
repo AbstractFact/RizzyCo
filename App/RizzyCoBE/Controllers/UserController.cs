@@ -25,13 +25,13 @@ namespace RizzyCoBE.Controllers
         }
 
         // POST: api/[controller]
-        [HttpPost("CreateGame/{creatorID}/{mapID}")]
-        public async Task<ActionResult> CreateGame([FromBody] List<string> users, int creatorID, int mapID)
+        [HttpPost("CreateGame")]
+        public async Task<ActionResult<int>> CreateGame([FromBody] CreateGameDTO entity)
         {
-            User result =  await this.service.CreateGame(users, creatorID, mapID);
+            int result =  await this.service.CreateGame(entity.Users, entity.CreatorID, entity.MapID, entity.LobbyID);
 
-            if (result != null)
-                return Ok();
+            if (result != -1)
+                return Ok(result);
 
             return BadRequest("Bad request!");
         }

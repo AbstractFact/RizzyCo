@@ -2,21 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BussinesLogic.Messaging;
 using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
 using DTOs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BussinesLogic.Services
 {
     public class UserService : IUserService
     {
         private readonly IUnitOfWork unit;
+        private HubService _hubService;
 
-        public UserService(IUnitOfWork unit)
+        public UserService(IUnitOfWork unit, IHubContext<MessageHub> hubContext)
         {
             this.unit = unit;
+            _hubService = new HubService(hubContext);
         }
         public async Task<List<User>> GetAll()
         {
@@ -95,7 +99,7 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<User> CreateGame(List<string> users, int creatorId, int mapID)
+        public async Task<int> CreateGame(List<string> users, int creatorId, int mapID, string lobbyID)
         {
             using (unit)
             {
@@ -158,8 +162,6 @@ namespace BussinesLogic.Services
 
                 }
 
-                //List<Territory> territories = await GetMapTerritories(mapID);
-
                 List<Continent> mapContinents = await unit.Continents.GetMapContinents(mapID);
                 List<Territory> territories = new List<Territory>();
 
@@ -190,7 +192,13 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
-                return await uu;
+                CreateGameMsgDTO msg = new CreateGameMsgDTO();
+                msg.GameID = game.ID;
+                msg.LobbyID = lobbyID;
+
+                //await _hubService.GameStartedAsync(msg);
+
+                return game.ID;
             }
         }
 

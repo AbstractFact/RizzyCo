@@ -3,7 +3,7 @@ import Signup from "./Signup"
 import Login from "./Login"
 import Lobby from "./Lobby"
 import Home from "./Home"
-import Chat from "./Chat"
+import Game from "./Game"
 import './style/index.css'
 import {
   BrowserRouter as Router,
@@ -30,8 +30,8 @@ function App (){
         <Route path="/signup">
           <Signup />
         </Route>
-        <Route path="/msg"> 
-          <Chat />
+        <Route path="/game">
+          <Game />
         </Route>
         </Switch>
     </Router>

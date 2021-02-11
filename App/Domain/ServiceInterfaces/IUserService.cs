@@ -8,6 +8,6 @@ namespace Domain.ServiceInterfaces
 {
     public interface IUserService : IService<User>
     {
-        Task<User> CreateGame(List<string> users, int creatorId, int mapID);
+        Task<int> CreateGame(List<string> users, int creatorId, int mapID, string lobbyID);
     }
 }

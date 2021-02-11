@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 using DTOs;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace RizzyCoBE.Messaging.Hubs
+namespace BussinesLogic.Messaging
 {
+    public struct dictionaryValue
+    {
+        public string username;
+        public string connectionID;
+    };
     public class MessageHub : Hub
     {
         private readonly IMemoryCache _memoryCache;
-        private Dictionary<string, List<string>> dictionary;
         public MessageHub(IMemoryCache memoryCache) : base()
         {
             _memoryCache = memoryCache;
-            dictionary = new Dictionary<string, List<string>>();
         }
         public async Task SendStringMessage(string msg)
         {
@@ -32,10 +35,25 @@ namespace RizzyCoBE.Messaging.Hubs
             await Clients.All.SendAsync("ReceiveTestMessage", message);
         }
 
-        public async Task<string> JoinGameGroup(int gameID)
+        public async Task<string> JoinGameGroup(CreateGameMsgDTO msg)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, "Game" + gameID);
-            return "Joined group \"Game" + gameID + "\"";
+            Dictionary<string, List<dictionaryValue>> dictionary = null;
+            _memoryCache.TryGetValue("dictionary", out dictionary);
+
+            List<dictionaryValue> res = new List<dictionaryValue>();
+            dictionary.TryGetValue(msg.LobbyID, out res);
+
+            res.ForEach(async element => {
+                await Groups.AddToGroupAsync(element.connectionID, "Game" + msg.GameID);
+                await Groups.RemoveFromGroupAsync(element.connectionID, "Lobby" + msg.LobbyID);
+            });
+
+            dictionary.Remove(msg.LobbyID);
+            _memoryCache.Set("dictionary", dictionary);
+
+            await NotifyOnGameChanges(msg.GameID, "ReceiveGameStarted", msg.GameID);
+
+            return "Joined group \"Game" + msg.GameID + "\"";
         }
 
         public async Task<string> LeaveGameGroup(int gameID)
@@ -51,13 +69,13 @@ namespace RizzyCoBE.Messaging.Hubs
 
         public async Task<string> JoinLobbyGroup(LobbyPlayerDTO msg)
         {
-           
-            Dictionary<string, List<string>> dictionary = null;
+         
+            Dictionary<string, List<dictionaryValue>> dictionary = null;
             _memoryCache.TryGetValue("dictionary", out dictionary);
 
-            if (dictionary == null) dictionary = new Dictionary<string, List<string>>();
+            if (dictionary == null) dictionary = new Dictionary<string, List<dictionaryValue>>();
 
-            List<string> res = new List<string>();
+            List<dictionaryValue> res = new List<dictionaryValue>();
             dictionary.TryGetValue(msg.LobbyID, out res);
 
             if (res != null)
@@ -66,13 +84,25 @@ namespace RizzyCoBE.Messaging.Hubs
                     return "Not joined group \"Lobby" + msg.LobbyID + "\"";
             }
             else
-                dictionary.Add(msg.LobbyID, new List<string>());
+                dictionary.Add(msg.LobbyID, new List<dictionaryValue>());
 
-            dictionary[msg.LobbyID].Add(msg.Username);
+            dictionaryValue a;
+            a.username = msg.Username;
+            a.connectionID = Context.ConnectionId;
+
+            dictionary[msg.LobbyID].Add(a);
             _memoryCache.Set("dictionary", dictionary);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, "Lobby" + msg.LobbyID);
-            await NotifyOnLobbyChanges(msg.LobbyID, "ReceiveLobbyPlayerAdd", dictionary[msg.LobbyID]);
+
+            dictionary.TryGetValue(msg.LobbyID, out res);
+            List<string> usernames = new List<string>();
+            res.ForEach(element => {
+
+                usernames.Add(element.username);
+            });
+
+            await NotifyOnLobbyChanges(msg.LobbyID, "ReceiveLobbyPlayerAdd", usernames);
 
             return "Joined group \"Lobby" + msg.LobbyID + "\"";
 

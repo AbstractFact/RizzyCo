@@ -1,4 +1,3 @@
-import { ActionViewCarousel, NavigationFullscreen } from "material-ui/svg-icons";
 import React, { Component } from "react";
 import LoginForm from "./LoginForm.js";
 const FormValidators = require("./Validate");

@@ -16,7 +16,7 @@ using Domain;
 using Repository;
 using BussinesLogic.Helpers;
 using BussinesLogic.Authentication;
-using RizzyCoBE.Messaging.Hubs;
+using BussinesLogic.Messaging;
 
 namespace RizzyCoBE
 {
