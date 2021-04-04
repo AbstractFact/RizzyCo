@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DTOs;
 using Microsoft.AspNetCore.SignalR;
@@ -14,10 +15,10 @@ namespace BussinesLogic.Messaging
             _hub = hub;
         }
 
-        public async Task<int> GameStartedAsync(CreateGameMsgDTO msg)
+        public async Task<string> NotifyOnGameChanges(int gameID, string method, Object object_to_send)
         {
-            await _hub.Clients.Group("Game" + msg.GameID).SendAsync("JoinGameGroup", msg);
-            return msg.GameID;
+            await _hub.Clients.Group("Game" + gameID).SendAsync(method, object_to_send);
+            return "Game changed";
         }
 
     }

@@ -96,7 +96,7 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<int> CreateGame(List<string> users, int mapID, string lobbyID)
+        public async Task<int> CreateGame(List<string> users, int mapID)
         {
             using (unit)
             {
@@ -215,10 +215,6 @@ namespace BussinesLogic.Services
                 });
 
                 unit.Complete();
-
-                CreateGameMsgDTO msg = new CreateGameMsgDTO();
-                msg.GameID = game.ID;
-                msg.LobbyID = lobbyID;
 
                 return game.ID;
             }

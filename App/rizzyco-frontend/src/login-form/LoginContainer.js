@@ -85,10 +85,10 @@ export default class LoginContainer extends Component {
             localStorage.username=d.username;
             localStorage.isAuthenticated = true;
             console.log(localStorage.getItem("redirect"));
-            if(localStorage.getItem("redirect")!=="")
-              window.location.href=localStorage.getItem("redirect"); 
-            else
-              window.location.href="/home";
+            if(localStorage.getItem("redirect")!==null)
+               window.location.href=localStorage.getItem("redirect"); 
+             else
+               window.location.href="/home";
           })    
         } else {
           this.setState({

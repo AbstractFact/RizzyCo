@@ -28,7 +28,7 @@ namespace RizzyCoBE.Controllers
         [HttpPost("CreateGame")]
         public async Task<ActionResult<int>> CreateGame([FromBody] CreateGameDTO entity)
         {
-            int result =  await this.service.CreateGame(entity.Users, entity.MapID, entity.LobbyID);
+            int result =  await this.service.CreateGame(entity.Users, entity.MapID);
 
             if (result != -1)
                 return Ok(result);

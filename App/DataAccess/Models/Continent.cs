@@ -11,7 +11,6 @@ namespace DataAccess.Models
         public string Name { get; set; }
         public int NumTerritories { get; set; }
         public int Value { get; set; }
-
         
         public Map Map { get; set; }
     }

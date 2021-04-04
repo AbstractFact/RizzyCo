@@ -2,20 +2,24 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using BussinesLogic.Messaging;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
 using DTOs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BussinesLogic.Services
 {
     public class PlayerTerritoryService : IPlayerTerritoryService
     {
         private readonly IUnitOfWork unit;
+        private HubService hubService;
 
-        public PlayerTerritoryService(IUnitOfWork unit)
+        public PlayerTerritoryService(IUnitOfWork unit, IHubContext<MessageHub> hubContext)
         {
             this.unit = unit;
+            hubService = new HubService(hubContext);
         }
 
         public PlayerTerritory Delete(int id)
@@ -90,6 +94,20 @@ namespace BussinesLogic.Services
                 });
 
                 return territoriesDTO;
+            }
+        }
+
+        public async Task<PlayerTerritory> AddArmie(int gameID, int playerID, int territoryID)
+        {
+            using (unit)
+            {
+                PlayerTerritory playerTerritory = await unit.PlayerTerritories.AddArmie(playerID, territoryID);
+
+                unit.Complete();
+
+                //await hubService.NotifyOnGameChanges(gameID, "PlayerAddArmie", new AddArmieDTO(playerTerritory));
+
+                return playerTerritory;
             }
         }
     }

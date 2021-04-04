@@ -29,5 +29,15 @@ namespace RizzyCoBE.Controllers
 
             return NotFound();
         }
+
+        [HttpPost("AddArmie/{gameID}/{playerID}/{territoryID}")]
+        public async Task<ActionResult> AddArmie(int gameID, int playerID, int territoryID)
+        {
+            PlayerTerritory result = await service.AddArmie(gameID, playerID, territoryID);
+            if (result != null)
+                return Ok();
+
+            return NotFound();
+        }
     }
 }

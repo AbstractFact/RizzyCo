@@ -14,7 +14,6 @@ namespace BussinesLogic.Services
     {
         private readonly IUnitOfWork unit;
        
-
         public GameService(IUnitOfWork unit)
         { 
             this.unit = unit;
@@ -85,7 +84,6 @@ namespace BussinesLogic.Services
                 {
                     List<PlayerTerritory> list = await unit.PlayerTerritories.GetPlayerTerritories(player.ID);
                     territories.AddRange(list);
-
                 };
 
                 territories.ForEach(element =>
@@ -96,8 +94,5 @@ namespace BussinesLogic.Services
                 return territoriesDTO;
             }
         }
-
-        
-
     }
 }

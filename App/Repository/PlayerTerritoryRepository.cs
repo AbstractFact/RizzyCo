@@ -16,6 +16,16 @@ namespace Repository
         {
 
         }
+
+        public async Task<PlayerTerritory> AddArmie(int playerID, int territoryID)
+        {
+            PlayerTerritory entity = (await context.Set<PlayerTerritory>().Where(t => t.Player.ID == playerID && t.Territory.ID==territoryID).Include(t => t.Territory).Include(t => t.Player).Include(t => t.Player.User).ToListAsync()).FirstOrDefault();
+            entity.Armies++;
+
+            context.Entry(entity).State = EntityState.Modified;
+            return entity;
+        }
+
         public async Task<List<PlayerTerritory>> GetPlayerTerritories(int playerID)
         {
             

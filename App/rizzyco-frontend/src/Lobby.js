@@ -13,9 +13,7 @@ function Lobby (){
         localStorage.setItem("redirect", window.location.href);
         window.location.href="/login";
     }
-    else
-        localStorage.setItem("redirect", "");
-
+        
     if(!localStorage.lobbyID)
             localStorage.lobbyID=window.location.href;
 
@@ -36,6 +34,7 @@ function Lobby (){
             connection.start()
                 .then(async result =>  {
                     console.log('Connected!');
+                    localStorage.setItem("connection", JSON.stringify(connection));
                     await sendLobbyMessage(localStorage.lobbyID, localStorage.username);
                     connection.on('ReceiveLobbyPlayerAdd', message => {
                         setPlayers([]);
@@ -47,6 +46,7 @@ function Lobby (){
 
                     connection.on('ReceiveGameStarted', async message => {
                         localStorage.gameID=message;
+                        await sendJoinGameMessage(localStorage.lobbyID, localStorage.gameID);
                         await getPlayer();
                         await getPlayerTerritories();
                         await getAllTerritories();
@@ -77,7 +77,7 @@ function Lobby (){
         }
     }
 
-    const sendCreateGameMessage = async (lobbyID, gameID) => {
+    const sendJoinGameMessage = async (lobbyID, gameID) => {
         const msg = {
             lobbyID: lobbyID,
             gameID: gameID
@@ -86,6 +86,25 @@ function Lobby (){
         if (connection.connectionStarted) {
             try {
                 await connection.send('JoinGameGroup', msg);
+            }
+            catch(e) {
+                console.log(e);
+            }
+        }
+        else {
+            alert('No connection to server yet.');
+        }
+    }
+
+    const sendCreateGameMessage = async (lobbyID, gameID) => {
+        const msg = {
+            lobbyID: lobbyID,
+            gameID: gameID
+        };
+        
+        if (connection.connectionStarted) {
+            try {
+                await connection.send('CreateGame', msg);
             }
             catch(e) {
                 console.log(e);
@@ -135,8 +154,7 @@ function Lobby (){
 
         var msg = {
             "users" :usernames,
-            "mapID" : parseInt(localStorage.mapID),
-            "lobbyID" : localStorage.lobbyID
+            "mapID" : parseInt(localStorage.mapID)
         }
 
         fetch("https://localhost:44348/api/User/CreateGame", { method: "POST",
@@ -219,37 +237,24 @@ function Lobby (){
         } else {
             console.log(res.message);
         }  
-      }
+    }
 
-    if(!localStorage.token)
-    {
-        localStorage.setItem("redirect", window.location.href);
-        window.location.href="/login";
-        return ;
-    }
-    else
-    {
-        localStorage.setItem("redirect", "");
-        if(!localStorage.lobbyID)
-                localStorage.lobbyID=window.location.href;
-        return (
-            <>
-                <MapSelect maps={localStorage.getItem("allMaps")}/>
-                <br />
-                <label>Players:</label>
-                <PlayerList players={players} togglePlayer={togglePlayer} />
-                <button onClick={handleClearPlayers}>Clear Players</button>
-                <br />
-                <p>{players.filter(player => player.complete).length} players invited</p>
-                <br />
-                <button onClick={handleCreateGame}>Create game</button>
-                <br />
-                <br />
-                <label>{localStorage.lobbyID}</label>
-            </>
-            )
-    }
-       
+    return (
+        <>
+            <MapSelect maps={localStorage.getItem("allMaps")}/>
+            <br />
+            <label>Players:</label>
+            <PlayerList players={players} togglePlayer={togglePlayer} />
+            <button onClick={handleClearPlayers}>Clear Players</button>
+            <br />
+            <p>{players.filter(player => player.complete).length} players invited</p>
+            <br />
+            <button onClick={handleCreateGame}>Create game</button>
+            <br />
+            <br />
+            <label>{localStorage.lobbyID}</label>
+        </>
+        )  
 }
 
 export default Lobby;

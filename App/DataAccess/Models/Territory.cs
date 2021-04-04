@@ -13,6 +13,5 @@ namespace DataAccess.Models
 
         [JsonIgnore]
         public Continent Continent { get; set; }
-
     }
 }

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace DTOs
 {
-    public class CreateGameMsgDTO
+    public class AddArmieSendDTO
     {
-        public string LobbyID { get; set; }
         public int GameID { get; set; }
+        public string Method { get; set; }
     }
 }

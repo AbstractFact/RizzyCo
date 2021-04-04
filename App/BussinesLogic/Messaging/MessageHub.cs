@@ -8,11 +8,6 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace BussinesLogic.Messaging
 {
-    public struct dictionaryValue
-    {
-        public string username;
-        public string connectionID;
-    };
     public class MessageHub : Hub
     {
         private readonly IMemoryCache _memoryCache;
@@ -20,34 +15,19 @@ namespace BussinesLogic.Messaging
         {
             _memoryCache = memoryCache;
         }
-        public async Task SendStringMessage(string msg)
+
+        public async Task<string> CreateGame(JoinGameDTO msg)
         {
-            await Clients.All.SendAsync("ReceiveStringMessage", msg);
+            await NotifyOnLobbyChanges(msg.LobbyID, "ReceiveGameStarted", msg.GameID);
+
+            return "Created game";
         }
 
-        public async Task SendListMessage(List<string> messages)
-        {
-            await Clients.All.SendAsync("ReceiveListMessage", messages);
-        }
-
-        public async Task<string> JoinGameGroup(CreateGameMsgDTO msg)
-        {
-            Dictionary<string, List<dictionaryValue>> dictionary = null;
-            _memoryCache.TryGetValue("dictionary", out dictionary);
-
-            List<dictionaryValue> res = new List<dictionaryValue>();
-            dictionary.TryGetValue(msg.LobbyID, out res);
-
-            res.ForEach(async element => {
-                await Groups.AddToGroupAsync(element.connectionID, "Game" + msg.GameID);
-                await Groups.RemoveFromGroupAsync(element.connectionID, "Lobby" + msg.LobbyID);
-            });
-
-            dictionary.Remove(msg.LobbyID);
-            _memoryCache.Set("dictionary", dictionary);
-
-            await NotifyOnGameChanges(msg.GameID, "ReceiveGameStarted", msg.GameID);
-
+        public async Task<string> JoinGameGroup(JoinGameDTO msg)
+        {    
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, "Lobby" + msg.LobbyID);
+            await Groups.AddToGroupAsync(Context.ConnectionId, "Game" + msg.GameID);
+            
             return "Joined group \"Game" + msg.GameID + "\"";
         }
 
@@ -57,20 +37,27 @@ namespace BussinesLogic.Messaging
             return "Left group \"Game" + gameID + "\"";
         }
 
-        public async Task NotifyOnGameChanges(int gameID, String method, Object object_to_send)
+        public async Task<string> NotifyOnGameChanges(int gameID, String method, Object object_to_send)
         {
             await Clients.Group("Game" + gameID).SendAsync(method, object_to_send);
+            return "Left group \"Game" + gameID + "\"";
+        }
+
+        public async Task<string> NotifyOnGameChanges1(AddArmieSendDTO msg)
+        {
+            await Clients.Group("Game" + msg.GameID).SendAsync(msg.Method, "Dodate armije");
+            return "Left group \"Game" + msg.GameID + "\"";
         }
 
         public async Task<string> JoinLobbyGroup(LobbyPlayerDTO msg)
         {
          
-            Dictionary<string, List<dictionaryValue>> dictionary = null;
+            Dictionary<string, List<string>> dictionary = null;
             _memoryCache.TryGetValue("dictionary", out dictionary);
 
-            if (dictionary == null) dictionary = new Dictionary<string, List<dictionaryValue>>();
+            if (dictionary == null) dictionary = new Dictionary<string, List<string>>();
 
-            List<dictionaryValue> res = new List<dictionaryValue>();
+            List<string> res = new List<string>();
             dictionary.TryGetValue(msg.LobbyID, out res);
 
             if (res != null)
@@ -79,25 +66,16 @@ namespace BussinesLogic.Messaging
                     return "Not joined group \"Lobby" + msg.LobbyID + "\"";
             }
             else
-                dictionary.Add(msg.LobbyID, new List<dictionaryValue>());
+                dictionary.Add(msg.LobbyID, new List<string>());
+            
+            if (!dictionary[msg.LobbyID].Contains(msg.Username))
+                dictionary[msg.LobbyID].Add(msg.Username);
 
-            dictionaryValue a;
-            a.username = msg.Username;
-            a.connectionID = Context.ConnectionId;
-
-            dictionary[msg.LobbyID].Add(a);
             _memoryCache.Set("dictionary", dictionary);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, "Lobby" + msg.LobbyID);
 
-            dictionary.TryGetValue(msg.LobbyID, out res);
-            List<string> usernames = new List<string>();
-            res.ForEach(element => {
-
-                usernames.Add(element.username);
-            });
-
-            await NotifyOnLobbyChanges(msg.LobbyID, "ReceiveLobbyPlayerAdd", usernames);
+            await NotifyOnLobbyChanges(msg.LobbyID, "ReceiveLobbyPlayerAdd", dictionary[msg.LobbyID]);
 
             return "Joined group \"Lobby" + msg.LobbyID + "\"";
 
@@ -113,8 +91,6 @@ namespace BussinesLogic.Messaging
         {
             await Clients.Group("Lobby" + lobbyID).SendAsync(method, object_to_send);
         }
-
-      
     }
 }
 
