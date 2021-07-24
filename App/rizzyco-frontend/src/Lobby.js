@@ -4,8 +4,6 @@ import MapSelect from "./MapSelect";
 
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
-const LOCAL_STORAGE_KEY = 'home.players'
-
 function Lobby (){
 
     if(!localStorage.token)
@@ -46,7 +44,6 @@ function Lobby (){
 
                     connection.on('ReceiveGameStarted', async message => {
                         localStorage.gameID=message;
-                        await sendJoinGameMessage(localStorage.lobbyID, localStorage.gameID);
                         await getPlayer();
                         await getPlayerTerritories();
                         await getAllTerritories();
@@ -67,25 +64,6 @@ function Lobby (){
         if (connection.connectionStarted) {
             try {
                 await connection.send('JoinLobbyGroup', msg);
-            }
-            catch(e) {
-                console.log(e);
-            }
-        }
-        else {
-            alert('No connection to server yet.');
-        }
-    }
-
-    const sendJoinGameMessage = async (lobbyID, gameID) => {
-        const msg = {
-            lobbyID: lobbyID,
-            gameID: gameID
-        };
-        
-        if (connection.connectionStarted) {
-            try {
-                await connection.send('JoinGameGroup', msg);
             }
             catch(e) {
                 console.log(e);
@@ -147,7 +125,7 @@ function Lobby (){
 
    
     function handleCreateGame() {
-        const usernames=new Array()
+        const usernames = []
         players.filter(player => player.complete===true).forEach(element => {
            usernames.push(element.username);
         });

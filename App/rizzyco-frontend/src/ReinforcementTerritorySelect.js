@@ -10,7 +10,7 @@ class ReinforcementTerritorySelect extends Component {
   }
 
   onChangeTerritory(event) {
-    localStorage.addArmieToTerritory = parseInt(event.target.value);
+    localStorage.selectedAddArmieTerritory = parseInt(event.target.value);
 
   }
 
@@ -24,7 +24,8 @@ class ReinforcementTerritorySelect extends Component {
               <select onChange={this.onChangeTerritory}>
                 {this.territories.map((m, index) => {
                   if(index===0)
-                    localStorage.addArmieToTerritory = m.territoryID;
+                    localStorage.selectedAddArmieTerritory = parseInt(m.territoryID);
+                    
                   return <option key={m.territoryID} value={m.territoryID}>{m.territoryName}({m.numArmies})</option>;
                 })}
               </select>

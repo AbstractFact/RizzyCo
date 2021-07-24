@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
 using DTOs;
+using BussinesLogic.Messaging;
+using Microsoft.AspNetCore.SignalR;
 
 namespace RizzyCoBE.Controllers
 {
@@ -15,9 +17,10 @@ namespace RizzyCoBE.Controllers
     [ApiController]
     public class PlayerTerritoryController : MyMDBController<PlayerTerritory, PlayerTerritoryService>
     {
-        public PlayerTerritoryController(PlayerTerritoryService service) : base(service)
+        private HubService hub;
+        public PlayerTerritoryController(PlayerTerritoryService service, IHubContext<MessageHub> hubContext) : base(service)
         {
-
+            hub = new HubService(hubContext);
         }
 
         [HttpGet("GetPlayerTerritories/{playerID}")]
@@ -35,8 +38,11 @@ namespace RizzyCoBE.Controllers
         {
             PlayerTerritory result = await service.AddArmie(gameID, playerID, territoryID);
             if (result != null)
+            {
+                await hub.NotifyOnGameChanges(gameID, "PlayerAddArmie", "Armie added");
                 return Ok();
-
+            }
+                
             return NotFound();
         }
     }

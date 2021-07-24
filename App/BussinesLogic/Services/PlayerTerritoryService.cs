@@ -102,10 +102,8 @@ namespace BussinesLogic.Services
             using (unit)
             {
                 PlayerTerritory playerTerritory = await unit.PlayerTerritories.AddArmie(playerID, territoryID);
-
+                await unit.Players.UpdateAvailableArmies(playerID);
                 unit.Complete();
-
-                //await hubService.NotifyOnGameChanges(gameID, "PlayerAddArmie", new AddArmieDTO(playerTerritory));
 
                 return playerTerritory;
             }

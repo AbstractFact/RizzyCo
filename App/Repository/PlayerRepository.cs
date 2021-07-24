@@ -23,14 +23,20 @@ namespace Repository
 
         public async Task<Player> GetPlayerInfo(int gameID, int userID)
         {
-            return (await context.Set<Player>().Where(p => p.Game.ID == gameID).Where(p => p.User.ID == userID).Include(p => p.PlayerColor).Include(p => p.Mission).ToListAsync()).FirstOrDefault();
-            
-            
+            return (await context.Set<Player>().Where(p => p.Game.ID == gameID).Where(p => p.User.ID == userID).Include(p => p.PlayerColor).Include(p => p.Mission).ToListAsync()).FirstOrDefault();  
         }
 
         public async Task<List<Player>> GetPlayers(int gameID)
         {
             return await context.Set<Player>().Where(p => p.Game.ID == gameID).Include(p => p.User).Include(p => p.PlayerColor).Include(p => p.Mission).ToListAsync();
+        }
+
+        public async Task<Player> UpdateAvailableArmies(int playerID)
+        {
+            Player tmp = await context.Players.FindAsync(playerID);
+            tmp.AvailableArmies--;
+            context.Update(tmp);
+            return tmp;
         }
     }
 }
