@@ -10,5 +10,6 @@ namespace Domain.RepositoryInterfaces
     {
         Task<List<PlayerTerritory>> GetPlayerTerritories(int playerID);
         Task<PlayerTerritory> AddArmie(int playerID, int territoryID);
+        Task<PlayerTerritory> GetTargetTerritory(int playerID, int terrID, int gameID);
     }
 }

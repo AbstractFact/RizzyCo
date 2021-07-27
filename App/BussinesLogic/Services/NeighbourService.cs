@@ -7,6 +7,7 @@ using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
+using DTOs;
 
 namespace BussinesLogic.Services
 {
@@ -100,15 +101,22 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<List<Neighbour>> GetTerritoryNeighbours(int terrID)
+        public async Task<List<PlayerTerritoryDTO>> GetTargetTerritories(int playerID, int terrID, int gameID)
         {
             using (unit)
             {
-                Task<Territory> terr = unit.Territories.Get(terrID);
-                Territory t = await terr;
-                Task<List<Neighbour>> games = unit.Neighbours.GetTerritoryNeighbours(t);
+                Territory t = await unit.Territories.Get(terrID);
+                List<Neighbour> neighbours = await unit.Neighbours.GetTerritoryNeighbours(t);
+                List<PlayerTerritoryDTO> result = new List<PlayerTerritoryDTO>();
 
-                return await games;
+                foreach (Neighbour n in neighbours)
+                {
+                    PlayerTerritory pt = await unit.PlayerTerritories.GetTargetTerritory(playerID, n.Dst.ID, gameID);
+                    if(pt != null)
+                        result.Add(new PlayerTerritoryDTO(pt));
+                };
+
+                return result;
             }
         }
 

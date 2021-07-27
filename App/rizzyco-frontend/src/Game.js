@@ -50,6 +50,11 @@ export default class Game extends Component {
   }
    
   async onAddArmie(){
+    if(parseInt(localStorage.selectedAddArmieTerritory) === 0)
+    {
+      alert("Please select territory.");
+      return;
+    }
     const res =  await fetch("https://localhost:44348/api/PlayerTerritory/AddArmie/"+localStorage.gameID+"/"+(JSON.parse(localStorage.getItem("playerInfo"))).playerID+"/"+localStorage.selectedAddArmieTerritory, { method: "POST"}); 
     if (res.ok) {
       alert("Armie added!");
@@ -102,7 +107,7 @@ export default class Game extends Component {
         <br />
         <h4>ATTACK</h4>
         <AttackTerritorySelect />
-        <TargetTerritorySelect />
+        {/* <TargetTerritorySelect /> */}
         <button onClick={this.onAttack}>Attack</button>
         <br />
         <br />

@@ -17,5 +17,6 @@ namespace DTOs
             this.TerritoryName = playerTerr.Territory.Name;
             this.NumArmies = playerTerr.Armies;
         }
+
     }
 }

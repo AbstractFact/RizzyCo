@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
-
+using DTOs;
 
 namespace RizzyCoBE.Controllers
 {
@@ -31,10 +31,10 @@ namespace RizzyCoBE.Controllers
             return BadRequest("Bad request!");
         }
 
-        [HttpGet("GetTerritoryNeighbours/{terrID}")]
-        public async Task<ActionResult<IEnumerable<Neighbour>>> GetTerritoryNeighbours(int terrID)
+        [HttpGet("GetTargetTerritories/{playerID}/{terrID}/{gameID}")]
+        public async Task<ActionResult<IEnumerable<PlayerTerritoryDTO>>> GetTargetTerritories(int playerID, int terrID, int gameID)
         {
-            List<Neighbour> result = await service.GetTerritoryNeighbours(terrID);
+            List<PlayerTerritoryDTO> result = await service.GetTargetTerritories(playerID, terrID, gameID);
             if (result != null)
                 return Ok(result);
 

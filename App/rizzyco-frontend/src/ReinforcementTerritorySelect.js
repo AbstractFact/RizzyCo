@@ -15,18 +15,18 @@ class ReinforcementTerritorySelect extends Component {
   }
 
   render() {
+    localStorage.selectedAddArmieTerritory = 0;
     return (
       <div>
         <div>
           <span>Select Territory: </span> 
           {this.territories && this.territories.length > 0 && (
             <div>
-              <select onChange={this.onChangeTerritory}>
-                {this.territories.map((m, index) => {
-                  if(index===0)
-                    localStorage.selectedAddArmieTerritory = parseInt(m.territoryID);
-                    
-                  return <option key={m.territoryID} value={m.territoryID}>{m.territoryName}({m.numArmies})</option>;
+              <select onChange={this.onChangeTerritory} defaultValue={{ label: "Select Territory", value: 0 }}>
+              <option key = "default" value={0}>Select Territory</option>
+                {
+                  this.territories.map((m, index) => {
+                     return <option key={m.territoryID} value={m.territoryID}>{m.territoryName}({m.numArmies})</option>;
                 })}
               </select>
             </div>
