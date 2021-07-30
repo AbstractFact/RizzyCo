@@ -31,6 +31,11 @@ namespace Repository
             return await context.Set<Player>().Where(p => p.Game.ID == gameID).Include(p => p.User).Include(p => p.PlayerColor).Include(p => p.Mission).ToListAsync();
         }
 
+        public async Task<List<Player>> GetUserPlayers(int userID)
+        {
+            return await context.Set<Player>().Where(p => p.User.ID == userID).Include(p => p.Game).ToListAsync();
+        }
+
         public async Task<Player> UpdateAvailableArmies(int playerID)
         {
             Player tmp = await context.Players.FindAsync(playerID);

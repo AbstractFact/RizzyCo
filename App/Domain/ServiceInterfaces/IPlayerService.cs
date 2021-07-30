@@ -12,7 +12,6 @@ namespace Domain.ServiceInterfaces
         Task<Player> GetPlayer(int id);
         Task<List<Player>> GetPlayers(int id);
         Task<PlayerInfoDTO> GetPlayerInfo(int gameID, int userID);
-
-
+        Task<List<GameInfoDTO>> GetUserGames(int userID);
     }
 }

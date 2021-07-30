@@ -111,5 +111,25 @@ namespace BussinesLogic.Services
                 return new PlayerInfoDTO(player);
             }
         }
+
+        public async Task<List<GameInfoDTO>> GetUserGames(int userID)
+        {
+            List<Player> players = await unit.Players.GetUserPlayers(userID);
+            List<GameInfoDTO> result = new List<GameInfoDTO>();
+
+            foreach(Player el in players)
+            {
+                List<GameParticipantInfoDTO> participants = new List<GameParticipantInfoDTO>();
+                List<Player> p = await unit.Players.GetPlayers(el.Game.ID);
+                p.ForEach(pl =>
+                {
+                    participants.Add(new GameParticipantInfoDTO() { Username = pl.User.Username, PlayerColor = pl.PlayerColor.Value });
+                });
+
+                result.Add(new GameInfoDTO() { CreationDate = el.Game.CreationDate, Participants = participants});
+            }
+
+            return result;
+        }
     }
 }

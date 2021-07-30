@@ -1,5 +1,6 @@
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import GameSelect from "./GameSelect";
 
 function Home (){
     function handleCreateLobby() {
@@ -13,8 +14,7 @@ function Home (){
         <button onClick={handleCreateLobby}>Create lobby</button>
         <br />
         <br />
-        <label>Active games:</label>
-        {/* <GameList games={games} toggleGame={toggleGame} /> */}
+        <GameSelect />
     </>
    )
 }

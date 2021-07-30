@@ -49,5 +49,15 @@ namespace RizzyCoBE.Controllers
 
             return NotFound();
         }
+
+        [HttpGet("GetUserGames/{userID}")]
+        public async Task<ActionResult<List<GameInfoDTO>>> GetUserGames(int userID)
+        {
+            var result = await service.GetUserGames(userID);
+            if (result != null)
+                return Ok(result);
+
+            return NotFound();
+        }
     }
 }

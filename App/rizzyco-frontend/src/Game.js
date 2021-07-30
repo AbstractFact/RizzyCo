@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import ReinforcementTerritorySelect from "./ReinforcementTerritorySelect";
 import AttackTerritorySelect from "./AttackTerritorySelect";
-import TargetTerritorySelect from "./TargetTerritorySelect";
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
 
@@ -107,7 +106,6 @@ export default class Game extends Component {
         <br />
         <h4>ATTACK</h4>
         <AttackTerritorySelect />
-        {/* <TargetTerritorySelect /> */}
         <button onClick={this.onAttack}>Attack</button>
         <br />
         <br />
