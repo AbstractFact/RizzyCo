@@ -2,22 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using BussinesLogic.Messaging;
 using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
 using DTOs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BussinesLogic.Services
 {
     public class PlayerService : IPlayerService
     {
         private readonly IUnitOfWork unit;
+        private HubService hubService;
 
-        public PlayerService(IUnitOfWork unit)
+        public PlayerService(IUnitOfWork unit, IHubContext<MessageHub> hubContext)
         {
             this.unit = unit;
+            hubService = new HubService(hubContext);
         }
         public async Task<List<Player>> GetAll()
         {
@@ -126,10 +129,30 @@ namespace BussinesLogic.Services
                     participants.Add(new GameParticipantInfoDTO() { Username = pl.User.Username, PlayerColor = pl.PlayerColor.Value });
                 });
 
-                result.Add(new GameInfoDTO() { CreationDate = el.Game.CreationDate, Participants = participants});
+                result.Add(new GameInfoDTO() { GameID = el.Game.ID, CreationDate = el.Game.CreationDate, Finished = el.Game.Finished, Participants = participants});
             }
 
             return result;
         }
+
+        public async Task<bool> FullWaitingLobby(List<string> playersJoined, int gameID)
+        {
+            List<Player> players = await GetPlayers(gameID);
+            List<string> playerUsernames = new List<string>();
+            players.ForEach(el =>
+            {
+                playerUsernames.Add(el.User.Username);
+            });
+
+            bool result = false;
+            if (playerUsernames.Intersect(playersJoined).Count() == playerUsernames.Count())
+            {
+                await hubService.NotifyOnWaitingLobbyChanges(gameID, "ReceiveGameContinued", gameID);
+                result = true;
+            }
+
+            return result;
+        }
+
     }
 }

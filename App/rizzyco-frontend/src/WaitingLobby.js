@@ -1,19 +1,9 @@
 import React, {useState, useEffect } from 'react';
 import PlayerList from './PlayerList'
 
-
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
 function WaitingLobby (){
-
-    if(!localStorage.token)
-    {
-        localStorage.setItem("redirect", window.location.href);
-        window.location.href="/login";
-    }
-        
-    if(!localStorage.lobbyID)
-            localStorage.lobbyID=window.location.href;
 
     const [ connection, setConnection ] = useState(null);
     const [players, setPlayers] = useState([])
@@ -33,8 +23,8 @@ function WaitingLobby (){
                 .then(async result =>  {
                     console.log('Connected!');
                     localStorage.setItem("connection", JSON.stringify(connection));
-                    await sendLobbyMessage(localStorage.lobbyID, localStorage.username);
-                    connection.on('ReceiveLobbyPlayerAdd', message => {
+                    await sendWaitingLobbyMessage(localStorage.waitingLobbyID, localStorage.username);
+                    connection.on('ReceiveWaitingLobbyPlayerAdd', message => {
                         setPlayers([]);
                         message.forEach(element => {
                             handleAddPlayer(element);
@@ -42,8 +32,7 @@ function WaitingLobby (){
                         
                     });
 
-                    connection.on('ReceiveGameStarted', async message => {
-                        localStorage.gameID=message;
+                    connection.on('ReceiveGameContinued', async message => {
                         await getPlayer();
                         await getPlayerTerritories();
                         await getAllTerritories();
@@ -55,7 +44,7 @@ function WaitingLobby (){
         }
     }, [connection]);
 
-    const sendLobbyMessage = async (lobbyID, username) => {
+    const sendWaitingLobbyMessage = async (lobbyID, username) => {
         const msg = {
             lobbyID: lobbyID,
             username: username
@@ -63,26 +52,7 @@ function WaitingLobby (){
         
         if (connection.connectionStarted) {
             try {
-                await connection.send('JoinLobbyGroup', msg);
-            }
-            catch(e) {
-                console.log(e);
-            }
-        }
-        else {
-            alert('No connection to server yet.');
-        }
-    }
-
-    const sendCreateGameMessage = async (lobbyID, gameID) => {
-        const msg = {
-            lobbyID: lobbyID,
-            gameID: gameID
-        };
-        
-        if (connection.connectionStarted) {
-            try {
-                await connection.send('CreateGame', msg);
+                await connection.send('JoinWaitingLobbyGroup', msg);
             }
             catch(e) {
                 console.log(e);
@@ -103,12 +73,6 @@ function WaitingLobby (){
     const handleAddPlayer = (addUsername) =>{
         const username = addUsername
         if (username === '') return
-        if (players.filter(player => player.complete===true).length===5)
-        {
-            alert("Party is full.")
-            window.location.href="/home"
-            return
-        }
         if (players.filter(player => player.username===username).length!==0)
         {
             return
@@ -118,24 +82,18 @@ function WaitingLobby (){
         })
     }
 
-    function handleClearPlayers() {
-        const newPlayers = players.filter(player => !player.complete)
-        setPlayers(newPlayers)
-    }
-
-   
-    function handleCreateGame() {
+    function handleContinueGame() {
         const usernames = []
         players.filter(player => player.complete===true).forEach(element => {
            usernames.push(element.username);
         });
 
         var msg = {
-            "users" :usernames,
-            "mapID" : parseInt(localStorage.mapID)
+            "playersJoined" :usernames,
+            "gameID" : parseInt(localStorage.gameID)
         }
 
-        fetch("https://localhost:44348/api/User/CreateGame", { method: "POST",
+        fetch("https://localhost:44348/api/Player/FullWaitingLobby", { method: "POST",
         headers: {
         "Content-Type": "application/json"
         },
@@ -143,9 +101,9 @@ function WaitingLobby (){
         }).then(res => {
             if (res.ok) {
                 res.json().then(async result=>{
-                    localStorage.gameID = result;
-                    await sendCreateGameMessage(localStorage.lobbyID, result);
-                    alert("Game created");
+                    if(result === false)
+                        alert("All players must be ready.");
+                    
                 });
 
             } else {
@@ -158,6 +116,8 @@ function WaitingLobby (){
             console.log("Create game error: ", err);
         });
     }
+
+ 
 
     const getPlayer = async function getPlayerInfo (){
         const res =  await fetch("https://localhost:44348/api/Player/GetPlayerInfo/"+localStorage.gameID+"/"+localStorage.userID, { method: "GET"}); 
@@ -223,15 +183,12 @@ function WaitingLobby (){
             <br />
             <label>Players:</label>
             <PlayerList players={players} togglePlayer={togglePlayer} />
-            <button onClick={handleClearPlayers}>Clear Players</button>
             <br />
             <p>{players.filter(player => player.complete).length} players invited</p>
             <br />
-            <button onClick={handleCreateGame}>Create game</button>
             <br />
+            <button onClick={handleContinueGame}>Continue game</button>
             <br />
-            <label>{localStorage.lobbyID}</label>
-        
         </>
         )  
 }

@@ -24,7 +24,9 @@ class GameSelect extends Component {
         const d = await res.json()
         d.forEach(element => {
             var entry = {
+                gameID : element.gameID,
                 creationDate: element.creationDate,
+                finished: element.finished,
                 participants: element.participants
             };
             array.push(entry);
@@ -38,8 +40,10 @@ class GameSelect extends Component {
     }  
   }
   
-  async onContinueGame() {
-    console.log("pozvala se");
+  async onContinueGame(gameID) {
+    localStorage.waitingLobbyID = gameID;
+    localStorage.gameID = gameID;
+    window.location.href="/waitingLobby";
   }
 
   render() {
@@ -66,7 +70,7 @@ class GameSelect extends Component {
                             {m.participants.map((m, index) => 
                             {return <div><label style={{color: m.playerColor}}>{m.username}</label><br/></div>})}
                             <br/><br/>
-                            <button onClick={this.onContinueGame}>Continue Game</button> 
+                            <button onClick={() => this.onContinueGame(m.gameID)} disabled={m.finished ? true : null}>Continue Game</button> 
                             <br/><br/><br/>
                          </div>;
                 })}

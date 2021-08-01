@@ -33,7 +33,7 @@ namespace Repository
 
         public async Task<List<Player>> GetUserPlayers(int userID)
         {
-            return await context.Set<Player>().Where(p => p.User.ID == userID).Include(p => p.Game).ToListAsync();
+            return await context.Set<Player>().Where(p => p.User.ID == userID).Include(p => p.Game).OrderBy(p => p.Game.Finished).ThenByDescending(p => p.Game.CreationDate).ToListAsync();
         }
 
         public async Task<Player> UpdateAvailableArmies(int playerID)

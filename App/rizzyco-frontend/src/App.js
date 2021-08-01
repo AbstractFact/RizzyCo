@@ -4,6 +4,7 @@ import Login from "./Login"
 import Lobby from "./Lobby"
 import Home from "./Home"
 import Game from "./Game"
+import WaitingLobby from "./WaitingLobby"
 import './style/index.css'
 import {
   BrowserRouter as Router,
@@ -32,6 +33,9 @@ function App (){
         </Route>
         <Route path="/game">
           <Game />
+        </Route>
+        <Route path="/waitingLobby">
+          <WaitingLobby />
         </Route>
         </Switch>
     </Router>

@@ -21,5 +21,11 @@ namespace BussinesLogic.Messaging
             return "Game changed";
         }
 
+        public async Task<string> NotifyOnWaitingLobbyChanges(int lobbyID, string method, Object object_to_send)
+        {
+            await _hub.Clients.Group("Waiting Lobby" + lobbyID).SendAsync(method, object_to_send);
+            return "Waiting Lobby changed";
+        }
+
     }
 }

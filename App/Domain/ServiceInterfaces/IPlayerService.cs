@@ -13,5 +13,6 @@ namespace Domain.ServiceInterfaces
         Task<List<Player>> GetPlayers(int id);
         Task<PlayerInfoDTO> GetPlayerInfo(int gameID, int userID);
         Task<List<GameInfoDTO>> GetUserGames(int userID);
+        Task<bool> FullWaitingLobby(List<string> playersJoined, int gameID);
     }
 }

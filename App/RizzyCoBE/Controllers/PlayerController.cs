@@ -59,5 +59,13 @@ namespace RizzyCoBE.Controllers
 
             return NotFound();
         }
+
+        [HttpPost("FullWaitingLobby")]
+        public async Task<ActionResult<bool>> FullWaitingLobby(CheckWaitingLobbyDTO msg)
+        {
+            var result = await service.FullWaitingLobby(msg.PlayersJoined, msg.GameID);
+
+            return Ok(result);
+        }
     }
 }
