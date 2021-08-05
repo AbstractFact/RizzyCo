@@ -8,10 +8,19 @@ function Home (){
         window.location.href="/lobby";
     }
 
+    function handleLogOut() {
+        localStorage.clear();
+        localStorage.setItem("redirect", null);
+        window.location.href="/login";
+    }
+
    return (
     <>
         <br />
         <button onClick={handleCreateLobby}>Create lobby</button>
+        <label style={{float: "right"}}>{localStorage.username}</label>
+        <br />
+        <button style={{float: "right"}} onClick={handleLogOut}>Log out</button>
         <br />
         <br />
         <GameSelect />

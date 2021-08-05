@@ -50,6 +50,10 @@ function Lobby (){
                         window.location.href="/game";
                     });
 
+                    connection.on('ReceivePlayerLeftLobby', message => {
+                        handleRemovePlayer(message);
+                    });
+
                 })
                 .catch(e => console.log('Connection failed: ', e));
         }
@@ -118,8 +122,16 @@ function Lobby (){
         })
     }
 
+    function handleRemovePlayer(removeUsername) {
+        setPlayers(prevPlayers => {
+            return prevPlayers.filter(player => player.username !== removeUsername)
+            })
+    }
+
     function handleClearPlayers() {
+        console.log([...players])
         const newPlayers = players.filter(player => !player.complete)
+        console.log(newPlayers)
         setPlayers(newPlayers)
     }
 
@@ -217,9 +229,30 @@ function Lobby (){
         }  
     }
 
+    async function handleLogOut() {
+        if (connection.connectionStarted) {
+            try {
+                await connection.send('LeaveLobbyGroup', localStorage.lobbyID, localStorage.username);
+            }
+            catch(e) {
+                console.log(e);
+            }
+        }
+        else {
+            alert('No connection to server yet.');
+        }
+        localStorage.clear();
+        localStorage.setItem("redirect", null);
+        window.location.href="/login";
+    }
+
     return (
         <>
+        {console.log(players)}
             <MapSelect maps={localStorage.getItem("allMaps")}/>
+            <label style={{float: "right"}}>{localStorage.username}</label>
+            <br />
+            <button style={{float: "right"}} onClick={handleLogOut}>Log out</button>
             <br />
             <label>Players:</label>
             <PlayerList players={players} togglePlayer={togglePlayer} />
@@ -231,6 +264,7 @@ function Lobby (){
             <br />
             <br />
             <label>{localStorage.lobbyID}</label>
+            
         </>
         )  
 }

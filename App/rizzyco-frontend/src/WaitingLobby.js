@@ -39,6 +39,11 @@ function WaitingLobby (){
                         window.location.href="/game";
                     });
 
+                    connection.on('ReceivePlayerLeftWaitingLobby', message => {
+                        console.log(message);
+                        handleRemovePlayer(message);
+                    });
+
                 })
                 .catch(e => console.log('Connection failed: ', e));
         }
@@ -80,6 +85,12 @@ function WaitingLobby (){
         setPlayers(prevPlayers => {
         return [...prevPlayers, { id: username, username: username, complete: true}]
         })
+    }
+
+    function handleRemovePlayer(removeUsername) {
+        setPlayers(prevPlayers => {
+            return prevPlayers.filter(player => player.username !== removeUsername)
+            })
     }
 
     function handleContinueGame() {
@@ -177,12 +188,32 @@ function WaitingLobby (){
         }  
     }
 
+    async function handleLogOut() {
+        if (connection.connectionStarted) {
+            try {
+                await connection.send('LeaveWaitingLobbyGroup', localStorage.waitingLobbyID, localStorage.username);
+            }
+            catch(e) {
+                console.log(e);
+            }
+        }
+        else {
+            alert('No connection to server yet.');
+        }
+        localStorage.clear();
+        localStorage.setItem("redirect", null);
+        window.location.href="/login";
+    }
+
     return (
         <>
             
             <br />
             <label>Players:</label>
             <PlayerList players={players} togglePlayer={togglePlayer} />
+            <label style={{float: "right"}}>{localStorage.username}</label>
+            <br />
+            <button style={{float: "right"}} onClick={handleLogOut}>Log out</button>
             <br />
             <p>{players.filter(player => player.complete).length} players invited</p>
             <br />

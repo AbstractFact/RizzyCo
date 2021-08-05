@@ -13,7 +13,9 @@ export default class Game extends Component {
     this.sendJoinGameMessage = this.sendJoinGameMessage.bind(this);
     this.onAddArmie = this.onAddArmie.bind(this);
     this.onAttack = this.onAttack.bind(this);
-    this.onDeffend = this.onDeffend.bind(this);    
+    this.onDeffend = this.onDeffend.bind(this);  
+    this.handleLogOut = this.handleLogOut.bind(this);
+    this.handleGameStopped = this.handleGameStopped.bind(this);  
   }
 
   async sendJoinGameMessage () {
@@ -42,6 +44,13 @@ export default class Game extends Component {
       await this.sendJoinGameMessage();
       this.connection.on('PlayerAddArmie', message => {
         console.log(message);
+      
+      });
+
+      this.connection.on('PlayerLeft', async message => {
+        alert(message + " left the game");
+        await this.handleGameStopped();
+        window.location.href="/home";
       
       });
     })
@@ -73,12 +82,44 @@ export default class Game extends Component {
 
   }
 
+  async handleGameStopped() {
+    if (this.connection.connectionStarted) {
+        try {
+            await this.connection.send('LeaveInterruptedGameGroup', parseInt(localStorage.gameID));
+        }
+        catch(e) {
+            console.log(e);
+        }
+    }
+    else {
+        alert('No connection to server yet.');
+    }
+}
 
+  async handleLogOut() {
+    if (this.connection.connectionStarted) {
+        try {
+            await this.connection.send('LeaveGameGroup', parseInt(localStorage.gameID), localStorage.username);
+        }
+        catch(e) {
+            console.log(e);
+        }
+    }
+    else {
+        alert('No connection to server yet.');
+    }
+    localStorage.clear();
+    localStorage.setItem("redirect", null);
+    window.location.href="/login";
+}
 
   render() {
     return (
         <>
         <br />
+        <label style={{float: "right"}}>{localStorage.username}</label>
+        <br />
+        <button style={{float: "right"}} onClick={this.handleLogOut}>Log out</button>
         <br />
         <h1>WELCOME TO THE RISK GAME</h1>
         <br />

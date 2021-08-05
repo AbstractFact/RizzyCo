@@ -55,7 +55,7 @@ class GameSelect extends Component {
             <div>
                 {
                   this.state.games.map((m, index) => {
-                  return <div>
+                  return <div key={m.gameID}>
                             <h4>Game: {index+1}</h4>
                             <label>Started on: </label>
                             {new Intl.DateTimeFormat("en-GB", {
@@ -68,7 +68,7 @@ class GameSelect extends Component {
                             <br/> 
                             <p>Participants:</p>
                             {m.participants.map((m, index) => 
-                            {return <div><label style={{color: m.playerColor}}>{m.username}</label><br/></div>})}
+                            {return <div key={m.username}><label style={{color: m.playerColor}}>{m.username}</label><br/></div>})}
                             <br/><br/>
                             <button onClick={() => this.onContinueGame(m.gameID)} disabled={m.finished ? true : null}>Continue Game</button> 
                             <br/><br/><br/>

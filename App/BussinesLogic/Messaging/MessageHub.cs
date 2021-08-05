@@ -51,9 +51,10 @@ namespace BussinesLogic.Messaging
 
         }
 
-        public async Task<string> LeaveLobbyGroup(string lobbyID)
+        public async Task<string> LeaveLobbyGroup(string lobbyID, string username)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, "Lobby" + lobbyID);
+            await NotifyOnLobbyChanges(lobbyID, "ReceivePlayerLeftLobby", username);
             return "Left group \"Lobby" + lobbyID + "\"";
         }
 
@@ -76,9 +77,17 @@ namespace BussinesLogic.Messaging
             return "Joined group \"Game" + gameID + "\"";
         }
 
-        public async Task<string> LeaveGameGroup(int gameID)
+        public async Task<string> LeaveInterruptedGameGroup(int gameID)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, "Trip" + gameID);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, "Game" + gameID);
+
+            return "Left group \"Game" + gameID + "\"";
+        }
+        public async Task<string> LeaveGameGroup(int gameID, string username)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, "Game" + gameID);
+            await Clients.Group("Game" + gameID).SendAsync("PlayerLeft", username);
+
             return "Left group \"Game" + gameID + "\"";
         }
 
@@ -113,9 +122,10 @@ namespace BussinesLogic.Messaging
 
         }
 
-        public async Task<string> LeaveWaitingLobbyGroup(string lobbyID)
+        public async Task<string> LeaveWaitingLobbyGroup(string lobbyID, string username)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, "Waiting Lobby" + lobbyID);
+            await NotifyOnWaitingLobbyChanges(lobbyID, "ReceivePlayerLeftWaitingLobby", username);
             return "Left group \"Waiting Lobby" + lobbyID + "\"";
         }
 

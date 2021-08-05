@@ -17,7 +17,7 @@ function App (){
    return (
     <Router>
         <Switch>
-        <Route exact path="/" component={()=>(<Redirect to="/signup" />)}>
+        <Route exact path="/" component={()=>(<Redirect to="/login" />)}>
         </Route>
         <Route path="/home">
           <Home />
