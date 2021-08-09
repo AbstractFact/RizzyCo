@@ -39,7 +39,7 @@ namespace RizzyCoBE.Controllers
             PlayerTerritory result = await service.AddArmie(gameID, playerID, territoryID);
             if (result != null)
             {
-                await hub.NotifyOnGameChanges(gameID, "PlayerAddArmie", "Armie added");
+                await hub.NotifyOnGameChanges(gameID, "PlayerAddArmie", new AddArmieDTO { TerritoryID=territoryID, NumArmies=result.Armies});
                 return Ok();
             }
                 

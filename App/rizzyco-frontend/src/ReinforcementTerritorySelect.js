@@ -26,7 +26,7 @@ class ReinforcementTerritorySelect extends Component {
               <option key = "default" value={0}>Select Territory</option>
                 {
                   this.territories.map((m, index) => {
-                     return <option key={m.territoryID} value={m.territoryID}>{m.territoryName}({m.numArmies})</option>;
+                     return <option key={m.territoryID} value={m.territoryID}>{m.territoryName}</option>;
                 })}
               </select>
             </div>

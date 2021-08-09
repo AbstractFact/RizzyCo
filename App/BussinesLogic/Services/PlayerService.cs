@@ -108,10 +108,16 @@ namespace BussinesLogic.Services
             using (unit)
             {
                 Player player = await unit.Players.GetPlayerInfo(gameID, userID);
+                List<GameParticipantInfoDTO> participants = new List<GameParticipantInfoDTO>();
+                List<Player> p = await unit.Players.GetPlayers(gameID);
+                p.ForEach(pl =>
+                {
+                    participants.Add(new GameParticipantInfoDTO() { Username = pl.User.Username, PlayerColor = pl.PlayerColor.Value , OnTurn=pl.OnTurn});
+                });
 
                 if (player == null) return null;
 
-                return new PlayerInfoDTO(player);
+                return new PlayerInfoDTO(player, participants);
             }
         }
 

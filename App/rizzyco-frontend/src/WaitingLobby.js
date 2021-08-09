@@ -142,6 +142,7 @@ function WaitingLobby (){
                 availableArmies:result.availableArmies
                 }; 
             localStorage.setItem("playerInfo", JSON.stringify(entity)) 
+            localStorage.setItem("gameParticipants", JSON.stringify(result.participants)) 
         }
         else {
             this.setState({
@@ -178,7 +179,8 @@ function WaitingLobby (){
                 var entry = {
                     territoryID: element.territoryID,
                     territoryName: element.territoryName,
-                    numArmies : element.numArmies
+                    numArmies : element.numArmies,
+                    playerColor : element.playerColor
                 };
                 array.push(entry);
             }); 

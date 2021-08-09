@@ -28,12 +28,12 @@ namespace Repository
 
         public async Task<List<PlayerTerritory>> GetPlayerTerritories(int playerID)
         {
-            return await context.Set<PlayerTerritory>().Where(t => t.Player.ID == playerID).Include(p => p.Territory).ToListAsync(); 
+            return await context.Set<PlayerTerritory>().Where(t => t.Player.ID == playerID).Include(p => p.Territory).Include(p => p.Player.PlayerColor).ToListAsync(); 
         }
 
         public async Task<PlayerTerritory> GetTargetTerritory(int playerID, int terrID, int gameID)
         {
-            return (await context.Set<PlayerTerritory>().Include(p => p.Territory).Include(p => p.Player).Where(t => t.Territory.ID == terrID && t.Player.ID!=playerID && t.Player.Game.ID == gameID).ToListAsync()).FirstOrDefault();
+            return (await context.Set<PlayerTerritory>().Include(p => p.Territory).Include(p => p.Player.PlayerColor).Where(t => t.Territory.ID == terrID && t.Player.ID!=playerID && t.Player.Game.ID == gameID).ToListAsync()).FirstOrDefault();
         }
     }
 }
