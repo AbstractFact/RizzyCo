@@ -139,7 +139,8 @@ function WaitingLobby (){
                 playerID:result.playerID,
                 playerColor:result.playerColor,
                 mission:result.mission,
-                availableArmies:result.availableArmies
+                availableArmies:result.availableArmies,
+                onTurn : result.onTurn
                 }; 
             localStorage.setItem("playerInfo", JSON.stringify(entity)) 
             localStorage.setItem("gameParticipants", JSON.stringify(result.participants)) 

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BussinesLogic.Messaging;
-using DataAccess;
+﻿using BussinesLogic.Messaging;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
 using DTOs;
 using Microsoft.AspNetCore.SignalR;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BussinesLogic.Services
 {
@@ -112,7 +110,7 @@ namespace BussinesLogic.Services
                 List<Player> p = await unit.Players.GetPlayers(gameID);
                 p.ForEach(pl =>
                 {
-                    participants.Add(new GameParticipantInfoDTO() { Username = pl.User.Username, PlayerColor = pl.PlayerColor.Value , OnTurn=pl.OnTurn});
+                    participants.Add(new GameParticipantInfoDTO() { Username = pl.User.Username, PlayerColor = pl.PlayerColor.Value, OnTurn = pl.OnTurn == 0 ? true : false });
                 });
 
                 if (player == null) return null;
@@ -126,7 +124,7 @@ namespace BussinesLogic.Services
             List<Player> players = await unit.Players.GetUserPlayers(userID);
             List<GameInfoDTO> result = new List<GameInfoDTO>();
 
-            foreach(Player el in players)
+            foreach (Player el in players)
             {
                 List<GameParticipantInfoDTO> participants = new List<GameParticipantInfoDTO>();
                 List<Player> p = await unit.Players.GetPlayers(el.Game.ID);
@@ -135,7 +133,7 @@ namespace BussinesLogic.Services
                     participants.Add(new GameParticipantInfoDTO() { Username = pl.User.Username, PlayerColor = pl.PlayerColor.Value });
                 });
 
-                result.Add(new GameInfoDTO() { GameID = el.Game.ID, CreationDate = el.Game.CreationDate, Finished = el.Game.Finished, Participants = participants});
+                result.Add(new GameInfoDTO() { GameID = el.Game.ID, CreationDate = el.Game.CreationDate, Finished = el.Game.Finished, Participants = participants });
             }
 
             return result;
@@ -160,5 +158,6 @@ namespace BussinesLogic.Services
             return result;
         }
 
+        
     }
 }

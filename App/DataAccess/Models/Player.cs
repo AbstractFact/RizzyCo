@@ -10,7 +10,7 @@ namespace DataAccess.Models
     {
         public int ID { get; set; }
         public bool Creator { get; set; }
-        public bool OnTurn { get; set; }
+        public int OnTurn { get; set; }
         public int AvailableArmies { get; set; }
         [JsonIgnore]
         public User User { get; set; }

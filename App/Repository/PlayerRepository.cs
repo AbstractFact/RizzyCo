@@ -43,5 +43,27 @@ namespace Repository
             context.Update(tmp);
             return tmp;
         }
+
+        public async Task<string> EndTurn(int gameID)
+        {
+           
+            List<Player> players = await GetPlayers(gameID);
+            string result = "";
+            players.ForEach(el =>
+            {
+                el.OnTurn--;
+                if (el.OnTurn < 0)
+                {
+                    el.OnTurn = players.Count - 1;
+                    context.Update(el);
+                }
+
+                if (el.OnTurn == 0)
+                    result = el.User.Username;
+            });
+
+            return result;
+            
+        }
     }
 }

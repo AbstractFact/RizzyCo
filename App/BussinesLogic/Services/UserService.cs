@@ -101,6 +101,7 @@ namespace BussinesLogic.Services
             using (unit)
             {
                 List<Player> players = new List<Player>();
+                int counter = 0;
 
                 Map map = await unit.Maps.Get(mapID);
                 User user = await unit.Users.GetUserByUsername(users.ElementAt(0));
@@ -147,7 +148,7 @@ namespace BussinesLogic.Services
 
                 Player player = new Player();
                 player.Creator = true;
-                player.OnTurn = true;
+                player.OnTurn = counter++;
                 player.User = user;
                 player.Game = game;
                 player.PlayerColor = colors.Pop();
@@ -162,7 +163,7 @@ namespace BussinesLogic.Services
 
                     Player invitedPlayer = new Player();
                     invitedPlayer.Creator = false;
-                    invitedPlayer.OnTurn = false;
+                    invitedPlayer.OnTurn = counter++;
                     invitedPlayer.User = u;
                     invitedPlayer.Game = game;
                     invitedPlayer.PlayerColor = colors.Pop();

@@ -18,9 +18,11 @@ namespace RizzyCoBE.Controllers
     public class PlayerTerritoryController : MyMDBController<PlayerTerritory, PlayerTerritoryService>
     {
         private HubService hub;
-        public PlayerTerritoryController(PlayerTerritoryService service, IHubContext<MessageHub> hubContext) : base(service)
+        private readonly PlayerService playerService;
+        public PlayerTerritoryController(PlayerTerritoryService service, PlayerService playerSevice, IHubContext<MessageHub> hubContext) : base(service)
         {
             hub = new HubService(hubContext);
+            this.playerService = playerSevice;
         }
 
         [HttpGet("GetPlayerTerritories/{playerID}")]
@@ -36,10 +38,10 @@ namespace RizzyCoBE.Controllers
         [HttpPost("AddArmie/{gameID}/{playerID}/{territoryID}")]
         public async Task<ActionResult> AddArmie(int gameID, int playerID, int territoryID)
         {
-            PlayerTerritory result = await service.AddArmie(gameID, playerID, territoryID);
+            AddArmieDTO result = await service.AddArmie(gameID, playerID, territoryID);
             if (result != null)
             {
-                await hub.NotifyOnGameChanges(gameID, "PlayerAddArmie", new AddArmieDTO { TerritoryID=territoryID, NumArmies=result.Armies});
+                await hub.NotifyOnGameChanges(gameID, "PlayerAddArmie", result);
                 return Ok();
             }
                 

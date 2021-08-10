@@ -12,7 +12,8 @@ export default class Game extends Component {
     this.state = 
     {
       playerInfo:JSON.parse(localStorage.getItem("playerInfo")),
-      allTerritories:JSON.parse(localStorage.getItem("allTerritories"))
+      allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+      gameParticipants: JSON.parse(localStorage.getItem("gameParticipants")), 
     }
     this.connection = null;
     this.sendJoinGameMessage = this.sendJoinGameMessage.bind(this);
@@ -51,16 +52,38 @@ export default class Game extends Component {
         var territories = JSON.parse(localStorage.getItem("allTerritories"));
         territories.forEach(el => {if (el.territoryID===message.territoryID) {el.numArmies=message.numArmies; return;}});
         localStorage.setItem("allTerritories", JSON.stringify(territories));
+
+        var participants = JSON.parse(localStorage.getItem("gameParticipants"));
+        participants.forEach(el => {if (el.username===message.nextPlayer) {el.onTurn=true; } else el.onTurn=false;});
+        localStorage.setItem("gameParticipants", JSON.stringify(participants));
+
+        var playerInfo = JSON.parse(localStorage.getItem("playerInfo"));
+        console.log(localStorage.username + "   " +message.nextPlayer);
+        if(localStorage.username === message.nextPlayer)
+        {
+          playerInfo.onTurn = true;
+          console.log("uslo");
+        }
+         
+        else
+          playerInfo.onTurn = false;
+
+          localStorage.setItem("playerInfo", JSON.stringify(playerInfo));
+
         this.setState(
             {
               playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
-              allTerritories:JSON.parse(localStorage.getItem("allTerritories"))
+              allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+              gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
             });
+      
         JSON.parse(localStorage.getItem("allTerritories")).forEach(element => {
           let el = document.getElementById(element.territoryID);
           el.style.backgroundColor=element.playerColor;
           el.querySelector('span').innerHTML=element.numArmies;
         });
+
+
       });
 
       this.connection.on('PlayerLeft', async message => {
@@ -95,7 +118,8 @@ export default class Game extends Component {
       this.setState( 
         {
           playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
-          allTerritories:JSON.parse(localStorage.getItem("allTerritories"))
+          allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+          gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
         }
       );
       
@@ -181,21 +205,21 @@ export default class Game extends Component {
           <div>
             <h4>REINFORCEMENT</h4>
             <ReinforcementTerritorySelect />
-            <button onClick={this.onAddArmie}>Add armie</button>
+            <button disabled = {!this.state.playerInfo.onTurn} onClick={this.onAddArmie}>Add armie</button>
           </div>
           <div>
             <h4>ATTACK</h4>
             <AttackTerritorySelect />
-            <button onClick={this.onAttack}>Attack</button>
+            <button disabled = {!this.state.playerInfo.onTurn} onClick={this.onAttack}>Attack</button>
           </div>
           <div>
             <h4>DEFENSE</h4>
             <label>Territory</label>
             <br/>
-            <button onClick={this.onDeffend}>Deffend</button>
+            <button disabled = {!this.state.playerInfo.onTurn} onClick={this.onDeffend}>Deffend</button>
           </div>
           <div>
-            <button >END MOVE</button> 
+            <button disabled = {!this.state.playerInfo.onTurn}>END MOVE</button> 
           </div>
           </div>
         </div>

@@ -9,6 +9,6 @@ namespace DTOs
     {
         public int TerritoryID { get; set; }
         public int NumArmies { get; set; }
-
+        public string NextPlayer { get; set; }
     }
 }

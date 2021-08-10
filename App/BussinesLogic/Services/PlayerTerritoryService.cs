@@ -97,15 +97,17 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<PlayerTerritory> AddArmie(int gameID, int playerID, int territoryID)
+
+        public async Task<AddArmieDTO> AddArmie(int gameID, int playerID, int territoryID)
         {
             using (unit)
             {
                 PlayerTerritory playerTerritory = await unit.PlayerTerritories.AddArmie(playerID, territoryID);
                 await unit.Players.UpdateAvailableArmies(playerID);
+                string nextPlayer = await unit.Players.EndTurn(gameID);
                 unit.Complete();
 
-                return playerTerritory;
+                return new AddArmieDTO { TerritoryID = territoryID, NumArmies = playerTerritory.Armies, NextPlayer = nextPlayer };
             }
         }
     }

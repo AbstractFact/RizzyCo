@@ -10,6 +10,6 @@ namespace Domain.ServiceInterfaces
     public interface IPlayerTerritoryService : IService<PlayerTerritory>
     {
         Task<List<PlayerTerritoryDTO>> GetPlayerTerritories(int playerID);
-        Task<PlayerTerritory> AddArmie(int gameID, int playerID, int territoryID);
+        Task<AddArmieDTO> AddArmie(int gameID, int playerID, int territoryID);
     }
 }
