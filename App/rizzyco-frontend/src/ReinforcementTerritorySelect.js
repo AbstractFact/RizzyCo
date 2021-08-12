@@ -6,7 +6,7 @@ class ReinforcementTerritorySelect extends Component {
 
     this.territories = JSON.parse(localStorage.getItem("playerTerritories"));
     this.onChangeTerritory = this.onChangeTerritory.bind(this);
-
+    localStorage.selectedAddArmieTerritory = 0;
   }
 
   onChangeTerritory(event) {
@@ -15,7 +15,6 @@ class ReinforcementTerritorySelect extends Component {
   }
 
   render() {
-    localStorage.selectedAddArmieTerritory = 0;
     return (
       <div>
         <div>

@@ -43,6 +43,7 @@ function Lobby (){
                     });
 
                     connection.on('ReceiveGameStarted', async message => {
+                        localStorage.gameStage = 0;
                         localStorage.gameID=message;
                         await getPlayer();
                         await getPlayerTerritories();

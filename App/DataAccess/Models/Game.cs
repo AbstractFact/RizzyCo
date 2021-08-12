@@ -14,5 +14,7 @@ namespace DataAccess.Models
         [JsonIgnore]
         public Map Map { get; set; }
 
+        public int Stage { get; set; }
+
     }
 }

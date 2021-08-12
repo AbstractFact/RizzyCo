@@ -151,7 +151,7 @@ namespace BussinesLogic.Services
             bool result = false;
             if (playerUsernames.Intersect(playersJoined).Count() == playerUsernames.Count())
             {
-                await hubService.NotifyOnWaitingLobbyChanges(gameID, "ReceiveGameContinued", gameID);
+                await hubService.NotifyOnWaitingLobbyChanges(gameID, "ReceiveGameContinued", players[0].Game.Stage);
                 result = true;
             }
 

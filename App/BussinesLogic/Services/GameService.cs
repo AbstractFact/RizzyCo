@@ -94,5 +94,14 @@ namespace BussinesLogic.Services
                 return territoriesDTO;
             }
         }
+
+        public async Task<Game> NextStage(int gameID)
+        {
+            using (unit)
+            {
+                Game game = await unit.Games.NextStage(gameID);
+                return game;
+            }
+        }
     }
 }

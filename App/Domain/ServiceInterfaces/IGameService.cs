@@ -10,5 +10,6 @@ namespace Domain.ServiceInterfaces
     public interface IGameService : IService<Game>
     {
         Task<List<PlayerTerritoryDTO>> GetGameTerritories(int id);
+        Task<Game> NextStage(int gameID);
     }
 }

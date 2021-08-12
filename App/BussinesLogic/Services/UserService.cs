@@ -125,6 +125,7 @@ namespace BussinesLogic.Services
                 game.NumberOfPlayers = users.Count + 1;
                 game.Finished = false;
                 game.Map = map;
+                game.Stage = 0;
                 game.CreationDate = DateTime.UtcNow;
                 await unit.Games.Add(game);
 

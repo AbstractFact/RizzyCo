@@ -48,7 +48,7 @@ export default class Game extends Component {
     {
       console.info('SignalR Connected');
       await this.sendJoinGameMessage();
-      this.connection.on('PlayerAddArmie', message => {
+      this.connection.on('PlayerAddArmie', async message => {
         var territories = JSON.parse(localStorage.getItem("allTerritories"));
         territories.forEach(el => {if (el.territoryID===message.territoryID) {el.numArmies=message.numArmies; return;}});
         localStorage.setItem("allTerritories", JSON.stringify(territories));
@@ -58,17 +58,35 @@ export default class Game extends Component {
         localStorage.setItem("gameParticipants", JSON.stringify(participants));
 
         var playerInfo = JSON.parse(localStorage.getItem("playerInfo"));
-        console.log(localStorage.username + "   " +message.nextPlayer);
         if(localStorage.username === message.nextPlayer)
         {
           playerInfo.onTurn = true;
-          console.log("uslo");
+          if(playerInfo.availableArmies===0 && parseInt(localStorage.gameStage)===0)
+          {
+            await this.sendFirstPhaseDone();
+          }
+          else if(parseInt(localStorage.gameStage)===0)
+          {
+            document.getElementById("attackBtn").disabled=true;
+            document.getElementById("defendBtn").disabled=true;
+            document.getElementById("endTurnBtn").disabled=true;
+            document.getElementById("addArmieBtn").disabled=false;
+          }         
+        } 
+        else
+        {
+          playerInfo.onTurn = false;
+          if(parseInt(localStorage.gameStage)===0)
+          {
+            document.getElementById("attackBtn").disabled=true;
+            document.getElementById("defendBtn").disabled=true;
+            document.getElementById("endTurnBtn").disabled=true;
+            document.getElementById("addArmieBtn").disabled=true;
+          } 
         }
          
-        else
-          playerInfo.onTurn = false;
 
-          localStorage.setItem("playerInfo", JSON.stringify(playerInfo));
+        localStorage.setItem("playerInfo", JSON.stringify(playerInfo));
 
         this.setState(
             {
@@ -82,8 +100,6 @@ export default class Game extends Component {
           el.style.backgroundColor=element.playerColor;
           el.querySelector('span').innerHTML=element.numArmies;
         });
-
-
       });
 
       this.connection.on('PlayerLeft', async message => {
@@ -91,6 +107,17 @@ export default class Game extends Component {
         await this.handleGameStopped();
         window.location.href="/home";
       
+      });
+
+      this.connection.on('ReceiveFirstStageDone', async message => {
+          localStorage.gameStage = 1;
+          document.getElementById("addArmieBtn").style.display="none";
+          document.getElementById("addReiforcementBtn").style.display="block";
+          if(playerInfo.onTurn===true)
+            document.getElementById("addReiforcementBtn").disabled=false;
+          else
+          document.getElementById("addReiforcementBtn").disabled=true;
+     
       });
     })
     .catch(err => console.error('SignalR Connection Error: ', err));
@@ -100,6 +127,44 @@ export default class Game extends Component {
       el.style.backgroundColor=element.playerColor;
       el.querySelector('span').innerHTML=element.numArmies;
     });
+
+    var playerInfo = JSON.parse(localStorage.getItem("playerInfo"));
+    if(parseInt(localStorage.gameStage)===0 && playerInfo.onTurn===true)
+    {
+          document.getElementById("addReiforcementBtn").style.display="none";
+          document.getElementById("addArmieBtn").style.display="block";
+          document.getElementById("attackBtn").disabled=true;
+          document.getElementById("defendBtn").disabled=true;
+          document.getElementById("endTurnBtn").disabled=true;
+          document.getElementById("addArmieBtn").disabled=false;
+    }
+    else if(parseInt(localStorage.gameStage)===0 && playerInfo.onTurn===false)
+    {
+          document.getElementById("addReiforcementBtn").style.display="none";
+          document.getElementById("addArmieBtn").style.display="block";
+          document.getElementById("attackBtn").disabled=true;
+          document.getElementById("defendBtn").disabled=true;
+          document.getElementById("endTurnBtn").disabled=true;
+          document.getElementById("addArmieBtn").disabled=true;
+    }
+    else if(parseInt(localStorage.gameStage)===1 && playerInfo.onTurn===true)
+    {
+          document.getElementById("addReiforcementBtn").style.display="block";
+          document.getElementById("addReiforcementBtn").disabled=false;
+          document.getElementById("addArmieBtn").style.display="none";
+          document.getElementById("attackBtn").disabled=true;
+          document.getElementById("defendBtn").disabled=true;
+          document.getElementById("endTurnBtn").disabled=true;
+    }
+    else if(parseInt(localStorage.gameStage)===1 && playerInfo.onTurn===false)
+    {
+          document.getElementById("addReiforcementBtn").style.display="block";
+          document.getElementById("addReiforcementBtn").disabled=true;
+          document.getElementById("addArmieBtn").style.display="none";
+          document.getElementById("attackBtn").disabled=true;
+          document.getElementById("defendBtn").disabled=true;
+          document.getElementById("endTurnBtn").disabled=true;
+    }
   }
    
   async onAddArmie(){
@@ -139,8 +204,6 @@ export default class Game extends Component {
 
   }
 
-
-
   async handleGameStopped() {
     if (this.connection.connectionStarted) {
         try {
@@ -153,7 +216,19 @@ export default class Game extends Component {
     else {
         alert('No connection to server yet.');
     }
-}
+  }
+
+  async sendFirstPhaseDone() {
+    const res =  await fetch("https://localhost:44348/api/Game/NextStage/"+localStorage.gameID, { method: "PUT"}); 
+    if (res.ok) {
+      alert("Ide gas!");
+    }
+    else {
+        this.setState({
+            errors: { message: res.message }
+        });
+    }
+  }
 
   async handleLogOut() {
     if (this.connection.connectionStarted) {
@@ -205,21 +280,22 @@ export default class Game extends Component {
           <div>
             <h4>REINFORCEMENT</h4>
             <ReinforcementTerritorySelect />
-            <button disabled = {!this.state.playerInfo.onTurn} onClick={this.onAddArmie}>Add armie</button>
+            <button id="addArmieBtn" onClick={this.onAddArmie}>Add armie</button>
+            <button id="addReiforcementBtn" onClick={this.onAddArmie}>Add armie(s)</button>
           </div>
           <div>
             <h4>ATTACK</h4>
             <AttackTerritorySelect />
-            <button disabled = {!this.state.playerInfo.onTurn} onClick={this.onAttack}>Attack</button>
+            <button id="attackBtn" onClick={this.onAttack}>Attack</button>
           </div>
           <div>
             <h4>DEFENSE</h4>
             <label>Territory</label>
             <br/>
-            <button disabled = {!this.state.playerInfo.onTurn} onClick={this.onDeffend}>Deffend</button>
+            <button id="defendBtn" onClick={this.onDeffend}>Deffend</button>
           </div>
           <div>
-            <button disabled = {!this.state.playerInfo.onTurn}>END MOVE</button> 
+            <button id="endTurnBtn">END TURN</button> 
           </div>
           </div>
         </div>
