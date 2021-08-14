@@ -2,21 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BussinesLogic.Messaging;
 using DataAccess;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
 using DTOs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BussinesLogic.Services
 {
     public class GameService : IGameService
     {
         private readonly IUnitOfWork unit;
-       
-        public GameService(IUnitOfWork unit)
+        private HubService hub;
+
+        public GameService(IUnitOfWork unit, IHubContext<MessageHub> hubContext)
         { 
             this.unit = unit;
+            hub = new HubService(hubContext);
         }
         public async Task<List<Game>> GetAll()
         {
@@ -95,13 +99,61 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<Game> NextStage(int gameID)
+        public async Task<Game> NextStage(int gameID, int playerID, int mapID)
         {
             using (unit)
             {
                 Game game = await unit.Games.NextStage(gameID);
+                int bonus = await CalculateBonusArmies(playerID, mapID);
+                await hub.NotifyOnGameChanges(gameID, "ReceiveFirstStageDone", bonus);
                 return game;
             }
+        }
+
+        public async Task<int> CalculateBonusArmies(int playerID, int mapID)
+        {
+            int bonus = 0;
+            List<PlayerTerritory> playerTerritories = await unit.PlayerTerritories.GetPlayerTerritories(playerID);
+            List<Territory> territories = new List<Territory>();
+            playerTerritories.ForEach(pt =>
+            {
+                territories.Add(pt.Territory);
+            });
+            bonus = territories.Count / 3;
+
+            List<Continent> continents = await unit.Continents.GetMapContinents(mapID);
+
+            foreach (Continent c in continents)
+            {
+                List<Territory> continentTerritories = await unit.Territories.GetContinentTerritories(c.ID);
+                if (continentTerritories.Intersect(territories).Count() == continentTerritories.Count())
+                {
+                    switch (c.Name)
+                    {
+                        case "Europe":
+                            bonus += 5;
+                            break;
+                        case "Africa":
+                            bonus += 3;
+                            break;
+                        case "Australia":
+                            bonus += 2;
+                            break;
+                        case "Northern America":
+                            bonus += 5;
+                            break;
+                        case "Southern America":
+                            bonus += 2;
+                            break;
+                        default:
+                            bonus += 7;
+                            break;
+                    }
+
+                }
+            }
+
+            return bonus;
         }
     }
 }

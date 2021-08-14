@@ -4,10 +4,9 @@ using System.Text;
 
 namespace DTOs
 {
-    public class JoinGameDTO
+    public class GameContinuedDTO
     {
-        public string LobbyID { get; set; }
-        public int GameID { get; set; }
+        public int Stage { get; set; }
         public int MapID { get; set; }
     }
 }

@@ -64,7 +64,7 @@ namespace BussinesLogic.Messaging
         }
         public async Task<string> CreateGame(JoinGameDTO msg)
         {
-            await NotifyOnLobbyChanges(msg.LobbyID, "ReceiveGameStarted", msg.GameID);
+            await NotifyOnLobbyChanges(msg.LobbyID, "ReceiveGameStarted", new GameStartedDTO { GameID = msg.GameID, MapID = msg.MapID });
 
             return "Created game";
         }

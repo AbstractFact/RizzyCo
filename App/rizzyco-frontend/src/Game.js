@@ -18,6 +18,7 @@ export default class Game extends Component {
     this.connection = null;
     this.sendJoinGameMessage = this.sendJoinGameMessage.bind(this);
     this.onAddArmie = this.onAddArmie.bind(this);
+    this.onAddReinforcement = this.onAddReinforcement.bind(this); 
     this.onAttack = this.onAttack.bind(this);
     this.onDeffend = this.onDeffend.bind(this);  
     this.handleLogOut = this.handleLogOut.bind(this);
@@ -61,6 +62,7 @@ export default class Game extends Component {
         if(localStorage.username === message.nextPlayer)
         {
           playerInfo.onTurn = true;
+          localStorage.setItem("playerInfo", JSON.stringify(playerInfo));
           if(playerInfo.availableArmies===0 && parseInt(localStorage.gameStage)===0)
           {
             await this.sendFirstPhaseDone();
@@ -76,6 +78,7 @@ export default class Game extends Component {
         else
         {
           playerInfo.onTurn = false;
+          localStorage.setItem("playerInfo", JSON.stringify(playerInfo));
           if(parseInt(localStorage.gameStage)===0)
           {
             document.getElementById("attackBtn").disabled=true;
@@ -85,9 +88,25 @@ export default class Game extends Component {
           } 
         }
          
+        this.setState(
+            {
+              playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
+              allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+              gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
+            });
+      
+        JSON.parse(localStorage.getItem("allTerritories")).forEach(element => {
+          let el = document.getElementById(element.territoryID);
+          el.style.backgroundColor=element.playerColor;
+          el.querySelector('span').innerHTML=element.numArmies;
+        });
+      });
 
-        localStorage.setItem("playerInfo", JSON.stringify(playerInfo));
-
+      this.connection.on('PlayerAddReinforcement', async message => {
+        var territories = JSON.parse(localStorage.getItem("allTerritories"));
+        territories.forEach(el => {if (el.territoryID===message.territoryID) {el.numArmies=message.numArmies; return;}});
+        localStorage.setItem("allTerritories", JSON.stringify(territories));
+         
         this.setState(
             {
               playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
@@ -112,11 +131,25 @@ export default class Game extends Component {
       this.connection.on('ReceiveFirstStageDone', async message => {
           localStorage.gameStage = 1;
           document.getElementById("addArmieBtn").style.display="none";
-          document.getElementById("addReiforcementBtn").style.display="block";
+          document.getElementById("addReinforcementBtn").style.display="block";
+          document.getElementById("addReinforcementInput").style.display="block";
+          var playerInfo = JSON.parse(localStorage.getItem("playerInfo"));
           if(playerInfo.onTurn===true)
-            document.getElementById("addReiforcementBtn").disabled=false;
+          {
+            document.getElementById("addReinforcementBtn").disabled=false;
+           
+            playerInfo.availableArmies=message;
+            localStorage.setItem("playerInfo", JSON.stringify(playerInfo));
+            this.setState(
+              {
+                playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
+                allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+                gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
+              });
+          }
+            
           else
-          document.getElementById("addReiforcementBtn").disabled=true;
+            document.getElementById("addReinforcementBtn").disabled=true;
      
       });
     })
@@ -131,7 +164,8 @@ export default class Game extends Component {
     var playerInfo = JSON.parse(localStorage.getItem("playerInfo"));
     if(parseInt(localStorage.gameStage)===0 && playerInfo.onTurn===true)
     {
-          document.getElementById("addReiforcementBtn").style.display="none";
+          document.getElementById("addReinforcementBtn").style.display="none";
+          document.getElementById("addReinforcementInput").style.display="none";
           document.getElementById("addArmieBtn").style.display="block";
           document.getElementById("attackBtn").disabled=true;
           document.getElementById("defendBtn").disabled=true;
@@ -140,17 +174,29 @@ export default class Game extends Component {
     }
     else if(parseInt(localStorage.gameStage)===0 && playerInfo.onTurn===false)
     {
-          document.getElementById("addReiforcementBtn").style.display="none";
+          document.getElementById("addReinforcementBtn").style.display="none";
+          document.getElementById("addReinforcementInput").style.display="none";
           document.getElementById("addArmieBtn").style.display="block";
           document.getElementById("attackBtn").disabled=true;
           document.getElementById("defendBtn").disabled=true;
           document.getElementById("endTurnBtn").disabled=true;
           document.getElementById("addArmieBtn").disabled=true;
     }
+    else if(parseInt(localStorage.gameStage)===1 && playerInfo.onTurn===true && playerInfo.availableArmies===0)
+    {
+          document.getElementById("addReinforcementBtn").style.display="block";
+          document.getElementById("addReinforcementInput").style.display="block";
+          document.getElementById("addReinforcementBtn").disabled=true;
+          document.getElementById("addArmieBtn").style.display="none";
+          document.getElementById("attackBtn").disabled=false;
+          document.getElementById("defendBtn").disabled=true;
+          document.getElementById("endTurnBtn").disabled=false;
+    }
     else if(parseInt(localStorage.gameStage)===1 && playerInfo.onTurn===true)
     {
-          document.getElementById("addReiforcementBtn").style.display="block";
-          document.getElementById("addReiforcementBtn").disabled=false;
+          document.getElementById("addReinforcementBtn").style.display="block";
+          document.getElementById("addReinforcementInput").style.display="block";
+          document.getElementById("addReinforcementBtn").disabled=false;
           document.getElementById("addArmieBtn").style.display="none";
           document.getElementById("attackBtn").disabled=true;
           document.getElementById("defendBtn").disabled=true;
@@ -158,13 +204,15 @@ export default class Game extends Component {
     }
     else if(parseInt(localStorage.gameStage)===1 && playerInfo.onTurn===false)
     {
-          document.getElementById("addReiforcementBtn").style.display="block";
-          document.getElementById("addReiforcementBtn").disabled=true;
+          document.getElementById("addReinforcementBtn").style.display="block";
+          document.getElementById("addReinforcementInput").style.display="block";
+          document.getElementById("addReinforcementBtn").disabled=true;
           document.getElementById("addArmieBtn").style.display="none";
           document.getElementById("attackBtn").disabled=true;
           document.getElementById("defendBtn").disabled=true;
           document.getElementById("endTurnBtn").disabled=true;
     }
+   
   }
    
   async onAddArmie(){
@@ -187,6 +235,70 @@ export default class Game extends Component {
           gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
         }
       );
+      
+    }
+    else {
+        this.setState({
+            errors: { message: res.message }
+        });
+    }
+  }
+
+  async onAddReinforcement(){
+    if(parseInt(localStorage.selectedAddArmieTerritory) === 0)
+    {
+      alert("Please select territory.");
+      return;
+    }
+
+    if(document.getElementById("addReinforcementInput").value==="")
+    {
+      alert("Select valid number of reinforcements!");
+      return;
+    }
+
+    var armies = parseInt(document.getElementById("addReinforcementInput").value);
+
+    if(armies<1 || armies > this.state.playerInfo.availableArmies)
+    {
+      alert("Select valid number of reinforcements!");
+      return;
+    }
+      
+
+    var msg = {
+      "gameID" : parseInt(localStorage.gameID),
+      "playerID" : (JSON.parse(localStorage.getItem("playerInfo"))).playerID,
+      "territoryID" : parseInt(localStorage.selectedAddArmieTerritory),
+      "numArmies" : armies
+    }
+    const res =  await fetch("https://localhost:44348/api/PlayerTerritory/AddReinforcement", { method: "POST",
+    headers: {
+    "Content-Type": "application/json"
+    },
+    body: JSON.stringify(msg)
+    });
+    //const res =  await fetch("https://localhost:44348/api/PlayerTerritory/AddReinforcement/"+localStorage.gameID+"/"+(JSON.parse(localStorage.getItem("playerInfo"))).playerID+"/"+localStorage.selectedAddArmieTerritory+"/"+armies, { method: "POST"}); 
+    if (res.ok) {
+      alert("Reinforcement added!");
+
+      var tmp = JSON.parse(localStorage.getItem("playerInfo"));
+      tmp.availableArmies=tmp.availableArmies-armies;
+      localStorage.setItem("playerInfo", JSON.stringify(tmp));
+      this.setState( 
+        {
+          playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
+          allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+          gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
+        }
+      );
+
+      if(tmp.availableArmies===0)
+      {
+        document.getElementById("addReinforcementBtn").disabled=true;
+        document.getElementById("attackBtn").disabled=false;
+        document.getElementById("endTurnBtn").disabled=false;
+      }
       
     }
     else {
@@ -219,7 +331,7 @@ export default class Game extends Component {
   }
 
   async sendFirstPhaseDone() {
-    const res =  await fetch("https://localhost:44348/api/Game/NextStage/"+localStorage.gameID, { method: "PUT"}); 
+    const res =  await fetch("https://localhost:44348/api/Game/NextStage/"+localStorage.gameID+"/"+(JSON.parse(localStorage.getItem("playerInfo"))).playerID+"/"+localStorage.mapID, { method: "PUT"}); 
     if (res.ok) {
       alert("Ide gas!");
     }
@@ -281,7 +393,8 @@ export default class Game extends Component {
             <h4>REINFORCEMENT</h4>
             <ReinforcementTerritorySelect />
             <button id="addArmieBtn" onClick={this.onAddArmie}>Add armie</button>
-            <button id="addReiforcementBtn" onClick={this.onAddArmie}>Add armie(s)</button>
+            <input id="addReinforcementInput" type="number" min="1" max={this.state.playerInfo.availableArmies}></input>
+            <button id="addReinforcementBtn" onClick={this.onAddReinforcement}>Add armie(s)</button>
           </div>
           <div>
             <h4>ATTACK</h4>

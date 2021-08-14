@@ -8,8 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
 using DTOs;
-using BussinesLogic.Messaging;
-using Microsoft.AspNetCore.SignalR;
 
 namespace RizzyCoBE.Controllers
 {
@@ -17,10 +15,9 @@ namespace RizzyCoBE.Controllers
     [ApiController]
     public class GameController : MyMDBController<Game, GameService>
     {
-        private HubService hub;
-        public GameController(GameService service, IHubContext<MessageHub> hubContext) : base(service)
+        public GameController(GameService service) : base(service)
         {
-            hub = new HubService(hubContext);
+            
         }
 
         [HttpGet("GetGameTerritories/{gameID}")]
@@ -33,16 +30,12 @@ namespace RizzyCoBE.Controllers
             return NotFound();
         }
 
-        [HttpPut("NextStage/{gameID}")]
-        public async Task<ActionResult> NextStage(int gameID)
+        [HttpPut("NextStage/{gameID}/{playerID}/{mapID}")]
+        public async Task<ActionResult> NextStage(int gameID, int playerID, int mapID)
         {
-            var result = await service.NextStage(gameID);
+            var result = await service.NextStage(gameID, playerID, mapID);
             if (result != null)
-            {
-                await hub.NotifyOnGameChanges(gameID, "ReceiveFirstStageDone", "First phase done");
                 return Ok();
-            }
-                
 
             return NotFound();
         }

@@ -47,5 +47,18 @@ namespace RizzyCoBE.Controllers
                 
             return NotFound();
         }
+
+        [HttpPost("AddReinforcement")]
+        public async Task<ActionResult> AddReinforcement(AddReinforcementDTO dto)
+        {
+            AddArmieDTO result = await service.AddReinforcement(dto);
+            if (result != null)
+            {
+                await hub.NotifyOnGameChanges(dto.GameID, "PlayerAddReinforcement", result);
+                return Ok();
+            }
+
+            return NotFound();
+        }
     }
 }

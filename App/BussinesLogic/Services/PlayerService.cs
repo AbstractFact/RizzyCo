@@ -133,7 +133,7 @@ namespace BussinesLogic.Services
                     participants.Add(new GameParticipantInfoDTO() { Username = pl.User.Username, PlayerColor = pl.PlayerColor.Value });
                 });
 
-                result.Add(new GameInfoDTO() { GameID = el.Game.ID, CreationDate = el.Game.CreationDate, Finished = el.Game.Finished, Participants = participants });
+                result.Add(new GameInfoDTO() { GameID = el.Game.ID, CreationDate = el.Game.CreationDate, Finished = el.Game.Finished, MapID = el.Game.Map.ID, Participants = participants });
             }
 
             return result;
@@ -151,13 +151,15 @@ namespace BussinesLogic.Services
             bool result = false;
             if (playerUsernames.Intersect(playersJoined).Count() == playerUsernames.Count())
             {
-                await hubService.NotifyOnWaitingLobbyChanges(gameID, "ReceiveGameContinued", players[0].Game.Stage);
+                await hubService.NotifyOnWaitingLobbyChanges(gameID, "ReceiveGameContinued", new GameContinuedDTO { Stage=players[0].Game.Stage, MapID= players[0].Game.Map.ID });
                 result = true;
             }
 
             return result;
         }
 
-        
+  
+
+
     }
 }

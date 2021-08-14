@@ -27,6 +27,7 @@ class GameSelect extends Component {
                 gameID : element.gameID,
                 creationDate: element.creationDate,
                 finished: element.finished,
+                mapID: element.mapID,
                 participants: element.participants
             };
             array.push(entry);
@@ -40,9 +41,10 @@ class GameSelect extends Component {
     }  
   }
   
-  async onContinueGame(gameID) {
+  async onContinueGame(gameID, mapID) {
     localStorage.waitingLobbyID = gameID;
     localStorage.gameID = gameID;
+    localStorage.mapID = mapID;
     window.location.href="/waitingLobby";
   }
 
@@ -70,7 +72,7 @@ class GameSelect extends Component {
                             {m.participants.map((m, index) => 
                             {return <div key={m.username}><label style={{color: m.playerColor}}>{m.username}</label><br/></div>})}
                             <br/><br/>
-                            <button onClick={() => this.onContinueGame(m.gameID)} disabled={m.finished ? true : null}>Continue Game</button> 
+                            <button onClick={() => this.onContinueGame(m.gameID, m.mapID)} disabled={m.finished ? true : null}>Continue Game</button> 
                             <br/><br/><br/>
                          </div>;
                 })}

@@ -44,7 +44,8 @@ function Lobby (){
 
                     connection.on('ReceiveGameStarted', async message => {
                         localStorage.gameStage = 0;
-                        localStorage.gameID=message;
+                        localStorage.gameID=message.gameID;
+                        localStorage.mapID=message.mapID;
                         await getPlayer();
                         await getPlayerTerritories();
                         await getAllTerritories();
@@ -82,7 +83,8 @@ function Lobby (){
     const sendCreateGameMessage = async (lobbyID, gameID) => {
         const msg = {
             lobbyID: lobbyID,
-            gameID: gameID
+            gameID: gameID,
+            mapID : parseInt(localStorage.mapID)
         };
         
         if (connection.connectionStarted) {
@@ -130,9 +132,7 @@ function Lobby (){
     }
 
     function handleClearPlayers() {
-        console.log([...players])
         const newPlayers = players.filter(player => !player.complete)
-        console.log(newPlayers)
         setPlayers(newPlayers)
     }
 

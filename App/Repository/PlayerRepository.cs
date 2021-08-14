@@ -28,7 +28,7 @@ namespace Repository
 
         public async Task<List<Player>> GetPlayers(int gameID)
         {
-            return await context.Set<Player>().Where(p => p.Game.ID == gameID).Include(p => p.Game).Include(p => p.User).Include(p => p.PlayerColor).Include(p => p.Mission).ToListAsync();
+            return await context.Set<Player>().Where(p => p.Game.ID == gameID).Include(p => p.Game).Include(p => p.Game.Map).Include(p => p.User).Include(p => p.PlayerColor).Include(p => p.Mission).ToListAsync();
         }
 
         public async Task<List<Player>> GetUserPlayers(int userID)
@@ -40,6 +40,14 @@ namespace Repository
         {
             Player tmp = await context.Players.FindAsync(playerID);
             tmp.AvailableArmies--;
+            context.Update(tmp);
+            return tmp;
+        }
+
+        public async Task<Player> UpdateAvailableReinforcements(int playerID, int numArmies)
+        {
+            Player tmp = await context.Players.FindAsync(playerID);
+            tmp.AvailableArmies-=numArmies;
             context.Update(tmp);
             return tmp;
         }

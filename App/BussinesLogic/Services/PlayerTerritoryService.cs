@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BussinesLogic.Messaging;
@@ -110,5 +111,19 @@ namespace BussinesLogic.Services
                 return new AddArmieDTO { TerritoryID = territoryID, NumArmies = playerTerritory.Armies, NextPlayer = nextPlayer };
             }
         }
+
+        public async Task<AddArmieDTO> AddReinforcement(AddReinforcementDTO dto)
+        {
+            using (unit)
+            {
+                PlayerTerritory playerTerritory = await unit.PlayerTerritories.AddReinforcement(dto.PlayerID, dto.TerritoryID, dto.NumArmies);
+                await unit.Players.UpdateAvailableReinforcements(dto.PlayerID, dto.NumArmies);
+                unit.Complete();
+
+                return new AddArmieDTO { TerritoryID = dto.TerritoryID, NumArmies = playerTerritory.Armies };
+            }
+        }
+
+
     }
 }

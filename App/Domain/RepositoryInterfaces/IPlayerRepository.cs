@@ -13,6 +13,7 @@ namespace Domain.RepositoryInterfaces
         Task<List<Player>> GetPlayers(int gameID);
         Task<Player> GetPlayerInfo(int gameID, int userID);
         Task<Player> UpdateAvailableArmies(int playerID);
+        Task<Player> UpdateAvailableReinforcements(int playerID, int numArmies);
         Task<List<Player>> GetUserPlayers(int userID);
         Task<string> EndTurn(int gameID);
     }

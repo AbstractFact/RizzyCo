@@ -33,7 +33,8 @@ function WaitingLobby (){
                     });
 
                     connection.on('ReceiveGameContinued', async message => {
-                        localStorage.gameStage = message;
+                        localStorage.gameStage = message.stage;
+                        localStorage.mapID=message.mapID;
                         await getPlayer();
                         await getPlayerTerritories();
                         await getAllTerritories();

@@ -11,5 +11,6 @@ namespace Domain.ServiceInterfaces
     {
         Task<List<PlayerTerritoryDTO>> GetPlayerTerritories(int playerID);
         Task<AddArmieDTO> AddArmie(int gameID, int playerID, int territoryID);
+        Task<AddArmieDTO> AddReinforcement(AddReinforcementDTO dto);
     }
 }

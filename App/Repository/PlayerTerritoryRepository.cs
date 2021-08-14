@@ -26,6 +26,15 @@ namespace Repository
             return entity;
         }
 
+        public async Task<PlayerTerritory> AddReinforcement(int playerID, int territoryID, int numArmies)
+        {
+            PlayerTerritory entity = (await context.Set<PlayerTerritory>().Where(t => t.Player.ID == playerID && t.Territory.ID == territoryID).ToListAsync()).FirstOrDefault();
+            entity.Armies+=numArmies;
+
+            context.Entry(entity).State = EntityState.Modified;
+            return entity;
+        }
+
         public async Task<List<PlayerTerritory>> GetPlayerTerritories(int playerID)
         {
             return await context.Set<PlayerTerritory>().Where(t => t.Player.ID == playerID).Include(p => p.Territory).Include(p => p.Player.PlayerColor).ToListAsync(); 
