@@ -47,7 +47,7 @@ namespace Repository
         public async Task<Player> UpdateAvailableReinforcements(int playerID, int numArmies)
         {
             Player tmp = await context.Players.FindAsync(playerID);
-            tmp.AvailableArmies-=numArmies;
+            tmp.AvailableArmies+=numArmies;
             context.Update(tmp);
             return tmp;
         }

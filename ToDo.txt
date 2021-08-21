@@ -1,7 +1,8 @@
 -Provera ko sme da kreira game
--Obezbediti da igraju redom
 -Srediti bazu
--Videti sta da se radi sa klasama AuthenticateModel i Role
 -Videti folder Patterns u DataAccess
--Videti folder Authentication i Helpers u BussinessLogic
 -Back u browser-u
+-Dugme za home
+-Misije
+-End turn
+-Kartice

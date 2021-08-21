@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 
 class AttackTerritorySelect extends Component {
-  constructor() {
-    super();
-
+  constructor(props) {
+    super(props);
     this.state = {
-      attackTerritories : JSON.parse(localStorage.getItem("playerTerritories")),
+      attackTerritories : this.props.dataParentToChild,
       targetTerritories : []
     };
 
@@ -13,11 +12,13 @@ class AttackTerritorySelect extends Component {
     this.onChangeTargetTerritory = this.onChangeTargetTerritory.bind(this);
     this.getNeighbours = this.getNeighbours.bind(this);
     localStorage.attackFromTerritory = 0;
+    localStorage.attackFromTerritoryName = "";
     localStorage.attackTargetTerritory = 0;
   }
 
   async onChangeAttackTerritory(event) {
     localStorage.attackFromTerritory = parseInt(event.target.value);
+    localStorage.attackFromTerritoryName = event.target[event.target.selectedIndex].text;
     await this.getNeighbours();
     this.setState((state) => {
       return {targetTerritories : JSON.parse(localStorage.getItem("targetTerritories"))}
@@ -57,9 +58,14 @@ class AttackTerritorySelect extends Component {
             <div>
               <select onChange={this.onChangeAttackTerritory}>
               <option key = "default" value={0}>Select Territory</option>
-                {this.state.attackTerritories.map((m, index) => {
-                  return <option key={m.territoryID} value={m.territoryID}>{m.territoryName}</option>;
+                {JSON.parse(localStorage.getItem("playerTerritories")).filter(el=>el.numArmies >= 2).map((m, index) => {
+                    return <option key={m.territoryID} value={m.territoryID}>{m.territoryName}</option>;
                 })}
+              </select>
+              <select id="attackNumDice" disabled={(parseInt(localStorage.attackFromTerritory) === 0) ? true : null}>
+                  <option key = "1" value={1} default>1</option>
+                  <option key = "2" value={2}>2</option>
+                  <option key = "3" value={3}>3</option>
               </select>
             </div>
           )}

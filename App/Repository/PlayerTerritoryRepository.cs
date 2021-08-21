@@ -44,5 +44,13 @@ namespace Repository
         {
             return (await context.Set<PlayerTerritory>().Include(p => p.Territory).Include(p => p.Player.PlayerColor).Where(t => t.Territory.ID == terrID && t.Player.ID!=playerID && t.Player.Game.ID == gameID).ToListAsync()).FirstOrDefault();
         }
+
+        public async Task<PlayerTerritory> GetPlayer(int terrID, int gameID)
+        {
+            PlayerTerritory p = (await context.Set<PlayerTerritory>().Include(p => p.Player).Include(p => p.Player.PlayerColor).Include(p => p.Territory).Include(p => p.Player.User).Where(t => t.Territory.ID == terrID && t.Player.Game.ID == gameID).ToListAsync()).FirstOrDefault();
+
+            return p;
+        }
+
     }
 }

@@ -13,6 +13,7 @@ export default class Game extends Component {
     {
       playerInfo:JSON.parse(localStorage.getItem("playerInfo")),
       allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+      playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
       gameParticipants: JSON.parse(localStorage.getItem("gameParticipants")), 
     }
     this.connection = null;
@@ -23,6 +24,8 @@ export default class Game extends Component {
     this.onDeffend = this.onDeffend.bind(this);  
     this.handleLogOut = this.handleLogOut.bind(this);
     this.handleGameStopped = this.handleGameStopped.bind(this); 
+    this.transferArmies = this.transferArmies.bind(this);
+    this.endTurn = this.endTurn.bind(this);
   }
 
   async sendJoinGameMessage () {
@@ -92,6 +95,7 @@ export default class Game extends Component {
             {
               playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
               allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+              playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
               gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
             });
       
@@ -106,11 +110,12 @@ export default class Game extends Component {
         var territories = JSON.parse(localStorage.getItem("allTerritories"));
         territories.forEach(el => {if (el.territoryID===message.territoryID) {el.numArmies=message.numArmies; return;}});
         localStorage.setItem("allTerritories", JSON.stringify(territories));
-         
+        
         this.setState(
             {
               playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
               allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+              playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
               gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
             });
       
@@ -126,6 +131,108 @@ export default class Game extends Component {
         await this.handleGameStopped();
         window.location.href="/home";
       
+      });
+
+      this.connection.on('PlayerAttacked', async message => {
+        if(localStorage.username===message.targetPlayer)
+        {
+          document.getElementById("defendBtn").disabled=false;
+          localStorage.attackedFromTerritoryID = message.attackFromTerritory;
+          localStorage.attackedTerritoryID = message.targetTerritory;
+          localStorage.attackNumDice=message.numDice;
+          localStorage.playerAttacked = message.playerAttackedID;
+          document.getElementById("attackedTerritoryName").innerHTML=message.targetTerritoryName;
+          alert(message.playerAttackedName + " attacked your territory " + message.targetTerritoryName + " from " + message.attackFromTerritoryName+" with " + message.numDice + " dice");
+        }
+        else if(localStorage.username===message.playerAttackedName)
+        {
+          document.getElementById("attackBtn").disabled=true;
+          localStorage.attackedFromTerritoryID = message.attackFromTerritory;
+          localStorage.attackedTerritoryID = message.targetTerritory;
+        }
+      });
+
+      this.connection.on('PlayerDefended', async message => {
+
+        var territories = JSON.parse(localStorage.getItem("allTerritories"));
+        territories.forEach(el => {
+          if (el.territoryID===message.territory1ID)
+          {
+            el.numArmies=message.numArmies1;
+          }
+          else if(el.territoryID===message.territory2ID)
+          {
+            el.numArmies=message.numArmies2;
+            if(message.winner)
+              el.playerColor = message.player1Color;
+          }
+        });
+        localStorage.setItem("allTerritories", JSON.stringify(territories));
+
+        JSON.parse(localStorage.getItem("allTerritories")).forEach(element => {
+          let el = document.getElementById(element.territoryID);
+          el.style.backgroundColor=element.playerColor;
+          el.querySelector('span').innerHTML=element.numArmies;
+        });
+        
+        if(message.player1ID===(JSON.parse(localStorage.getItem("playerInfo"))).playerID)
+        {
+          document.getElementById("attackBtn").disabled=false;
+          document.getElementById("endTurnBtn").disabled=false;
+          if(message.winner)
+          {
+            document.getElementById("transferArmiesDiv").style.display="block";
+            localStorage.attackFromTerritory = 0;
+          }
+            
+        }
+
+        if((JSON.parse(localStorage.getItem("playerInfo"))).playerID === message.player1ID || (JSON.parse(localStorage.getItem("playerInfo"))).playerID == message.player2ID)
+        {
+            await this.getPlayerTerritories();
+        }
+
+        this.setState(
+              {
+                playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
+                allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+                playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
+                gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
+              });
+      });
+
+      this.connection.on('PlayerTransferedArmies', async message => {
+        var territories = JSON.parse(localStorage.getItem("allTerritories"));
+        territories.forEach(el => {
+          if (el.territoryID===message.terrFromID) 
+          {
+            el.numArmies-=message.numArmies; 
+          }
+          else if(el.territoryID===message.terrToID) 
+          {
+            el.numArmies+=message.numArmies; 
+          }
+        });
+        localStorage.setItem("allTerritories", JSON.stringify(territories));
+        
+        if((JSON.parse(localStorage.getItem("playerInfo"))).playerID === message.playerID)
+        {
+            await this.getPlayerTerritories();
+        }
+
+        this.setState(
+            {
+              playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
+              allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+              playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
+              gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
+            });
+      
+        JSON.parse(localStorage.getItem("allTerritories")).forEach(element => {
+          let el = document.getElementById(element.territoryID);
+          el.style.backgroundColor=element.playerColor;
+          el.querySelector('span').innerHTML=element.numArmies;
+        });
       });
 
       this.connection.on('ReceiveFirstStageDone', async message => {
@@ -144,6 +251,7 @@ export default class Game extends Component {
               {
                 playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
                 allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+                playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
                 gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
               });
           }
@@ -232,6 +340,7 @@ export default class Game extends Component {
         {
           playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
           allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+          playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
           gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
         }
       );
@@ -278,7 +387,6 @@ export default class Game extends Component {
     },
     body: JSON.stringify(msg)
     });
-    //const res =  await fetch("https://localhost:44348/api/PlayerTerritory/AddReinforcement/"+localStorage.gameID+"/"+(JSON.parse(localStorage.getItem("playerInfo"))).playerID+"/"+localStorage.selectedAddArmieTerritory+"/"+armies, { method: "POST"}); 
     if (res.ok) {
       alert("Reinforcement added!");
 
@@ -289,12 +397,21 @@ export default class Game extends Component {
         {
           playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
           allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+          playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
           gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
         }
       );
 
       if(tmp.availableArmies===0)
       {
+        await this.getPlayerTerritories();
+        this.setState(
+          {
+            playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
+            allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+            playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
+            gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
+          });
         document.getElementById("addReinforcementBtn").disabled=true;
         document.getElementById("attackBtn").disabled=false;
         document.getElementById("endTurnBtn").disabled=false;
@@ -308,11 +425,125 @@ export default class Game extends Component {
     }
   }
 
-  onAttack(){
-
+  async onAttack(){
+    var attackNumDice = parseInt(document.getElementById("attackNumDice").value);
+    var playerTerritories = JSON.parse(localStorage.getItem("playerTerritories"))
+    var numDice = playerTerritories.filter(el=>el.territoryID === parseInt(localStorage.attackFromTerritory))[0].numArmies;
+    if(parseInt(localStorage.attackFromTerritory)===0 || parseInt(localStorage.attackTargetTerritory)===0)
+    {
+      alert("Select attack from and terget territories!");
+      return;
+    }
+    if(attackNumDice>numDice-1)
+    {
+      alert("Invalid dice num!");
+      return;
+    }
+    var msg = {
+      "playerID" :(JSON.parse(localStorage.getItem("playerInfo"))).playerID,
+      "playerUsername" :localStorage.username,
+      "attackFromID" : parseInt(localStorage.attackFromTerritory),
+      "attackFromName" : localStorage.attackFromTerritoryName,
+      "targetID" : parseInt(localStorage.attackTargetTerritory),
+      "numDice" : attackNumDice,
+      "gameID" :  parseInt(localStorage.gameID)
+    }
+    const res =  await fetch("https://localhost:44348/api/PlayerTerritory/Attack", { method: "POST",
+    headers: {
+    "Content-Type": "application/json"
+    },
+    body: JSON.stringify(msg)
+    }); 
+    if (res.ok) {
+      document.getElementById("endTurnBtn").disabled=true;
+      alert("Territory attacked!");
+    }
+    else {
+        this.setState({
+            errors: { message: res.message }
+        });
+    }
   }
 
-  onDeffend(){
+  async onDeffend(){
+    var defendNumDice = document.getElementById("defendNumDice").value;
+    var playerTerritories = JSON.parse(localStorage.getItem("playerTerritories"));
+    var validNumDice = playerTerritories.filter(el=>el.territoryID === parseInt(localStorage.attackedTerritoryID))[0].numArmies;
+    if(parseInt(defendNumDice)>parseInt(validNumDice))
+    {
+      alert("Invalid dice num!");
+      return;
+    }
+    var msg = {
+      "gameID" :  parseInt(localStorage.gameID),
+      "numDice1" : parseInt(localStorage.attackNumDice),
+      "numDice2" : parseInt(defendNumDice),
+      "territory1ID" : parseInt(localStorage.attackedFromTerritoryID),
+      "territory2ID" : parseInt(localStorage.attackedTerritoryID),
+      "player1ID" : parseInt(localStorage.playerAttacked),
+      "player2ID" : (JSON.parse(localStorage.getItem("playerInfo"))).playerID  
+    }
+    const res =  await fetch("https://localhost:44348/api/PlayerTerritory/ThrowDice", { method: "POST",
+    headers: {
+    "Content-Type": "application/json"
+    },
+    body: JSON.stringify(msg)
+    }); 
+    if (res.ok) {
+      document.getElementById("defendBtn").disabled=true;
+      document.getElementById("attackedTerritoryName").innerHTML="";
+      alert("Defending territory!");
+    }
+    else {
+        this.setState({
+            errors: { message: res.message }
+        });
+    }
+   }
+
+   async transferArmies(){
+    var terrFromID = parseInt(localStorage.attackedFromTerritoryID);
+    var terrToID = parseInt(localStorage.attackedTerritoryID);
+    var playerID = (JSON.parse(localStorage.getItem("playerInfo"))).playerID;
+    var numArmies = parseInt(document.getElementById("transferArmiesInput").value);
+    var playerTerritories = JSON.parse(localStorage.getItem("playerTerritories")).filter(el=>el.territoryID === terrFromID);
+    var validNumArmies = playerTerritories.filter(el=>el.territoryID === terrFromID)[0].numArmies;
+  
+    if(numArmies <= 0)
+    {
+      alert("Invalid number of armies!");
+      return;
+    }
+    if(validNumArmies - numArmies <= 0)
+    {
+      alert("Invalid number of armies!");
+      return;
+    }
+    var msg = {
+      "gameID" : parseInt(localStorage.gameID),
+      "terrFromID" :  terrFromID,
+      "terrToID" : terrToID,
+      "playerID" : playerID,
+      "numArmies" : numArmies  
+    }
+
+    const res =  await fetch("https://localhost:44348/api/PlayerTerritory/Transfer", { method: "POST",
+    headers: {
+    "Content-Type": "application/json"
+    },
+    body: JSON.stringify(msg)
+    }); 
+    if (res.ok) {
+      document.getElementById("transferArmiesDiv").style.display="none";
+    }
+    else {
+        this.setState({
+            errors: { message: res.message }
+        });
+    }
+   }
+
+  endTurn(){
 
   }
 
@@ -359,6 +590,26 @@ export default class Game extends Component {
     window.location.href="/login";
 }
 
+async getPlayerTerritories(){
+  const res = await fetch("https://localhost:44348/api/PlayerTerritory/GetPlayerTerritories/"+(JSON.parse(localStorage.getItem("playerInfo"))).playerID, { method: "GET"})
+  if (res.ok) {
+      var array = [];
+      const d = await res.json()
+      d.forEach(element => {
+          var entry = {
+              territoryID: element.territoryID,
+              territoryName: element.territoryName,
+              numArmies : element.numArmies
+          };
+          array.push(entry);
+      }); 
+      localStorage.setItem("playerTerritories", JSON.stringify(array)) 
+  } else {
+      console.log(res.message);
+  }  
+}
+
+
   render() {
     return (
         <>
@@ -398,17 +649,27 @@ export default class Game extends Component {
           </div>
           <div>
             <h4>ATTACK</h4>
-            <AttackTerritorySelect />
+            <AttackTerritorySelect dataParentToChild = {this.state.playerTerritories}/>
             <button id="attackBtn" onClick={this.onAttack}>Attack</button>
+            <div id="transferArmiesDiv" style={{display:"none"}}>
+              <label>Transfer armies</label>
+              <input id="transferArmiesInput" type="number" min="1"></input>
+              <button onClick={this.transferArmies}>Transfer</button>
+            </div>
           </div>
           <div>
             <h4>DEFENSE</h4>
-            <label>Territory</label>
+            <label id="attackedTerritoryName"></label>
+            <select id="defendNumDice">
+                  <option key = "1" value={1} default>1</option>
+                  <option key = "2" value={2}>2</option>
+                  <option key = "3" value={3}>3</option>
+            </select>
             <br/>
             <button id="defendBtn" onClick={this.onDeffend}>Deffend</button>
           </div>
           <div>
-            <button id="endTurnBtn">END TURN</button> 
+            <button id="endTurnBtn" onClick={this.endTurn}>END TURN</button> 
           </div>
           </div>
         </div>

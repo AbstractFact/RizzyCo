@@ -60,5 +60,44 @@ namespace RizzyCoBE.Controllers
 
             return NotFound();
         }
+
+        [HttpPost("Attack")]
+        public async Task<ActionResult> Attack(AttackDTO dto)
+        {
+            AttackInfoDTO result = await service.Attack(dto);
+            if (result != null)
+            {
+                await hub.NotifyOnGameChanges(dto.GameID, "PlayerAttacked", result);
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost("ThrowDice")]
+        public async Task<ActionResult> ThrowDice(ThrowDiceDTO dto)
+        {
+            ThrowDiceNotificationDTO result = await service.ThrowDice(dto);
+            if (result!=null)
+            {
+                await hub.NotifyOnGameChanges(dto.GameID, "PlayerDefended", result);
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost("Transfer")]
+        public async Task<ActionResult> Transfer(TransferArmiesDTO dto)
+        {
+            TransferArmiesDTO result = await service.Transfer(dto);
+            if (result != null)
+            {
+                await hub.NotifyOnGameChanges(dto.GameID, "PlayerTransferedArmies", result);
+                return Ok();
+            }
+
+            return NotFound();
+        }
     }
 }
