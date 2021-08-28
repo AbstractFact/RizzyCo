@@ -7,6 +7,7 @@ namespace DTOs
     public class ThrowDiceDTO
     {
         public int GameID { get; set; }
+        public int MapID { get; set; }
         public int NumDice1 { get; set; }
         public int NumDice2 { get; set; }
         public int Territory1ID { get; set; }

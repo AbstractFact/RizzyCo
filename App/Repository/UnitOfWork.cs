@@ -167,10 +167,6 @@ namespace Repository
         {
             return  _context.SaveChanges();
         }
-        //public void Dispose()
-        //{
-        //    _context.Dispose();
-        //}
 
         protected virtual void Dispose(bool disposing)
         {

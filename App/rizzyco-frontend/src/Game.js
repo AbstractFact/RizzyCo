@@ -187,7 +187,7 @@ export default class Game extends Component {
             
         }
 
-        if((JSON.parse(localStorage.getItem("playerInfo"))).playerID === message.player1ID || (JSON.parse(localStorage.getItem("playerInfo"))).playerID == message.player2ID)
+        if((JSON.parse(localStorage.getItem("playerInfo"))).playerID === message.player1ID || (JSON.parse(localStorage.getItem("playerInfo"))).playerID === message.player2ID)
         {
             await this.getPlayerTerritories();
         }
@@ -259,6 +259,34 @@ export default class Game extends Component {
           else
             document.getElementById("addReinforcementBtn").disabled=true;
      
+      });
+
+      this.connection.on('NextPlayerTurn', async message => {
+        var participants = JSON.parse(localStorage.getItem("gameParticipants"));
+        participants.forEach(el => {if (el.username===message.nextPlayerUsername) {el.onTurn=true; } else el.onTurn=false;});
+        localStorage.setItem("gameParticipants", JSON.stringify(participants));
+
+        var playerInfo = JSON.parse(localStorage.getItem("playerInfo"));
+        if(localStorage.username === message.nextPlayerUsername)
+        {
+          playerInfo.onTurn = true;
+          playerInfo.availableArmies=message.bonus;
+          document.getElementById("addReinforcementBtn").disabled=false;
+          localStorage.setItem("playerInfo", JSON.stringify(playerInfo));      
+        } 
+        else
+        {
+          playerInfo.onTurn = false;
+          localStorage.setItem("playerInfo", JSON.stringify(playerInfo)); 
+        }
+         
+        this.setState(
+            {
+              playerInfo: JSON.parse(localStorage.getItem("playerInfo")),
+              allTerritories:JSON.parse(localStorage.getItem("allTerritories")),
+              playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
+              gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
+            });
       });
     })
     .catch(err => console.error('SignalR Connection Error: ', err));
@@ -476,6 +504,7 @@ export default class Game extends Component {
     }
     var msg = {
       "gameID" :  parseInt(localStorage.gameID),
+      "mapID" :  parseInt(localStorage.mapID),
       "numDice1" : parseInt(localStorage.attackNumDice),
       "numDice2" : parseInt(defendNumDice),
       "territory1ID" : parseInt(localStorage.attackedFromTerritoryID),
@@ -543,8 +572,16 @@ export default class Game extends Component {
     }
    }
 
-  endTurn(){
-
+  async endTurn(){
+    const res =  await fetch("https://localhost:44348/api/Game/EndTurn/"+parseInt(localStorage.gameID) + "/" + localStorage.mapID, { method: "GET"}); 
+    if (res.ok) {
+      document.getElementById("endTurnBtn").disabled=true;
+    }
+    else {
+        this.setState({
+            errors: { message: res.message }
+        });
+    }
   }
 
   async handleGameStopped() {
@@ -572,6 +609,7 @@ export default class Game extends Component {
         });
     }
   }
+
 
   async handleLogOut() {
     if (this.connection.connectionStarted) {
@@ -625,7 +663,7 @@ async getPlayerTerritories(){
           <br />
           <br />
           <div className="HUDDiv">
-          <div>
+          <div style={{maxWidth : "30%"}}>
             <h4>GAME INFO</h4>
             <label>Participants: </label>
             <div>

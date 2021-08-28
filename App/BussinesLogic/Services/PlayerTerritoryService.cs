@@ -1,4 +1,5 @@
 ﻿using BussinesLogic.Messaging;
+using BussinesLogic.Services.Strategy;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
@@ -14,11 +15,13 @@ namespace BussinesLogic.Services
     {
         private readonly IUnitOfWork unit;
         private HubService hubService;
+        private IMissionContext missionContext;
 
-        public PlayerTerritoryService(IUnitOfWork unit, IHubContext<MessageHub> hubContext)
+        public PlayerTerritoryService(IUnitOfWork unit, IHubContext<MessageHub> hubContext, MissionContext missionContext)
         {
             this.unit = unit;
             hubService = new HubService(hubContext);
+            this.missionContext = missionContext;
         }
 
         public PlayerTerritory Delete(int id)
@@ -103,7 +106,7 @@ namespace BussinesLogic.Services
             {
                 PlayerTerritory playerTerritory = await unit.PlayerTerritories.AddArmie(playerID, territoryID);
                 await unit.Players.UpdateAvailableArmies(playerID);
-                string nextPlayer = await unit.Players.EndTurn(gameID);
+                string nextPlayer = (await unit.Players.EndTurn(gameID)).NextPlayerUsername;
                 unit.Complete();
 
                 return new AddArmieDTO { TerritoryID = territoryID, NumArmies = playerTerritory.Armies, NextPlayer = nextPlayer };
@@ -127,7 +130,7 @@ namespace BussinesLogic.Services
             using (unit)
             {
                 PlayerTerritory targetPlayer = await unit.PlayerTerritories.GetPlayer(dto.TargetID, dto.GameID);
-                return new AttackInfoDTO { PlayerAttackedID = dto.PlayerID, PlayerAttackedName = dto.PlayerUsername,  NumDice = dto.NumDice, TargetPlayer = targetPlayer.Player.User.Username, AttackFromTerritory = dto.AttackFromID, AttackFromTerritoryName=dto.AttackFromName, TargetTerritory = dto.TargetID, TargetTerritoryName = targetPlayer.Territory.Name };
+                return new AttackInfoDTO { PlayerAttackedID = dto.PlayerID, PlayerAttackedName = dto.PlayerUsername, NumDice = dto.NumDice, TargetPlayer = targetPlayer.Player.User.Username, AttackFromTerritory = dto.AttackFromID, AttackFromTerritoryName = dto.AttackFromName, TargetTerritory = dto.TargetID, TargetTerritoryName = targetPlayer.Territory.Name };
             }
         }
 
@@ -153,6 +156,8 @@ namespace BussinesLogic.Services
                 PlayerTerritory playerTerritory1 = await unit.PlayerTerritories.GetPlayer(dto.Territory1ID, dto.GameID);
                 PlayerTerritory playerTerritory2 = await unit.PlayerTerritories.GetPlayer(dto.Territory2ID, dto.GameID);
 
+                string targetPlayerColor = playerTerritory2.Player.PlayerColor.Value;
+
                 playerTerritory1.Armies -= armiesLost1;
                 playerTerritory2.Armies -= armiesLost2;
 
@@ -166,20 +171,28 @@ namespace BussinesLogic.Services
                 unit.PlayerTerritories.Update(playerTerritory1);
                 unit.PlayerTerritories.Update(playerTerritory2);
                 unit.Complete();
-                return new ThrowDiceNotificationDTO { DiceValues1 = diceValues1,
-                                                      DiceValues2 = diceValues2,
-                                                      Winner = winner,
-                                                      Player1ID = dto.Player1ID,
-                                                      Player1Color = playerTerritory1.Player.PlayerColor.Value,
-                                                      Player2ID = dto.Player2ID, 
-                                                      Territory1ID = playerTerritory1.Territory.ID,
-                                                      Territory2ID=playerTerritory2.Territory.ID,
-                                                      NumArmies1=playerTerritory1.Armies, 
-                                                      NumArmies2=playerTerritory2.Armies 
-                                                    };
+
+                WinnerDTO winnerDTO = new WinnerDTO();
+                if (winner)
+                    winnerDTO = await checkGameCompleted(dto.GameID, dto.MapID, targetPlayerColor, dto.Player1ID);
+
+                return new ThrowDiceNotificationDTO
+                {
+                    DiceValues1 = diceValues1,
+                    DiceValues2 = diceValues2,
+                    Winner = winner,
+                    Player1ID = dto.Player1ID,
+                    Player1Color = playerTerritory1.Player.PlayerColor.Value,
+                    Player2ID = dto.Player2ID,
+                    Territory1ID = playerTerritory1.Territory.ID,
+                    Territory2ID = playerTerritory2.Territory.ID,
+                    NumArmies1 = playerTerritory1.Armies,
+                    NumArmies2 = playerTerritory2.Armies,
+                    WinnerDTO = winnerDTO
+                };
             }
 
-            
+
         }
 
         public void GenerateDiceValues(List<int> diceValues1, int numDice1, List<int> diceValues2, int numDice2)
@@ -198,7 +211,7 @@ namespace BussinesLogic.Services
 
         public async Task<TransferArmiesDTO> Transfer(TransferArmiesDTO dto)
         {
-            using(unit)
+            using (unit)
             {
                 PlayerTerritory playerTerritory1 = await unit.PlayerTerritories.GetPlayer(dto.TerrFromID, dto.GameID);
                 PlayerTerritory playerTerritory2 = await unit.PlayerTerritories.GetPlayer(dto.TerrToID, dto.GameID);
@@ -213,6 +226,36 @@ namespace BussinesLogic.Services
                 return dto;
             }
 
+        }
+
+        async Task<WinnerDTO> checkGameCompleted(int gameID, int mapID, string targetColor, int conqID)
+        {
+            using(unit)
+            {
+                List<Player> players = await unit.Players.GetPlayers(gameID);
+                bool end = false;
+
+                foreach (Player player in players)
+                {
+                    switch (player.Mission.MissionType)
+                    {
+                        case 1:
+                            missionContext.SetStrategy(new ContinentStrategy(unit, player.Mission.Continent1, player.Mission.Continent2, player.Mission.Continent3, mapID));
+                            break;
+                        case 2:
+                            missionContext.SetStrategy(new NumTerritoriesStrategy(unit, player.Mission.NumArmies));
+                            break;
+                        default:
+                            missionContext.SetStrategy(new DestroyPlayerStrategy(unit, player.Mission.TargetPlayerColor, targetColor, conqID, gameID));
+                            break;
+                    }
+                    end = await missionContext.CheckComplete(player.ID);
+                    if (end)
+                        return new WinnerDTO { WinnerID = player.ID, Mission = player.Mission.Description };
+                }
+
+                return null;
+            }
         }
 
     }

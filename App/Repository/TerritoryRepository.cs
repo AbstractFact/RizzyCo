@@ -22,5 +22,10 @@ namespace Repository
             return await context.Set<Territory>().Where(t=>t.Continent.ID==continentID).ToListAsync();
         }
 
+        public async Task<List<Territory>> GetContinentTerritoriesByName(string continent)
+        {
+            return await context.Set<Territory>().Where(t => t.Continent.Name == continent).ToListAsync();
+        }
+
     }
 }

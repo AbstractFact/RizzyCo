@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using BussinesLogic.Services;
 using DTOs;
+using Microsoft.AspNetCore.SignalR;
+using BussinesLogic.Messaging;
 
 namespace RizzyCoBE.Controllers
 {
@@ -15,9 +17,10 @@ namespace RizzyCoBE.Controllers
     [ApiController]
     public class PlayerController : MyMDBController<Player, PlayerService>
     {
-        public PlayerController(PlayerService service) : base(service)
+        private HubService hub;
+        public PlayerController(PlayerService service, IHubContext<MessageHub> hubContext) : base(service)
         {
-
+            hub = new HubService(hubContext);
         }
 
         [HttpGet("GetPlayer/{id}")]
@@ -67,5 +70,6 @@ namespace RizzyCoBE.Controllers
 
             return Ok(result);
         }
+
     }
 }

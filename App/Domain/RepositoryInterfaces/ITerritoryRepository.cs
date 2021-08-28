@@ -9,5 +9,6 @@ namespace Domain.RepositoryInterfaces
     public interface ITerritoryRepository : IRepository<Territory>
     {
         Task<List<Territory>> GetContinentTerritories(int continentID);
+        Task<List<Territory>> GetContinentTerritoriesByName(string continent);
     }
 }

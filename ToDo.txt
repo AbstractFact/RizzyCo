@@ -4,5 +4,4 @@
 -Back u browser-u
 -Dugme za home
 -Misije
--End turn
 -Kartice

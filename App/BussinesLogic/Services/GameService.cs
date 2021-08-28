@@ -15,12 +15,10 @@ namespace BussinesLogic.Services
     public class GameService : IGameService
     {
         private readonly IUnitOfWork unit;
-        private HubService hub;
 
-        public GameService(IUnitOfWork unit, IHubContext<MessageHub> hubContext)
+        public GameService(IUnitOfWork unit)
         { 
             this.unit = unit;
-            hub = new HubService(hubContext);
         }
         public async Task<List<Game>> GetAll()
         {
@@ -99,15 +97,14 @@ namespace BussinesLogic.Services
             }
         }
 
-        public async Task<Game> NextStage(int gameID, int playerID, int mapID)
+        public async Task<int> NextStage(int gameID, int playerID, int mapID)
         {
             using (unit)
             {
                 Game game = await unit.Games.NextStage(gameID);
                 int bonus = await CalculateBonusArmies(playerID, mapID);
                 await unit.Players.UpdateAvailableReinforcements(playerID, bonus);
-                await hub.NotifyOnGameChanges(gameID, "ReceiveFirstStageDone", bonus);
-                return game;
+                return bonus;
             }
         }
 
@@ -155,6 +152,20 @@ namespace BussinesLogic.Services
             }
 
             return bonus;
+        }
+
+        public async Task<NextPlayerDTO> EndTurn(int gameID, int mapID)
+        {
+            using (unit)
+            {
+                NextPlayerDTO nextPlayer = await unit.Players.EndTurn(gameID);
+                int bonus = await CalculateBonusArmies(nextPlayer.NextPlayerID, mapID);
+                await unit.Players.UpdateAvailableReinforcements(nextPlayer.NextPlayerID, bonus);
+                nextPlayer.Bonus = bonus;
+                unit.Complete();
+                return nextPlayer;
+            }
+
         }
     }
 }

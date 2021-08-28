@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DataAccess;
 using DataAccess.Models;
 using Domain.RepositoryInterfaces;
+using DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repository
@@ -52,22 +53,26 @@ namespace Repository
             return tmp;
         }
 
-        public async Task<string> EndTurn(int gameID)
+        public async Task<NextPlayerDTO> EndTurn(int gameID)
         {
            
             List<Player> players = await GetPlayers(gameID);
-            string result = "";
+            NextPlayerDTO result = new NextPlayerDTO();
             players.ForEach(el =>
             {
                 el.OnTurn--;
                 if (el.OnTurn < 0)
                 {
                     el.OnTurn = players.Count - 1;
-                    context.Update(el);
+                    context.Players.Update(el);
                 }
 
                 if (el.OnTurn == 0)
-                    result = el.User.Username;
+                {
+                    result.NextPlayerID = el.ID;
+                    result.NextPlayerUsername = el.User.Username;
+                }
+                    
             });
 
             return result;

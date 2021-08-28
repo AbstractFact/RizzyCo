@@ -18,11 +18,9 @@ namespace RizzyCoBE.Controllers
     public class PlayerTerritoryController : MyMDBController<PlayerTerritory, PlayerTerritoryService>
     {
         private HubService hub;
-        private readonly PlayerService playerService;
-        public PlayerTerritoryController(PlayerTerritoryService service, PlayerService playerSevice, IHubContext<MessageHub> hubContext) : base(service)
+        public PlayerTerritoryController(PlayerTerritoryService service, IHubContext<MessageHub> hubContext) : base(service)
         {
             hub = new HubService(hubContext);
-            this.playerService = playerSevice;
         }
 
         [HttpGet("GetPlayerTerritories/{playerID}")]

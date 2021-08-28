@@ -17,6 +17,7 @@ using Repository;
 using BussinesLogic.Helpers;
 using BussinesLogic.Authentication;
 using BussinesLogic.Messaging;
+using BussinesLogic.Services.Strategy;
 
 namespace RizzyCoBE
 {
@@ -75,6 +76,7 @@ namespace RizzyCoBE
             services.AddTransient<IUserAuthService,UserAuthService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddScoped<MissionContext>();
             services.AddScoped<CardService>();
             services.AddScoped<GameService>();
             services.AddScoped<MapService>();

@@ -52,5 +52,9 @@ namespace Repository
             return p;
         }
 
+        public async Task<int> GetPlayerTerritoriesByColor(string playerColor, int gameID)
+        {
+            return (await context.Set<PlayerTerritory>().Where(t => t.Player.PlayerColor.Value == playerColor && t.Player.Game.ID==gameID).Include(p => p.Territory).Include(p => p.Player).ToListAsync()).Count;
+        }
     }
 }

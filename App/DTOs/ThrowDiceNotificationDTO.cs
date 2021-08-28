@@ -16,6 +16,8 @@ namespace DTOs
         public int Territory2ID { get; set; }
         public int NumArmies1 { get; set; }
         public int NumArmies2 { get; set; }
-        
+        public WinnerDTO WinnerDTO { get; set; }
+
+
     }
 }
