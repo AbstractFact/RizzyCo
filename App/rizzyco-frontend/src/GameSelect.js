@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "./style/style.css";
 
 class GameSelect extends Component {
   constructor() {
@@ -50,14 +51,13 @@ class GameSelect extends Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <h2>Game History: </h2> 
+        <div className="gameSelectDiv">
+          <h2 >Game History: </h2> 
           {this.state.games && (
             <div>
                 {
                   this.state.games.map((m, index) => {
-                  return <div key={m.gameID}>
+                  return <div key={m.gameID} className="homeGameDiv">
                             <h4>Game: {index+1}</h4>
                             <label>Started on: </label>
                             {new Intl.DateTimeFormat("en-GB", {
@@ -71,15 +71,14 @@ class GameSelect extends Component {
                             <p>Participants:</p>
                             {m.participants.map((m, index) => 
                             {return <div key={m.username}><label style={{color: m.playerColor}}>{m.username}</label><br/></div>})}
-                            <br/><br/>
-                            <button onClick={() => this.onContinueGame(m.gameID, m.mapID)} disabled={m.finished ? true : null}>Continue Game</button> 
-                            <br/><br/><br/>
+                            <br/>
+                            <button className="continueGameHomeBtn" onClick={() => this.onContinueGame(m.gameID, m.mapID)} disabled={m.finished ? true : null}>Continue Game</button> 
+                            <br/>
                          </div>;
                 })}
             </div>
           )}
         </div>
-      </div>
     );
   }
 }

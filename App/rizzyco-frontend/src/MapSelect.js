@@ -13,9 +13,8 @@ class MapSelect extends Component {
   render() {
     const { maps } = this.props
     return (
-      <div>
-        <div>
-          <span>Select map</span> :
+        <div className="mapDiv">
+          <span>Select map: </span> 
           {maps && maps.length > 0 && (
             <div>
               <select onChange={this.onChangeMap}>
@@ -28,7 +27,6 @@ class MapSelect extends Component {
             </div>
           )}
         </div>
-      </div>
     );
   }
 }

@@ -20,7 +20,6 @@ namespace RizzyCoBE.Controllers
 
         }
 
-        // POST: api/[controller]
         [HttpPost("AddNeighbour/{srcID}/{dstID}")]
         public async Task<ActionResult<Neighbour>> AddNeighbour(int srcID, int dstID)
         {

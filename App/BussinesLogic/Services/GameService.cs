@@ -125,30 +125,7 @@ namespace BussinesLogic.Services
             {
                 List<Territory> continentTerritories = await unit.Territories.GetContinentTerritories(c.ID);
                 if (continentTerritories.Intersect(territories).Count() == continentTerritories.Count())
-                {
-                    switch (c.Name)
-                    {
-                        case "Europe":
-                            bonus += 5;
-                            break;
-                        case "Africa":
-                            bonus += 3;
-                            break;
-                        case "Australia":
-                            bonus += 2;
-                            break;
-                        case "Northern America":
-                            bonus += 5;
-                            break;
-                        case "Southern America":
-                            bonus += 2;
-                            break;
-                        default:
-                            bonus += 7;
-                            break;
-                    }
-
-                }
+                    bonus += c.Value;
             }
 
             return bonus;

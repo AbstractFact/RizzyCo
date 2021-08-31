@@ -3,6 +3,7 @@ import ReinforcementTerritorySelect from "./ReinforcementTerritorySelect";
 import AttackTerritorySelect from "./AttackTerritorySelect";
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import "./style/style.css";
+import logo from './images/Logo.png';
 
 
 export default class Game extends Component {
@@ -497,6 +498,8 @@ export default class Game extends Component {
     var defendNumDice = document.getElementById("defendNumDice").value;
     var playerTerritories = JSON.parse(localStorage.getItem("playerTerritories"));
     var validNumDice = playerTerritories.filter(el=>el.territoryID === parseInt(localStorage.attackedTerritoryID))[0].numArmies;
+    console.log(parseInt(defendNumDice));
+    console.log(parseInt(validNumDice));
     if(parseInt(defendNumDice)>parseInt(validNumDice))
     {
       alert("Invalid dice num!");
@@ -652,50 +655,53 @@ async getPlayerTerritories(){
     return (
         <>
         <div>
-          <br />
-          <div className = "logOutDiv">
-          <label>{localStorage.username}</label>
-          <br />
-          <button onClick={this.handleLogOut}>Log out</button>
-          <br />
+          <div className="navDiv">
+                <div>
+                    <a href="/home"><img className="logoImg" src={logo} alt="Home"/></a>
+                </div>
+                <div className="logoutDiv">
+                    <label>{localStorage.username}</label>
+                    <button className="logoutBtn" onClick={this.handleLogOut} >Log out</button>
+                    <br />
+                </div>
           </div>
           <h1>WELCOME TO THE RISK GAME</h1>
           <br />
           <br />
           <div className="HUDDiv">
-          <div style={{maxWidth : "30%"}}>
-            <h4>GAME INFO</h4>
-            <label>Participants: </label>
-            <div>
-            { JSON.parse(localStorage.getItem("gameParticipants")).map((m, index) => 
-            {return <div key={m.username}><label style={{color: m.playerColor, textDecorationLine: m.onTurn ? "underline" : "none"}}>{m.username}</label> </div>})}
+            <div style={{maxWidth : "30%"}}>
+              <h4>GAME INFO</h4>
+              <label>Participants: </label>
+              <div>
+              { JSON.parse(localStorage.getItem("gameParticipants")).map((m, index) => 
+              {return <div key={m.username}><label style={{color: m.playerColor, textDecorationLine: m.onTurn ? "underline" : "none"}}>{m.username}</label> </div>})}
+              </div>
+              <br />
+              <label>My Mission: </label>
+              <label>{this.state.playerInfo.mission}</label>
+              <br />
+              <br />
+              <label>Available armies: </label>
+              <label>{this.state.playerInfo.availableArmies}</label>
             </div>
-            <br />
-            <label>My Mission: </label>
-            <label>{this.state.playerInfo.mission}</label>
-            <br />
-            <br />
-            <label>Available armies: </label>
-            <label>{this.state.playerInfo.availableArmies}</label>
-          </div>
-          <div>
-            <h4>REINFORCEMENT</h4>
-            <ReinforcementTerritorySelect />
-            <button id="addArmieBtn" onClick={this.onAddArmie}>Add armie</button>
-            <input id="addReinforcementInput" type="number" min="1" max={this.state.playerInfo.availableArmies}></input>
-            <button id="addReinforcementBtn" onClick={this.onAddReinforcement}>Add armie(s)</button>
-          </div>
-          <div>
-            <h4>ATTACK</h4>
-            <AttackTerritorySelect dataParentToChild = {this.state.playerTerritories}/>
-            <button id="attackBtn" onClick={this.onAttack}>Attack</button>
-            <div id="transferArmiesDiv" style={{display:"none"}}>
-              <label>Transfer armies</label>
-              <input id="transferArmiesInput" type="number" min="1"></input>
-              <button onClick={this.transferArmies}>Transfer</button>
+            <div className="reinforcementDiv">
+              <h4>REINFORCEMENT</h4>
+              <ReinforcementTerritorySelect />
+              <button id="addArmieBtn" onClick={this.onAddArmie}>Add armie</button>
+              <input id="addReinforcementInput" type="number" min="1" max={this.state.playerInfo.availableArmies}></input>
+              <button id="addReinforcementBtn" onClick={this.onAddReinforcement}>Add armie(s)</button>
             </div>
-          </div>
-          <div>
+            <div className="attackDiv">
+              <h4>ATTACK</h4>
+              <AttackTerritorySelect dataParentToChild = {this.state.playerTerritories}/>
+              <button id="attackBtn" onClick={this.onAttack}>Attack</button>
+              <div id="transferArmiesDiv" style={{display:"none"}}>
+                <label>Transfer armies</label>
+                <input id="transferArmiesInput" type="number" min="1"></input>
+                <button onClick={this.transferArmies}>Transfer</button>
+              </div>
+            </div>
+          <div className="defenceDiv">
             <h4>DEFENSE</h4>
             <label id="attackedTerritoryName"></label>
             <select id="defendNumDice">

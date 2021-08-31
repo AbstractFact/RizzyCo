@@ -1,6 +1,8 @@
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import GameSelect from "./GameSelect";
+import "./style/style.css";
+import logo from './images/Logo.png';
 
 function Home (){
     function handleCreateLobby() {
@@ -16,14 +18,20 @@ function Home (){
 
    return (
     <>
-        <br />
-        <button onClick={handleCreateLobby}>Create lobby</button>
-        <label style={{float: "right"}}>{localStorage.username}</label>
-        <br />
-        <button style={{float: "right"}} onClick={handleLogOut}>Log out</button>
-        <br />
-        <br />
+    <div className="homeContainer"> 
+        <div className="navDiv">
+            <div>
+                <a href="/home"><img className="logoImg" src={logo} alt="Home"/></a>
+            </div>
+            <div className="logoutDiv">
+                <label>{localStorage.username}</label>
+                <button className="logoutBtn" onClick={handleLogOut} >Log out</button>
+                <br />
+            </div>
+        </div>
+        <button className="createLobbyBtn" onClick={handleCreateLobby}>Create lobby</button>
         <GameSelect />
+    </div>
     </>
    )
 }

@@ -1,6 +1,8 @@
 import React, {useState, useEffect } from 'react';
 import PlayerList from './PlayerList'
 import MapSelect from "./MapSelect";
+import "./style/style.css";
+import logo from './images/Logo.png';
 
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
@@ -252,22 +254,37 @@ function Lobby (){
 
     return (
         <>
-        {console.log(players)}
-            <MapSelect maps={localStorage.getItem("allMaps")}/>
-            <label style={{float: "right"}}>{localStorage.username}</label>
-            <br />
-            <button style={{float: "right"}} onClick={handleLogOut}>Log out</button>
-            <br />
-            <label>Players:</label>
-            <PlayerList players={players} togglePlayer={togglePlayer} />
-            <button onClick={handleClearPlayers}>Clear Players</button>
-            <br />
-            <p>{players.filter(player => player.complete).length} players invited</p>
-            <br />
-            <button onClick={handleCreateGame}>Create game</button>
-            <br />
-            <br />
-            <label>{localStorage.lobbyID}</label>
+            <div className="navDiv">
+                <div>
+                    <a href="/home"><img className="logoImg" src={logo} alt="Home"/></a>
+                </div>
+                <div className="logoutDiv">
+                    <label>{localStorage.username}</label>
+                    <button className="logoutBtn" onClick={handleLogOut} >Log out</button>
+                    <br />
+                </div>
+            </div>
+            <div className="lobbyDiv">
+                <MapSelect maps={localStorage.getItem("allMaps")}/>
+                <div>
+                    <br/>
+                    <div className="playersDiv">
+                        <label>Players:</label>
+                        <div>
+                        <PlayerList players={players} togglePlayer={togglePlayer} />
+                        </div>
+                        <div className="clearPlayersDiv">
+                            <button className="clearPlayersBtn" onClick={handleClearPlayers}>Clear Players</button>
+                            <p>{players.filter(player => player.complete).length} players invited</p>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <button className="startGameBtn" onClick={handleCreateGame}>Create game</button>
+                <br />
+                <br />
+                <label>{localStorage.lobbyID}</label>
+            </div>
             
         </>
         )  

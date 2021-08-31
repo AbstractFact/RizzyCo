@@ -14,7 +14,7 @@ namespace DataAccess.Models
         public string Continent1 { get; set; }
         public string Continent2 { get; set; }
         public bool Continent3 { get; set; }
-        public int NumArmies { get; set; }
+        public int NumTerritories { get; set; }
         public string TargetPlayerColor { get; set; }
 
         [JsonIgnore]

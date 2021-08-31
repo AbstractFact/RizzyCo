@@ -50,7 +50,7 @@ form {
 }
 
 .box {
-  color: rgb(121, 116, 116);
+  color: rgb(131, 126, 130);
   font-size: 100%;
   font-weight: bold;
   width: 30px;
@@ -85,5 +85,162 @@ h1{
   padding: 20px;
   display: flex;
   justify-content: space-between;
-  align-items:flex-start
+  align-items:flex-start;
+  border:3px solid rgb(156, 141, 141);
+  margin:20px;
+  font-size:18px;
+  align-items:stretch;
+}
+
+.waitingLobbyDiv{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  font-size: large;
+  background-color: #917153;
+  width: 30%;
+  margin:auto;
+}
+
+.continueGameBtn, .startGameBtn{
+  font-weight: bold;
+  font-size: large;
+  padding: 10px;
+  border-style: dotted;
+}
+
+.continueGameBtn:hover {
+  background-color: #1a303a; 
+  color: white;
+}
+
+.startGameBtn:hover {
+  background-color: #1a303a; 
+  color: white;
+}
+
+.logoImg{
+  width: 200px;
+  margin: 10px;
+}
+
+.navDiv{
+  display: flex;
+  justify-content: space-between;
+}
+
+.logoutDiv{
+  margin: 15px;
+  font-weight: bold;
+  font-size: large;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logoutBtn{
+  background-color: rgb(185, 46, 46);
+  font-size: large;
+  color: white;
+  margin-top: 10px;
+}
+
+.mapDiv{
+  display: flex;
+}
+
+.lobbyDiv{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  font-size: large;
+  background-color: #917153;
+  width: 40%;
+  margin:auto;
+}
+
+.clearPlayersBtn{
+  font-weight: bold;
+  padding: 3px;
+  background-color: rgb(92, 88, 88);
+  color: white;
+  height: 30px;
+}
+
+.clearPlayersBtn:hover {
+  background-color: #395461; 
+  color: white;
+}
+
+.playersDiv{
+  display: flex;
+}
+
+.clearPlayersDiv{
+  display: flex;
+  flex-direction: column;
+  margin-left: 40px;
+}
+
+.gameSelectDiv{
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.homeContainer{
+  display: flex;
+  flex-direction: column;
+}
+
+.homeGameDiv{
+  border:whitesmoke 1px solid;
+  padding-left: 90px;
+  padding-right: 90px;
+  margin: 20px;
+  font-size: large;
+  background-color: rgb(143, 110, 68);
+  display: flex;
+  flex-direction: column;
+}
+
+.continueGameHomeBtn{
+  font-weight: bold;
+  font-size: 14px;
+  padding: 5px;
+  align-self: center;
+}
+
+.continueGameHomeBtn:hover {
+  background-color: #1a303a; 
+  color: white;
+}
+
+.createLobbyBtn{
+  width: 8%;
+  align-self: center;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 5px;
+}
+
+.createLobbyBtn:hover {
+  background-color: #7e376e; 
+  color: white;
+}
+
+.reinforcementDiv{
+  border:1px solid black;
+  padding: 15px;
+}
+
+.attackDiv{
+  border:1px solid black;
+  padding: 15px;
+}
+
+.defenceDiv{
+  border:1px solid black;
+  padding: 15px;
 }

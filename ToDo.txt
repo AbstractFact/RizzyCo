@@ -1,7 +1,3 @@
--Provera ko sme da kreira game
--Srediti bazu
 -Videti folder Patterns u DataAccess
--Back u browser-u
--Dugme za home
--Misije
 -Kartice
+-Prikazati kraj igre

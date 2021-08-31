@@ -10,11 +10,9 @@ namespace DataAccess.Models
         public int NumberOfPlayers { get; set; }
         public bool Finished { get; set; }
         public DateTime CreationDate { get; set; }
-
+        public int Stage { get; set; }
+        
         [JsonIgnore]
         public Map Map { get; set; }
-
-        public int Stage { get; set; }
-
     }
 }

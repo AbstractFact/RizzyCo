@@ -174,7 +174,7 @@ namespace BussinesLogic.Services
 
                 WinnerDTO winnerDTO = new WinnerDTO();
                 if (winner)
-                    winnerDTO = await checkGameCompleted(dto.GameID, dto.MapID, targetPlayerColor, dto.Player1ID);
+                    winnerDTO = await checkGameCompleted(dto.GameID, dto.MapID, targetPlayerColor, dto.Player1ID, playerTerritory1.Player.PlayerColor.Value);
 
                 return new ThrowDiceNotificationDTO
                 {
@@ -228,7 +228,7 @@ namespace BussinesLogic.Services
 
         }
 
-        async Task<WinnerDTO> checkGameCompleted(int gameID, int mapID, string targetColor, int conqID)
+        async Task<WinnerDTO> checkGameCompleted(int gameID, int mapID, string targetColor, int conqID, string playerColor)
         {
             using(unit)
             {
@@ -243,10 +243,10 @@ namespace BussinesLogic.Services
                             missionContext.SetStrategy(new ContinentStrategy(unit, player.Mission.Continent1, player.Mission.Continent2, player.Mission.Continent3, mapID));
                             break;
                         case 2:
-                            missionContext.SetStrategy(new NumTerritoriesStrategy(unit, player.Mission.NumArmies));
+                            missionContext.SetStrategy(new NumTerritoriesStrategy(unit, player.Mission.NumTerritories));
                             break;
                         default:
-                            missionContext.SetStrategy(new DestroyPlayerStrategy(unit, player.Mission.TargetPlayerColor, targetColor, conqID, gameID));
+                            missionContext.SetStrategy(new DestroyPlayerStrategy(unit, player.Mission.TargetPlayerColor, targetColor, playerColor, conqID, gameID));
                             break;
                     }
                     end = await missionContext.CheckComplete(player.ID);

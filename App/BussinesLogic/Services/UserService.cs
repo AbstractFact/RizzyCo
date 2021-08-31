@@ -107,12 +107,11 @@ namespace BussinesLogic.Services
                 User user = await unit.Users.GetUserByUsername(users.ElementAt(0));
                 users.RemoveAt(0);
 
-                Stack<PlayerColor> colors = new Stack<PlayerColor>();
-                (await unit.PlayerColors.GetAll()).ForEach(elem =>
-                {
-                    colors.Push(elem);
-                });
-
+                //Stack<PlayerColor> colors = new Stack<PlayerColor>();
+                //(await unit.PlayerColors.GetAll()).ForEach(elem =>
+                //{
+                //    colors.Push(elem);
+                //});
                 List<Mission> missions = await unit.Missions.GetMapMissions(mapID);
                 int missonCount = missions.Count + 1;
                 Random rnd = new Random();
@@ -120,6 +119,13 @@ namespace BussinesLogic.Services
 
                 Mission mission = missions.ElementAt(randomInd);
                 missions.RemoveAt(randomInd);
+
+                List<PlayerColor> colors = await unit.PlayerColors.GetAll();
+                int colorCount = colors.Count + 1;
+                int randomColor = rnd.Next(0, colorCount - 1);
+
+                PlayerColor playerColor = colors.ElementAt(randomColor);
+                colors.RemoveAt(randomColor);
 
                 Game game = new Game();
                 game.NumberOfPlayers = users.Count + 1;
@@ -152,7 +158,7 @@ namespace BussinesLogic.Services
                 player.OnTurn = counter++;
                 player.User = user;
                 player.Game = game;
-                player.PlayerColor = colors.Pop();
+                player.PlayerColor = playerColor;
                 player.Mission = mission;
                 player.AvailableArmies = availableArmies;
                 await unit.Players.Add(player);
@@ -167,16 +173,20 @@ namespace BussinesLogic.Services
                     invitedPlayer.OnTurn = counter++;
                     invitedPlayer.User = u;
                     invitedPlayer.Game = game;
-                    invitedPlayer.PlayerColor = colors.Pop();
                     invitedPlayer.AvailableArmies = availableArmies;
+
+                    colorCount = colors.Count;
+                    randomColor = rnd.Next(0, colorCount - 1);
+                    PlayerColor newPlayerColor = colors.ElementAt(randomColor);
+                    colors.RemoveAt(randomColor);
+                    invitedPlayer.PlayerColor = newPlayerColor;
 
                     missonCount = missions.Count;
                     randomInd = rnd.Next(0, missonCount - 1);
-
                     Mission invitedPlayerMission = missions.ElementAt(randomInd);
                     missions.RemoveAt(randomInd);
-
                     invitedPlayer.Mission = invitedPlayerMission;
+
                     await unit.Players.Add(invitedPlayer);
                     players.Add(invitedPlayer);
 

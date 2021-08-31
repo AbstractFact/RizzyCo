@@ -103,8 +103,7 @@ export default class SignUpContainer extends Component {
           localStorage.userID=d.id;
           localStorage.username=d.username;
           localStorage.isAuthenticated = true;
-          console.log(localStorage.getItem("redirect"));
-            if(localStorage.getItem("redirect")!=="")
+            if(localStorage.getItem("redirect"))
               window.location.href=localStorage.getItem("redirect"); 
             else
               window.location.href="/home";

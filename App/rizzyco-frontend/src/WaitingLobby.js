@@ -1,5 +1,7 @@
 import React, {useState, useEffect } from 'react';
 import PlayerList from './PlayerList'
+import "./style/style.css";
+import logo from './images/Logo.png';
 
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
@@ -212,19 +214,27 @@ function WaitingLobby (){
 
     return (
         <>
-            
-            <br />
-            <label>Players:</label>
-            <PlayerList players={players} togglePlayer={togglePlayer} />
-            <label style={{float: "right"}}>{localStorage.username}</label>
-            <br />
-            <button style={{float: "right"}} onClick={handleLogOut}>Log out</button>
-            <br />
-            <p>{players.filter(player => player.complete).length} players invited</p>
-            <br />
-            <br />
-            <button onClick={handleContinueGame}>Continue game</button>
-            <br />
+            <div className="navDiv">
+                <div>
+                    <a href="/home"><img className="logoImg" src={logo} alt="Home"/></a>
+                </div>
+                <div className="logoutDiv">
+                    <label>{localStorage.username}</label>
+                    <button className="logoutBtn" onClick={handleLogOut} >Log out</button>
+                    <br />
+                </div>
+            </div>
+            <div className="waitingLobbyDiv">
+                <br/>
+                <label>Players:</label>
+                <br/>
+                <PlayerList players={players} togglePlayer={togglePlayer} />
+                <p>{players.filter(player => player.complete).length} players invited</p>
+                <br />
+                <br />
+                <button className="continueGameBtn" onClick={handleContinueGame}>Continue Game</button>
+                <br />
+            </div>
         </>
         )  
 }

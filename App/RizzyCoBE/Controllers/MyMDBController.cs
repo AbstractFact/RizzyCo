@@ -31,7 +31,6 @@ namespace RizzyCoBE.Controllers
             return NotFound();
         }
 
-        // GET: api/[controller]/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TEntity>> Get(int id)
         {
@@ -42,7 +41,6 @@ namespace RizzyCoBE.Controllers
             return NotFound();
         }
 
-        // PUT: api/[controller]/5
         [HttpPut]
         public IActionResult Put(TEntity entity)
         {
@@ -53,7 +51,6 @@ namespace RizzyCoBE.Controllers
             return BadRequest("Bad request!");
         }
 
-        // POST: api/[controller]
         [HttpPost]
         public async Task<ActionResult<TEntity>> Post(TEntity entity)
         {
@@ -64,7 +61,6 @@ namespace RizzyCoBE.Controllers
             return BadRequest("Bad request!");
         }
 
-        // DELETE: api/[controller]/5
         [HttpDelete("{id}")]
         public ActionResult<TEntity> Delete(int id)
         {

@@ -12,13 +12,15 @@ namespace BussinesLogic.Services.Strategy
         private readonly IUnitOfWork unit;
         private string color;
         private string targetColor;
+        private string playerColor;
         private int conqID;
         private int gameID;
-        public DestroyPlayerStrategy(IUnitOfWork unit, string color, string targetColor, int conqID, int gameID)
+        public DestroyPlayerStrategy(IUnitOfWork unit, string color, string targetColor, string playerColor, int conqID, int gameID)
         {
             this.unit = unit;
             this.color = color;
             this.targetColor = targetColor;
+            this.playerColor = playerColor;
             this.conqID = conqID;
             this.gameID = gameID;
         }
@@ -28,7 +30,7 @@ namespace BussinesLogic.Services.Strategy
             int numTerr = await this.unit.PlayerTerritories.GetPlayerTerritoriesByColor(this.color, gameID);
             if(numTerr == 0 && playerID == conqID && color == targetColor)
                 completed = true;
-            else if(numTerr == 0)
+            else if(numTerr == 0 || color==playerColor)
             {
                 List<PlayerTerritory> playerTerritories = await unit.PlayerTerritories.GetPlayerTerritories(playerID);
 

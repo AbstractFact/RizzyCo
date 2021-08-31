@@ -69,6 +69,7 @@ class AttackTerritorySelect extends Component {
               </select>
             </div>
           )}
+          <br/>
           <span>Attack Target: </span> 
           {this.state.targetTerritories && (
             <div>
