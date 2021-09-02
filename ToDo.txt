@@ -1,3 +1,2 @@
 -Videti folder Patterns u DataAccess
 -Kartice
--Prikazati kraj igre

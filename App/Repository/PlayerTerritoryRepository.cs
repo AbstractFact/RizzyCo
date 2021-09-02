@@ -19,7 +19,7 @@ namespace Repository
 
         public async Task<PlayerTerritory> AddArmie(int playerID, int territoryID)
         {
-            PlayerTerritory entity = (await context.Set<PlayerTerritory>().Where(t => t.Player.ID == playerID && t.Territory.ID == territoryID).ToListAsync()).FirstOrDefault();
+            PlayerTerritory entity = (await context.Set<PlayerTerritory>().Include(p => p.Territory).Include(p => p.Player).Include(p=>p.Player.User).Include(p=>p.Territory).Where(t => t.Player.ID == playerID && t.Territory.ID == territoryID).ToListAsync()).FirstOrDefault();
             entity.Armies++;
 
             context.Entry(entity).State = EntityState.Modified;
@@ -28,7 +28,7 @@ namespace Repository
 
         public async Task<PlayerTerritory> AddReinforcement(int playerID, int territoryID, int numArmies)
         {
-            PlayerTerritory entity = (await context.Set<PlayerTerritory>().Where(t => t.Player.ID == playerID && t.Territory.ID == territoryID).ToListAsync()).FirstOrDefault();
+            PlayerTerritory entity = (await context.Set<PlayerTerritory>().Include(p => p.Territory).Include(p => p.Player).Include(p => p.Player.User).Include(p => p.Territory).Where(t => t.Player.ID == playerID && t.Territory.ID == territoryID).ToListAsync()).FirstOrDefault();
             entity.Armies+=numArmies;
 
             context.Entry(entity).State = EntityState.Modified;

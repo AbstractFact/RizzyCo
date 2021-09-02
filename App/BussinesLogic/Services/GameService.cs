@@ -104,6 +104,7 @@ namespace BussinesLogic.Services
                 Game game = await unit.Games.NextStage(gameID);
                 int bonus = await CalculateBonusArmies(playerID, mapID);
                 await unit.Players.UpdateAvailableReinforcements(playerID, bonus);
+                unit.Complete();
                 return bonus;
             }
         }

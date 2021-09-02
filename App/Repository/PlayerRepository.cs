@@ -41,7 +41,7 @@ namespace Repository
         {
             Player tmp = await context.Players.FindAsync(playerID);
             tmp.AvailableArmies--;
-            context.Update(tmp);
+            context.Entry(tmp).State = EntityState.Modified;
             return tmp;
         }
 
@@ -49,7 +49,7 @@ namespace Repository
         {
             Player tmp = await context.Players.FindAsync(playerID);
             tmp.AvailableArmies+=numArmies;
-            context.Update(tmp);
+            context.Entry(tmp).State = EntityState.Modified;
             return tmp;
         }
 

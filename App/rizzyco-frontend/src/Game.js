@@ -53,7 +53,13 @@ export default class Game extends Component {
     {
       console.info('SignalR Connected');
       await this.sendJoinGameMessage();
+
       this.connection.on('PlayerAddArmie', async message => {
+        var time = new Date();
+        var textarea = document.getElementById("messages");
+        textarea.value+="["+time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()+"] "+message.prevPlayer+" added an armie to " + message.territoryName + "\n";
+        textarea.scrollTop = textarea.scrollHeight;
+
         var territories = JSON.parse(localStorage.getItem("allTerritories"));
         territories.forEach(el => {if (el.territoryID===message.territoryID) {el.numArmies=message.numArmies; return;}});
         localStorage.setItem("allTerritories", JSON.stringify(territories));
@@ -108,6 +114,11 @@ export default class Game extends Component {
       });
 
       this.connection.on('PlayerAddReinforcement', async message => {
+        var time = new Date();
+        var textarea = document.getElementById("messages");
+        textarea.value+="["+time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()+"] "+message.prevPlayer+" added " + message.numArmies + " armie(s) to " + message.territoryName + "\n";
+        textarea.scrollTop = textarea.scrollHeight;
+
         var territories = JSON.parse(localStorage.getItem("allTerritories"));
         territories.forEach(el => {if (el.territoryID===message.territoryID) {el.numArmies=message.numArmies; return;}});
         localStorage.setItem("allTerritories", JSON.stringify(territories));
@@ -135,6 +146,11 @@ export default class Game extends Component {
       });
 
       this.connection.on('PlayerAttacked', async message => {
+        var time = new Date();
+        var textarea = document.getElementById("messages");
+        textarea.value+="["+time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()+"] "+message.playerAttackedName+" attacked " + message.targetTerritoryName  + " from " + message.attackFromTerritoryName+" with " + message.numDice + " dice \n";
+        textarea.scrollTop = textarea.scrollHeight;
+
         if(localStorage.username===message.targetPlayer)
         {
           document.getElementById("defendBtn").disabled=false;
@@ -154,6 +170,20 @@ export default class Game extends Component {
       });
 
       this.connection.on('PlayerDefended', async message => {
+        var dice1 = "";
+        var dice2 = "";
+        message.diceValues1.forEach(d=>dice1+=d+" ");
+        message.diceValues2.forEach(d=>dice2+=d+" ");
+        
+        var time = new Date();
+        var textarea = document.getElementById("messages");
+        var msg ="["+time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()+"] Result:\n"
+                          + message.username1 + "  " + dice1 + " (lost "+ message.lost1 + " armie(s))\n"
+                          + message.username2 + "  " + dice2 + " (lost "+ message.lost2 + " armie(s))\n";
+        
+                          
+        textarea.value+=msg;
+        textarea.scrollTop = textarea.scrollHeight;
 
         var territories = JSON.parse(localStorage.getItem("allTerritories"));
         territories.forEach(el => {
@@ -165,7 +195,13 @@ export default class Game extends Component {
           {
             el.numArmies=message.numArmies2;
             if(message.winner)
+            {
+              textarea.value += message.username1 + " won " + message.territory2Name + "\n";
+              textarea.scrollTop = textarea.scrollHeight;
               el.playerColor = message.player1Color;
+            }
+
+              
           }
         });
         localStorage.setItem("allTerritories", JSON.stringify(territories));
@@ -200,23 +236,35 @@ export default class Game extends Component {
                 playerTerritories:JSON.parse(localStorage.getItem("playerTerritories")),
                 gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
               });
+
+        if(message.winner && message.winnerDTO!=null)
+                {
+                  alert("Winner is player " + message.winnerDTO.winnerUsername + " with mission : " + message.winnerDTO.mission);
+                  window.location.href="/home";
+                }
       });
 
+
       this.connection.on('PlayerTransferedArmies', async message => {
+        var time = new Date();
+        var textarea = document.getElementById("messages");
+        textarea.value+="["+time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()+"] "+message.playerUsername+" transfered " + message.transferInfo.numArmies  + " armie(s) from " + message.terrFromName+" to " + message.terrToName + "\n";
+        textarea.scrollTop = textarea.scrollHeight;
+
         var territories = JSON.parse(localStorage.getItem("allTerritories"));
         territories.forEach(el => {
-          if (el.territoryID===message.terrFromID) 
+          if (el.territoryID===message.transferInfo.terrFromID) 
           {
-            el.numArmies-=message.numArmies; 
+            el.numArmies-=message.transferInfo.numArmies; 
           }
-          else if(el.territoryID===message.terrToID) 
+          else if(el.territoryID===message.transferInfo.terrToID) 
           {
-            el.numArmies+=message.numArmies; 
+            el.numArmies+=message.transferInfo.numArmies; 
           }
         });
         localStorage.setItem("allTerritories", JSON.stringify(territories));
         
-        if((JSON.parse(localStorage.getItem("playerInfo"))).playerID === message.playerID)
+        if((JSON.parse(localStorage.getItem("playerInfo"))).playerID === message.transferInfo.playerID)
         {
             await this.getPlayerTerritories();
         }
@@ -237,6 +285,11 @@ export default class Game extends Component {
       });
 
       this.connection.on('ReceiveFirstStageDone', async message => {
+          var time = new Date();
+          var textarea = document.getElementById("messages");
+          textarea.value+="["+time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()+"] SETUP STAGE COMPLETED \n";
+          textarea.scrollTop = textarea.scrollHeight;
+          
           localStorage.gameStage = 1;
           document.getElementById("addArmieBtn").style.display="none";
           document.getElementById("addReinforcementBtn").style.display="block";
@@ -256,7 +309,6 @@ export default class Game extends Component {
                 gameParticipants: JSON.parse(localStorage.getItem("gameParticipants"))
               });
           }
-            
           else
             document.getElementById("addReinforcementBtn").disabled=true;
      
@@ -360,8 +412,7 @@ export default class Game extends Component {
     }
     const res =  await fetch("https://localhost:44348/api/PlayerTerritory/AddArmie/"+localStorage.gameID+"/"+(JSON.parse(localStorage.getItem("playerInfo"))).playerID+"/"+localStorage.selectedAddArmieTerritory, { method: "POST"}); 
     if (res.ok) {
-      alert("Armie added!");
-
+      
       var tmp = JSON.parse(localStorage.getItem("playerInfo"));
       tmp.availableArmies=tmp.availableArmies-1;
       localStorage.setItem("playerInfo", JSON.stringify(tmp));
@@ -417,7 +468,7 @@ export default class Game extends Component {
     body: JSON.stringify(msg)
     });
     if (res.ok) {
-      alert("Reinforcement added!");
+      
 
       var tmp = JSON.parse(localStorage.getItem("playerInfo"));
       tmp.availableArmies=tmp.availableArmies-armies;
@@ -485,7 +536,7 @@ export default class Game extends Component {
     }); 
     if (res.ok) {
       document.getElementById("endTurnBtn").disabled=true;
-      alert("Territory attacked!");
+      document.getElementById("transferArmiesDiv").style.display="none";
     }
     else {
         this.setState({
@@ -498,8 +549,6 @@ export default class Game extends Component {
     var defendNumDice = document.getElementById("defendNumDice").value;
     var playerTerritories = JSON.parse(localStorage.getItem("playerTerritories"));
     var validNumDice = playerTerritories.filter(el=>el.territoryID === parseInt(localStorage.attackedTerritoryID))[0].numArmies;
-    console.log(parseInt(defendNumDice));
-    console.log(parseInt(validNumDice));
     if(parseInt(defendNumDice)>parseInt(validNumDice))
     {
       alert("Invalid dice num!");
@@ -524,7 +573,6 @@ export default class Game extends Component {
     if (res.ok) {
       document.getElementById("defendBtn").disabled=true;
       document.getElementById("attackedTerritoryName").innerHTML="";
-      alert("Defending territory!");
     }
     else {
         this.setState({
@@ -604,7 +652,7 @@ export default class Game extends Component {
   async sendFirstPhaseDone() {
     const res =  await fetch("https://localhost:44348/api/Game/NextStage/"+localStorage.gameID+"/"+(JSON.parse(localStorage.getItem("playerInfo"))).playerID+"/"+localStorage.mapID, { method: "PUT"}); 
     if (res.ok) {
-      alert("Ide gas!");
+      
     }
     else {
         this.setState({
@@ -669,52 +717,59 @@ async getPlayerTerritories(){
           <br />
           <br />
           <div className="HUDDiv">
-            <div style={{maxWidth : "30%"}}>
-              <h4>GAME INFO</h4>
-              <label>Participants: </label>
-              <div>
-              { JSON.parse(localStorage.getItem("gameParticipants")).map((m, index) => 
-              {return <div key={m.username}><label style={{color: m.playerColor, textDecorationLine: m.onTurn ? "underline" : "none"}}>{m.username}</label> </div>})}
+              <div style={{maxWidth : "30%"}}>
+                <h4>GAME INFO</h4>
+                <label>Participants: </label>
+                <div>
+                { JSON.parse(localStorage.getItem("gameParticipants")).map((m, index) => 
+                {return <div key={m.username}><label style={{color: m.playerColor, textDecorationLine: m.onTurn ? "underline" : "none"}}>{m.username}</label> </div>})}
+                </div>
+                <br />
+                <label>My Mission: </label>
+                <label>{this.state.playerInfo.mission}</label>
+                <br />
+                <br />
+                <label>Available armies: </label>
+                <label>{this.state.playerInfo.availableArmies}</label>
               </div>
-              <br />
-              <label>My Mission: </label>
-              <label>{this.state.playerInfo.mission}</label>
-              <br />
-              <br />
-              <label>Available armies: </label>
-              <label>{this.state.playerInfo.availableArmies}</label>
-            </div>
-            <div className="reinforcementDiv">
-              <h4>REINFORCEMENT</h4>
-              <ReinforcementTerritorySelect />
-              <button id="addArmieBtn" onClick={this.onAddArmie}>Add armie</button>
-              <input id="addReinforcementInput" type="number" min="1" max={this.state.playerInfo.availableArmies}></input>
-              <button id="addReinforcementBtn" onClick={this.onAddReinforcement}>Add armie(s)</button>
-            </div>
-            <div className="attackDiv">
-              <h4>ATTACK</h4>
-              <AttackTerritorySelect dataParentToChild = {this.state.playerTerritories}/>
-              <button id="attackBtn" onClick={this.onAttack}>Attack</button>
-              <div id="transferArmiesDiv" style={{display:"none"}}>
-                <label>Transfer armies</label>
-                <input id="transferArmiesInput" type="number" min="1"></input>
-                <button onClick={this.transferArmies}>Transfer</button>
+              <div className="controlsContainer">
+                <div className="controlsDiv">
+                  <div className="reinforcementDiv">
+                    <h4>REINFORCEMENT</h4>
+                    <ReinforcementTerritorySelect />
+                    <button id="addArmieBtn" onClick={this.onAddArmie}>Add armie</button>
+                    <input id="addReinforcementInput" type="number" min="1" max={this.state.playerInfo.availableArmies}></input>
+                    <button id="addReinforcementBtn" onClick={this.onAddReinforcement}>Add armie(s)</button>
+                  </div>
+                  <div className="attackDiv">
+                    <h4>ATTACK</h4>
+                    <AttackTerritorySelect dataParentToChild = {this.state.playerTerritories}/>
+                    <button id="attackBtn" onClick={this.onAttack}>Attack</button>
+                    <div id="transferArmiesDiv" style={{display:"none"}}>
+                      <label>Transfer armies</label>
+                      <input id="transferArmiesInput" type="number" min="1"></input>
+                      <button onClick={this.transferArmies}>Transfer</button>
+                    </div>
+                  </div>
+                <div className="defenceDiv">
+                  <h4>DEFENSE</h4>
+                  <label id="attackedTerritoryName"></label>
+                  <select id="defendNumDice">
+                        <option key = "1" value={1} default>1</option>
+                        <option key = "2" value={2}>2</option>
+                        <option key = "3" value={3}>3</option>
+                  </select>
+                  <br/>
+                  <button id="defendBtn" onClick={this.onDeffend}>Deffend</button>
+                </div>
+                <div className="textareaDiv">
+                  <textarea id="messages" readOnly></textarea>
+                </div>
+              </div>
+              <div className="endTurnBtn">
+                <button id="endTurnBtn" onClick={this.endTurn}>END TURN</button> 
               </div>
             </div>
-          <div className="defenceDiv">
-            <h4>DEFENSE</h4>
-            <label id="attackedTerritoryName"></label>
-            <select id="defendNumDice">
-                  <option key = "1" value={1} default>1</option>
-                  <option key = "2" value={2}>2</option>
-                  <option key = "3" value={3}>3</option>
-            </select>
-            <br/>
-            <button id="defendBtn" onClick={this.onDeffend}>Deffend</button>
-          </div>
-          <div>
-            <button id="endTurnBtn" onClick={this.endTurn}>END TURN</button> 
-          </div>
           </div>
         </div>
         <div className="wrapper">

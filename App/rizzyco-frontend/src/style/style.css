@@ -84,12 +84,34 @@ h1{
 .HUDDiv{
   padding: 20px;
   display: flex;
+  /* align-items: stretch;  */
   justify-content: space-between;
-  align-items:flex-start;
+  /* align-items:flex-start; */
   border:3px solid rgb(156, 141, 141);
   margin:20px;
   font-size:18px;
-  align-items:stretch;
+}
+
+.controlsContainer{
+  display: flex;
+  flex-direction: column; 
+  /* justify-content: space-between; */
+  width: 70%;
+  /* align-items: space-between; */
+  /* align-items:stretch;*/
+  justify-content: stretch; 
+}
+
+.controlsDiv{
+  display: flex;
+  justify-content: space-between;
+  /*width: 100%;
+  justify-content: space-between; */
+}
+
+.endTurnBtn{
+  align-self: center;
+  margin-top: 15px;
 }
 
 .waitingLobbyDiv{
@@ -244,3 +266,17 @@ h1{
   border:1px solid black;
   padding: 15px;
 }
+
+textarea{
+  overflow-y: scroll;
+  resize: none;
+  height: 100%;
+  width: 100%;
+
+}
+
+.textareaDiv{
+  width: 30%;
+}
+
+        

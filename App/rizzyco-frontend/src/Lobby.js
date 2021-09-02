@@ -160,7 +160,6 @@ function Lobby (){
                 res.json().then(async result=>{
                     localStorage.gameID = result;
                     await sendCreateGameMessage(localStorage.lobbyID, result);
-                    alert("Game created");
                 });
 
             } else {

@@ -88,7 +88,7 @@ namespace RizzyCoBE.Controllers
         [HttpPost("Transfer")]
         public async Task<ActionResult> Transfer(TransferArmiesDTO dto)
         {
-            TransferArmiesDTO result = await service.Transfer(dto);
+            TransferArmiesNotificationDTO result = await service.Transfer(dto);
             if (result != null)
             {
                 await hub.NotifyOnGameChanges(dto.GameID, "PlayerTransferedArmies", result);

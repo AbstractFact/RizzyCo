@@ -14,6 +14,6 @@ namespace Domain.ServiceInterfaces
         Task<AddArmieDTO> AddReinforcement(AddReinforcementDTO dto);
         Task<AttackInfoDTO> Attack(AttackDTO dto);
         Task<ThrowDiceNotificationDTO> ThrowDice(ThrowDiceDTO dto);
-        Task<TransferArmiesDTO> Transfer(TransferArmiesDTO dto);
+        Task<TransferArmiesNotificationDTO> Transfer(TransferArmiesDTO dto);
     }
 }

@@ -109,7 +109,7 @@ namespace BussinesLogic.Services
                 string nextPlayer = (await unit.Players.EndTurn(gameID)).NextPlayerUsername;
                 unit.Complete();
 
-                return new AddArmieDTO { TerritoryID = territoryID, NumArmies = playerTerritory.Armies, NextPlayer = nextPlayer };
+                return new AddArmieDTO { TerritoryID = territoryID, NumArmies = playerTerritory.Armies, NextPlayer = nextPlayer, PrevPlayer = playerTerritory.Player.User.Username, TerritoryName = playerTerritory.Territory.Name };
             }
         }
 
@@ -121,7 +121,7 @@ namespace BussinesLogic.Services
                 await unit.Players.UpdateAvailableReinforcements(dto.PlayerID, -dto.NumArmies);
                 unit.Complete();
 
-                return new AddArmieDTO { TerritoryID = dto.TerritoryID, NumArmies = playerTerritory.Armies };
+                return new AddArmieDTO { TerritoryID = dto.TerritoryID, NumArmies = dto.NumArmies, PrevPlayer = playerTerritory.Player.User.Username, TerritoryName = playerTerritory.Territory.Name };
             }
         }
 
@@ -157,6 +157,7 @@ namespace BussinesLogic.Services
                 PlayerTerritory playerTerritory2 = await unit.PlayerTerritories.GetPlayer(dto.Territory2ID, dto.GameID);
 
                 string targetPlayerColor = playerTerritory2.Player.PlayerColor.Value;
+                string username2 = playerTerritory2.Player.User.Username;
 
                 playerTerritory1.Armies -= armiesLost1;
                 playerTerritory2.Armies -= armiesLost2;
@@ -182,12 +183,17 @@ namespace BussinesLogic.Services
                     DiceValues2 = diceValues2,
                     Winner = winner,
                     Player1ID = dto.Player1ID,
+                    Username1 = playerTerritory1.Player.User.Username,
                     Player1Color = playerTerritory1.Player.PlayerColor.Value,
                     Player2ID = dto.Player2ID,
+                    Username2 = username2,
                     Territory1ID = playerTerritory1.Territory.ID,
                     Territory2ID = playerTerritory2.Territory.ID,
+                    Territory2Name = playerTerritory2.Territory.Name,
                     NumArmies1 = playerTerritory1.Armies,
                     NumArmies2 = playerTerritory2.Armies,
+                    Lost1 = armiesLost1,
+                    Lost2 = armiesLost2,
                     WinnerDTO = winnerDTO
                 };
             }
@@ -200,16 +206,16 @@ namespace BussinesLogic.Services
             Random random = new Random();
 
             for (int i = 0; i < numDice1; i++)
-                diceValues1.Add(random.Next(1, 6));
+                diceValues1.Add(random.Next(1, 7));
 
             for (int i = 0; i < numDice2; i++)
-                diceValues2.Add(random.Next(1, 6));
+                diceValues2.Add(random.Next(1, 7));
 
             diceValues1.Sort((a, b) => b.CompareTo(a));
             diceValues2.Sort((a, b) => b.CompareTo(a));
         }
 
-        public async Task<TransferArmiesDTO> Transfer(TransferArmiesDTO dto)
+        public async Task<TransferArmiesNotificationDTO> Transfer(TransferArmiesDTO dto)
         {
             using (unit)
             {
@@ -223,14 +229,20 @@ namespace BussinesLogic.Services
                 unit.PlayerTerritories.Update(playerTerritory2);
                 unit.Complete();
 
-                return dto;
+                return new TransferArmiesNotificationDTO
+                {
+                    TransferInfo = dto,
+                    PlayerUsername = playerTerritory1.Player.User.Username,
+                    TerrFromName = playerTerritory1.Territory.Name,
+                    TerrToName = playerTerritory2.Territory.Name
+                };
             }
 
         }
 
         async Task<WinnerDTO> checkGameCompleted(int gameID, int mapID, string targetColor, int conqID, string playerColor)
         {
-            using(unit)
+            using (unit)
             {
                 List<Player> players = await unit.Players.GetPlayers(gameID);
                 bool end = false;
@@ -251,7 +263,13 @@ namespace BussinesLogic.Services
                     }
                     end = await missionContext.CheckComplete(player.ID);
                     if (end)
-                        return new WinnerDTO { WinnerID = player.ID, Mission = player.Mission.Description };
+                    {
+                        Game game = await unit.Games.Get(gameID);
+                        game.Finished = true;
+                        unit.Complete();
+                        return new WinnerDTO { WinnerID = player.ID, Mission = player.Mission.Description, WinnerUsername = player.User.Username };
+                    }
+
                 }
 
                 return null;
