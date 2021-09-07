@@ -2,7 +2,6 @@ import React, {useState, useEffect } from 'react';
 import PlayerList from './PlayerList'
 import MapSelect from "./MapSelect";
 import "./style/style.css";
-import logo from './images/Logo.png';
 
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
@@ -33,9 +32,10 @@ function Lobby (){
         if (connection) {
             connection.start()
                 .then(async result =>  {
-                    console.log('Connected!');
                     localStorage.setItem("connection", JSON.stringify(connection));
+
                     await sendLobbyMessage(localStorage.lobbyID, localStorage.username);
+
                     connection.on('ReceiveLobbyPlayerAdd', message => {
                         setPlayers([]);
                         message.forEach(element => {
@@ -112,16 +112,19 @@ function Lobby (){
     const handleAddPlayer = (addUsername) =>{
         const username = addUsername
         if (username === '') return
+        
         if (players.filter(player => player.complete===true).length===5)
         {
             alert("Party is full.")
             window.location.href="/home"
             return
         }
+
         if (players.filter(player => player.username===username).length!==0)
         {
             return
         }
+
         setPlayers(prevPlayers => {
         return [...prevPlayers, { id: username, username: username, complete: true}]
         })
@@ -140,7 +143,8 @@ function Lobby (){
 
    
     function handleCreateGame() {
-        const usernames = []
+        const usernames = [];
+
         players.filter(player => player.complete===true).forEach(element => {
            usernames.push(element.username);
         });
@@ -152,7 +156,7 @@ function Lobby (){
 
         fetch("https://localhost:44348/api/User/CreateGame", { method: "POST",
         headers: {
-        "Content-Type": "application/json"
+            "Content-Type": "application/json"
         },
         body: JSON.stringify(msg)
         }).then(res => {
@@ -185,8 +189,12 @@ function Lobby (){
                 availableArmies:result.availableArmies,
                 onTurn : result.onTurn
                 }; 
+
             localStorage.setItem("playerInfo", JSON.stringify(entity)) 
             localStorage.setItem("gameParticipants", JSON.stringify(result.participants)) 
+
+            var array = [];
+            localStorage.setItem("playerCards", JSON.stringify(array))
         }
         else {
             this.setState({
@@ -200,14 +208,17 @@ function Lobby (){
         if (res.ok) {
             var array = [];
             const d = await res.json()
+
             d.forEach(element => {
                 var entry = {
                     territoryID: element.territoryID,
                     territoryName: element.territoryName,
                     numArmies : element.numArmies
                 };
+
                 array.push(entry);
             }); 
+
             localStorage.setItem("playerTerritories", JSON.stringify(array)) 
         } else {
             console.log(res.message);
@@ -219,6 +230,7 @@ function Lobby (){
         if (res.ok) {
             var array = [];
             const d = await res.json()
+
             d.forEach(element => {
                 var entry = {
                     territoryID: element.territoryID,
@@ -228,6 +240,7 @@ function Lobby (){
                 };
                 array.push(entry);
             }); 
+
             localStorage.setItem("allTerritories", JSON.stringify(array)) 
         } else {
             console.log(res.message);
@@ -246,8 +259,8 @@ function Lobby (){
         else {
             alert('No connection to server yet.');
         }
+
         localStorage.clear();
-        localStorage.setItem("redirect", null);
         window.location.href="/login";
     }
 
@@ -255,7 +268,7 @@ function Lobby (){
         <>
             <div className="navDiv">
                 <div>
-                    <a href="/home"><img className="logoImg" src={logo} alt="Home"/></a>
+                    <a href="/home"><img className="logoImg" src="http://127.0.0.1:10000/devstoreaccount1/rizzyco-container/Logo.png" alt="Home"/></a>
                 </div>
                 <div className="logoutDiv">
                     <label>{localStorage.username}</label>
@@ -284,7 +297,6 @@ function Lobby (){
                 <br />
                 <label>{localStorage.lobbyID}</label>
             </div>
-            
         </>
         )  
 }

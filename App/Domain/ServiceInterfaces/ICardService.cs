@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DataAccess.Models;
 using System.Threading.Tasks;
-using DataAccess.Models;
 
 namespace Domain.ServiceInterfaces
 {

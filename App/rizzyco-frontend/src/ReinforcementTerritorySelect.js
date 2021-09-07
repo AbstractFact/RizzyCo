@@ -6,12 +6,12 @@ class ReinforcementTerritorySelect extends Component {
 
     this.territories = JSON.parse(localStorage.getItem("playerTerritories"));
     this.onChangeTerritory = this.onChangeTerritory.bind(this);
+
     localStorage.selectedAddArmieTerritory = 0;
   }
 
   onChangeTerritory(event) {
     localStorage.selectedAddArmieTerritory = parseInt(event.target.value);
-
   }
 
   render() {
@@ -24,7 +24,7 @@ class ReinforcementTerritorySelect extends Component {
               <select onChange={this.onChangeTerritory} defaultValue={{ label: "Select Territory", value: 0 }}>
               <option key = "default" value={0}>Select Territory</option>
                 {
-                  this.territories.map((m, index) => {
+                  JSON.parse(localStorage.getItem("playerTerritories")).map((m) => {
                      return <option key={m.territoryID} value={m.territoryID}>{m.territoryName}</option>;
                 })}
               </select>

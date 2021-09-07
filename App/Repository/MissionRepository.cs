@@ -16,7 +16,6 @@ namespace Repository
         {
 
         }
-
         public async Task<List<Mission>> GetMapMissions(int mapID)
         {
             return await context.Set<Mission>().Where(t => t.Map.ID == mapID).ToListAsync();

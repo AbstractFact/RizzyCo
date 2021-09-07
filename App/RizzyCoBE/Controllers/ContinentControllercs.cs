@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
 using DataAccess.Models;
 using BussinesLogic.Services;
 
@@ -21,7 +18,6 @@ namespace RizzyCoBE.Controllers
 
         }
 
-        // POST: api/[controller]
         [HttpPost("AddContinent/{mapID}")]
         public async Task<ActionResult<Continent>> AddContinent([FromBody] Continent entity, int mapID)
         {

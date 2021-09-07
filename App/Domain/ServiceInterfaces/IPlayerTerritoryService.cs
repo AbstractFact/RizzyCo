@@ -1,8 +1,6 @@
 ﻿using DataAccess.Models;
 using DTOs;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.ServiceInterfaces

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DTOs;
 using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
-using DTOs;
 using Microsoft.Extensions.Caching.Memory;
-using BussinesLogic.Services;
-using DataAccess.Models;
-using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BussinesLogic.Messaging
 {
@@ -48,13 +44,13 @@ namespace BussinesLogic.Messaging
             await NotifyOnLobbyChanges(msg.LobbyID, "ReceiveLobbyPlayerAdd", dictionary[msg.LobbyID]);
 
             return "Joined group \"Lobby" + msg.LobbyID + "\"";
-
         }
 
         public async Task<string> LeaveLobbyGroup(string lobbyID, string username)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, "Lobby" + lobbyID);
             await NotifyOnLobbyChanges(lobbyID, "ReceivePlayerLeftLobby", username);
+
             return "Left group \"Lobby" + lobbyID + "\"";
         }
 
@@ -119,7 +115,6 @@ namespace BussinesLogic.Messaging
             await NotifyOnWaitingLobbyChanges(msg.LobbyID, "ReceiveWaitingLobbyPlayerAdd", dictionary[msg.LobbyID]);
 
             return "Joined group \"Waiting Lobby" + msg.LobbyID + "\"";
-
         }
 
         public async Task<string> LeaveWaitingLobbyGroup(string lobbyID, string username)

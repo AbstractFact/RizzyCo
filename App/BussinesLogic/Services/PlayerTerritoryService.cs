@@ -1,10 +1,8 @@
-﻿using BussinesLogic.Messaging;
-using BussinesLogic.Services.Strategy;
+﻿using BussinesLogic.Services.Strategy;
 using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
 using DTOs;
-using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,13 +12,11 @@ namespace BussinesLogic.Services
     public class PlayerTerritoryService : IPlayerTerritoryService
     {
         private readonly IUnitOfWork unit;
-        private HubService hubService;
         private IMissionContext missionContext;
 
-        public PlayerTerritoryService(IUnitOfWork unit, IHubContext<MessageHub> hubContext, MissionContext missionContext)
+        public PlayerTerritoryService(IUnitOfWork unit, MissionContext missionContext)
         {
             this.unit = unit;
-            hubService = new HubService(hubContext);
             this.missionContext = missionContext;
         }
 
@@ -92,7 +88,6 @@ namespace BussinesLogic.Services
                 territories.ForEach(element =>
                 {
                     territoriesDTO.Add(new PlayerTerritoryDTO(element));
-
                 });
 
                 return territoriesDTO;
@@ -107,6 +102,7 @@ namespace BussinesLogic.Services
                 PlayerTerritory playerTerritory = await unit.PlayerTerritories.AddArmie(playerID, territoryID);
                 await unit.Players.UpdateAvailableArmies(playerID);
                 string nextPlayer = (await unit.Players.EndTurn(gameID)).NextPlayerUsername;
+
                 unit.Complete();
 
                 return new AddArmieDTO { TerritoryID = territoryID, NumArmies = playerTerritory.Armies, NextPlayer = nextPlayer, PrevPlayer = playerTerritory.Player.User.Username, TerritoryName = playerTerritory.Territory.Name };
@@ -119,6 +115,7 @@ namespace BussinesLogic.Services
             {
                 PlayerTerritory playerTerritory = await unit.PlayerTerritories.AddReinforcement(dto.PlayerID, dto.TerritoryID, dto.NumArmies);
                 await unit.Players.UpdateAvailableReinforcements(dto.PlayerID, -dto.NumArmies);
+                
                 unit.Complete();
 
                 return new AddArmieDTO { TerritoryID = dto.TerritoryID, NumArmies = dto.NumArmies, PrevPlayer = playerTerritory.Player.User.Username, TerritoryName = playerTerritory.Territory.Name };
@@ -145,6 +142,7 @@ namespace BussinesLogic.Services
 
             GenerateDiceValues(diceValues1, dto.NumDice1, diceValues2, dto.NumDice2);
             int range = dto.NumDice1 < dto.NumDice2 ? dto.NumDice1 : dto.NumDice2;
+
             for (int i = 0; i < range; i++)
                 if (diceValues1[i] > diceValues2[i])
                     armiesLost2++;
@@ -169,13 +167,18 @@ namespace BussinesLogic.Services
                     playerTerritory1.Armies--;
                     winner = true;
                 }
+
                 unit.PlayerTerritories.Update(playerTerritory1);
                 unit.PlayerTerritories.Update(playerTerritory2);
                 unit.Complete();
 
                 WinnerDTO winnerDTO = new WinnerDTO();
                 if (winner)
+                {
+                    await unit.Players.WonCard(dto.Player1ID, true);
+                    unit.Complete();
                     winnerDTO = await checkGameCompleted(dto.GameID, dto.MapID, targetPlayerColor, dto.Player1ID, playerTerritory1.Player.PlayerColor.Value);
+                }
 
                 return new ThrowDiceNotificationDTO
                 {
@@ -197,8 +200,6 @@ namespace BussinesLogic.Services
                     WinnerDTO = winnerDTO
                 };
             }
-
-
         }
 
         public void GenerateDiceValues(List<int> diceValues1, int numDice1, List<int> diceValues2, int numDice2)
@@ -227,6 +228,7 @@ namespace BussinesLogic.Services
 
                 unit.PlayerTerritories.Update(playerTerritory1);
                 unit.PlayerTerritories.Update(playerTerritory2);
+
                 unit.Complete();
 
                 return new TransferArmiesNotificationDTO
@@ -237,7 +239,6 @@ namespace BussinesLogic.Services
                     TerrToName = playerTerritory2.Territory.Name
                 };
             }
-
         }
 
         async Task<WinnerDTO> checkGameCompleted(int gameID, int mapID, string targetColor, int conqID, string playerColor)
@@ -262,19 +263,20 @@ namespace BussinesLogic.Services
                             break;
                     }
                     end = await missionContext.CheckComplete(player.ID);
+
                     if (end)
                     {
                         Game game = await unit.Games.Get(gameID);
                         game.Finished = true;
+
                         unit.Complete();
+
                         return new WinnerDTO { WinnerID = player.ID, Mission = player.Mission.Description, WinnerUsername = player.User.Username };
                     }
-
                 }
 
                 return null;
             }
         }
-
     }
 }

@@ -1,12 +1,11 @@
-﻿using DataAccess;
-using DataAccess.Models;
-using Domain.RepositoryInterfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+
+using DataAccess;
+using DataAccess.Models;
+using Domain.RepositoryInterfaces;
 
 namespace Repository
 {
@@ -55,6 +54,11 @@ namespace Repository
         public async Task<int> GetPlayerTerritoriesByColor(string playerColor, int gameID)
         {
             return (await context.Set<PlayerTerritory>().Where(t => t.Player.PlayerColor.Value == playerColor && t.Player.Game.ID==gameID).Include(p => p.Territory).Include(p => p.Player).ToListAsync()).Count;
+        }
+
+        public async Task<PlayerTerritory> GetPlayerTerritory(int playerID, int territoryID)
+        {
+            return (await context.Set<PlayerTerritory>().Where(t => t.Player.ID == playerID && t.Territory.ID == territoryID).Include(p => p.Territory).Include(p => p.Player).ToListAsync()).FirstOrDefault();
         }
     }
 }

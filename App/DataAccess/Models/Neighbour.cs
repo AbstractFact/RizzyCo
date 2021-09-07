@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace DataAccess.Models
 {
-    public class Neighbour 
+    public class Neighbour
     {
         public int ID { get; set; }
         [JsonIgnore]

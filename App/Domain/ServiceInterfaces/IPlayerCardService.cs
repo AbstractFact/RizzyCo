@@ -1,7 +1,6 @@
 ﻿using DataAccess.Models;
-using System;
+using DTOs;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.ServiceInterfaces
@@ -9,6 +8,7 @@ namespace Domain.ServiceInterfaces
     public interface IPlayerCardService : IService<PlayerCard>
     {
         Task<PlayerCard> AddPlayerCard(int playerID, int cardID);
-        Task<List<PlayerCard>> GetPlayerCards(int playerID);
+        Task<List<GetCardDTO>> GetPlayerCards(int playerID);
+        Task<int> UseCards(int card1ID, int cards2ID, int card3ID);
     }
 }

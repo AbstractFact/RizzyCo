@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BussinesLogic.Messaging;
-using DataAccess;
-using DataAccess.Models;
+﻿using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
 using DTOs;
-using Microsoft.AspNetCore.SignalR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BussinesLogic.Services
 {
@@ -17,7 +14,7 @@ namespace BussinesLogic.Services
         private readonly IUnitOfWork unit;
 
         public GameService(IUnitOfWork unit)
-        { 
+        {
             this.unit = unit;
         }
         public async Task<List<Game>> GetAll()
@@ -48,7 +45,7 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
-                return  game;
+                return game;
             }
         }
         public async Task<Game> Post(Game entity)
@@ -70,7 +67,7 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
-                return  game;
+                return game;
             }
         }
 
@@ -104,7 +101,9 @@ namespace BussinesLogic.Services
                 Game game = await unit.Games.NextStage(gameID);
                 int bonus = await CalculateBonusArmies(playerID, mapID);
                 await unit.Players.UpdateAvailableReinforcements(playerID, bonus);
+
                 unit.Complete();
+
                 return bonus;
             }
         }
@@ -114,10 +113,12 @@ namespace BussinesLogic.Services
             int bonus = 0;
             List<PlayerTerritory> playerTerritories = await unit.PlayerTerritories.GetPlayerTerritories(playerID);
             List<Territory> territories = new List<Territory>();
+
             playerTerritories.ForEach(pt =>
             {
                 territories.Add(pt.Territory);
             });
+
             bonus = territories.Count / 3;
 
             List<Continent> continents = await unit.Continents.GetMapContinents(mapID);
@@ -136,14 +137,55 @@ namespace BussinesLogic.Services
         {
             using (unit)
             {
+                PlayerCard playerCard = await GetCard(gameID);
+                GetCardDTO cardDTO;
+                if (playerCard != null)
+                    cardDTO = new GetCardDTO
+                    {
+                        ID = playerCard.ID,
+                        Type = playerCard.Card.Type,
+                        Picture = playerCard.Card.Picture,
+                        TerritoryID = playerCard.Card.Territory != null ? playerCard.Card.Territory.ID : -1,
+                        TerritoryName = playerCard.Card.Territory != null ? playerCard.Card.Territory.Name : "",
+                        PlayerID = playerCard.Player.ID
+                    };
+                else
+                    cardDTO = null;
+
                 NextPlayerDTO nextPlayer = await unit.Players.EndTurn(gameID);
                 int bonus = await CalculateBonusArmies(nextPlayer.NextPlayerID, mapID);
                 await unit.Players.UpdateAvailableReinforcements(nextPlayer.NextPlayerID, bonus);
                 nextPlayer.Bonus = bonus;
+                nextPlayer.Card = cardDTO;
+
                 unit.Complete();
+
                 return nextPlayer;
             }
+        }
 
+        public async Task<PlayerCard> GetCard(int gameID)
+        {
+            List<Player> players = await unit.Players.GetPlayers(gameID);
+            Player player = players.Where(player => player.WonCard == true).FirstOrDefault();
+
+            if (player == null)
+                return null;
+
+            List<PlayerCard> existingCards = await unit.PlayerCards.GetPlayerCards(player.ID);
+            if (existingCards.Count == 5)
+                return null;
+
+            List<PlayerCard> availableCards = await unit.PlayerCards.GetAvailableCards(gameID);
+
+            Random rnd = new Random();
+            int randomInd = rnd.Next(0, availableCards.Count);
+
+            PlayerCard playerCard = availableCards.ElementAt(randomInd);
+            playerCard.Player = player;
+            unit.PlayerCards.Update(playerCard);
+
+            return playerCard;
         }
     }
 }

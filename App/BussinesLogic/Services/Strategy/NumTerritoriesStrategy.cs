@@ -17,9 +17,8 @@ namespace BussinesLogic.Services.Strategy
         }
         public async Task<bool> CheckComplete(int playerID)
         {
-
             List<PlayerTerritory> playerTerritories = await unit.PlayerTerritories.GetPlayerTerritories(playerID);
-                
+
             if (numTerritories == 24)
                 return playerTerritories.Count >= 24;
 
@@ -36,8 +35,6 @@ namespace BussinesLogic.Services.Strategy
             }
 
             return false;
-            
         }
-
     }
 }

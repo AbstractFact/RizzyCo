@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using DataAccess;
-using DataAccess.Models;
+﻿using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BussinesLogic.Services
 {
@@ -25,7 +21,6 @@ namespace BussinesLogic.Services
                 List<Map> maps = await unit.Maps.GetAll();
 
                 return maps;
-
             }
         }
         public async Task<Map> Get(int id)
@@ -49,7 +44,6 @@ namespace BussinesLogic.Services
                 unit.Complete();
 
                 return map;
-
             }
         }
 
@@ -62,7 +56,6 @@ namespace BussinesLogic.Services
                 unit.Complete();
 
                 return map;
-   
             }
         }
 
@@ -75,7 +68,6 @@ namespace BussinesLogic.Services
                 unit.Complete();
 
                 return map;
- 
             }
         }
     }

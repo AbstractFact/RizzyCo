@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Threading.Tasks;
-using DTOs;
-using Microsoft.AspNetCore.SignalR;
 
 namespace BussinesLogic.Messaging
 {
-    public class HubService 
+    public class HubService
     {
         private readonly IHubContext<MessageHub> _hub;
 

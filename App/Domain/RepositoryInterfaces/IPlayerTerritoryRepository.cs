@@ -1,7 +1,5 @@
 ﻿using DataAccess.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.RepositoryInterfaces
@@ -14,5 +12,6 @@ namespace Domain.RepositoryInterfaces
         Task<PlayerTerritory> AddReinforcement(int playerID, int territoryID, int numArmies);
         Task<PlayerTerritory> GetPlayer(int terrID, int gameID);
         Task<int> GetPlayerTerritoriesByColor(string playerColor, int gameID);
+        Task<PlayerTerritory> GetPlayerTerritory(int playerID, int territoryID);
     }
 }

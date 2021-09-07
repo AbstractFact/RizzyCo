@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using DataAccess;
 using DataAccess.Models;
 using Domain.RepositoryInterfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
@@ -16,7 +12,6 @@ namespace Repository
         {
            
         }
-
         public async Task<Game> NextStage(int gameID)
         {
             Game game = await context.Games.FindAsync(gameID);

@@ -1,7 +1,6 @@
 import React, {useState, useEffect } from 'react';
 import PlayerList from './PlayerList'
 import "./style/style.css";
-import logo from './images/Logo.png';
 
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
@@ -23,9 +22,10 @@ function WaitingLobby (){
         if (connection) {
             connection.start()
                 .then(async result =>  {
-                    console.log('Connected!');
                     localStorage.setItem("connection", JSON.stringify(connection));
+
                     await sendWaitingLobbyMessage(localStorage.waitingLobbyID, localStorage.username);
+
                     connection.on('ReceiveWaitingLobbyPlayerAdd', message => {
                         setPlayers([]);
                         message.forEach(element => {
@@ -39,6 +39,7 @@ function WaitingLobby (){
                         localStorage.mapID=message.mapID;
                         await getPlayer();
                         await getPlayerTerritories();
+                        await getPlayerCards();
                         await getAllTerritories();
                         window.location.href="/game";
                     });
@@ -82,10 +83,12 @@ function WaitingLobby (){
     const handleAddPlayer = (addUsername) =>{
         const username = addUsername
         if (username === '') return
+
         if (players.filter(player => player.username===username).length!==0)
         {
             return
         }
+
         setPlayers(prevPlayers => {
         return [...prevPlayers, { id: username, username: username, complete: true}]
         })
@@ -99,6 +102,7 @@ function WaitingLobby (){
 
     function handleContinueGame() {
         const usernames = []
+
         players.filter(player => player.complete===true).forEach(element => {
            usernames.push(element.username);
         });
@@ -132,8 +136,6 @@ function WaitingLobby (){
         });
     }
 
- 
-
     const getPlayer = async function getPlayerInfo (){
         const res =  await fetch("https://localhost:44348/api/Player/GetPlayerInfo/"+localStorage.gameID+"/"+localStorage.userID, { method: "GET"}); 
         if (res.ok) {
@@ -146,6 +148,7 @@ function WaitingLobby (){
                 availableArmies:result.availableArmies,
                 onTurn : result.onTurn
                 }; 
+
             localStorage.setItem("playerInfo", JSON.stringify(entity)) 
             localStorage.setItem("gameParticipants", JSON.stringify(result.participants)) 
         }
@@ -161,15 +164,40 @@ function WaitingLobby (){
         if (res.ok) {
             var array = [];
             const d = await res.json()
+
             d.forEach(element => {
                 var entry = {
                     territoryID: element.territoryID,
                     territoryName: element.territoryName,
                     numArmies : element.numArmies
                 };
+
                 array.push(entry);
             }); 
+
             localStorage.setItem("playerTerritories", JSON.stringify(array)) 
+        } else {
+            console.log(res.message);
+        }  
+    }
+
+    const getPlayerCards = async function getPlayerCards(){
+        const res = await fetch("https://localhost:44348/api/PlayerCard/GetPlayerCards/"+(JSON.parse(localStorage.getItem("playerInfo"))).playerID, { method: "GET"})
+        if (res.ok) {
+            var array = [];
+            const d = await res.json();
+
+            d.forEach(element => {
+                var entry = {
+                    id: element.id,
+                    territoryName: element.territoryName,
+                    picture : element.picture
+                };
+
+                array.push(entry);
+            }); 
+
+            localStorage.setItem("playerCards", JSON.stringify(array)) 
         } else {
             console.log(res.message);
         }  
@@ -180,6 +208,7 @@ function WaitingLobby (){
         if (res.ok) {
             var array = [];
             const d = await res.json()
+
             d.forEach(element => {
                 var entry = {
                     territoryID: element.territoryID,
@@ -187,8 +216,10 @@ function WaitingLobby (){
                     numArmies : element.numArmies,
                     playerColor : element.playerColor
                 };
+
                 array.push(entry);
             }); 
+
             localStorage.setItem("allTerritories", JSON.stringify(array)) 
         } else {
             console.log(res.message);
@@ -207,8 +238,8 @@ function WaitingLobby (){
         else {
             alert('No connection to server yet.');
         }
+        
         localStorage.clear();
-        localStorage.setItem("redirect", null);
         window.location.href="/login";
     }
 
@@ -216,7 +247,7 @@ function WaitingLobby (){
         <>
             <div className="navDiv">
                 <div>
-                    <a href="/home"><img className="logoImg" src={logo} alt="Home"/></a>
+                    <a href="/home"><img className="logoImg" src="http://127.0.0.1:10000/devstoreaccount1/rizzyco-container/Logo.png"alt="Home"/></a>
                 </div>
                 <div className="logoutDiv">
                     <label>{localStorage.username}</label>

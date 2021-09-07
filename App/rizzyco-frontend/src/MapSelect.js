@@ -3,6 +3,7 @@ import React, { Component } from "react";
 class MapSelect extends Component {
   constructor() {
     super();
+    
     this.onChangeMap = this.onChangeMap.bind(this);
   }
 

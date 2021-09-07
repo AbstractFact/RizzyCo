@@ -60,6 +60,7 @@ namespace Repository
             NextPlayerDTO result = new NextPlayerDTO();
             players.ForEach(el =>
             {
+                el.WonCard = false;
                 el.OnTurn--;
                 if (el.OnTurn < 0)
                 {
@@ -77,6 +78,14 @@ namespace Repository
 
             return result;
             
+        }
+
+        public async Task<Player> WonCard(int playerID, bool won)
+        {
+            Player player = await context.Players.FindAsync(playerID);
+            player.WonCard = won;
+            context.Entry(player).State = EntityState.Modified;
+            return player;
         }
     }
 }

@@ -1,14 +1,10 @@
-﻿using System;
+﻿using DataAccess.Models;
+using Domain;
+using Domain.ServiceInterfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BussinesLogic.Messaging;
-using DataAccess;
-using DataAccess.Models;
-using Domain;
-using Domain.ServiceInterfaces;
-using DTOs;
-using Microsoft.AspNetCore.SignalR;
 
 namespace BussinesLogic.Services
 {
@@ -86,10 +82,8 @@ namespace BussinesLogic.Services
 
                 foreach (Continent continent in mapContinents)
                 {
-
                     List<Territory> territories1 = await unit.Territories.GetContinentTerritories(continent.ID);
                     territories.AddRange(territories1);
-
                 };
 
                 return territories;
@@ -107,11 +101,6 @@ namespace BussinesLogic.Services
                 User user = await unit.Users.GetUserByUsername(users.ElementAt(0));
                 users.RemoveAt(0);
 
-                //Stack<PlayerColor> colors = new Stack<PlayerColor>();
-                //(await unit.PlayerColors.GetAll()).ForEach(elem =>
-                //{
-                //    colors.Push(elem);
-                //});
                 List<Mission> missions = await unit.Missions.GetMapMissions(mapID);
                 int missonCount = missions.Count + 1;
                 Random rnd = new Random();
@@ -161,6 +150,7 @@ namespace BussinesLogic.Services
                 player.PlayerColor = playerColor;
                 player.Mission = mission;
                 player.AvailableArmies = availableArmies;
+                player.WonCard = false;
                 await unit.Players.Add(player);
                 players.Add(player);
 
@@ -174,6 +164,7 @@ namespace BussinesLogic.Services
                     invitedPlayer.User = u;
                     invitedPlayer.Game = game;
                     invitedPlayer.AvailableArmies = availableArmies;
+                    invitedPlayer.WonCard = false;
 
                     colorCount = colors.Count;
                     randomColor = rnd.Next(0, colorCount - 1);
@@ -189,7 +180,6 @@ namespace BussinesLogic.Services
 
                     await unit.Players.Add(invitedPlayer);
                     players.Add(invitedPlayer);
-
                 }
 
                 List<Continent> mapContinents = await unit.Continents.GetMapContinents(mapID);
@@ -197,10 +187,8 @@ namespace BussinesLogic.Services
 
                 foreach (Continent continent in mapContinents)
                 {
-
                     List<Territory> territories1 = await unit.Territories.GetContinentTerritories(continent.ID);
                     territories.AddRange(territories1);
-
                 };
 
                 int playersCount = players.Count;
@@ -211,7 +199,7 @@ namespace BussinesLogic.Services
                     randomInd = rnd.Next(0, territories.Count - 1);
 
                     playerTerritory.Armies = 1;
-                    Player p= players.ElementAt(i % playersCount);
+                    Player p = players.ElementAt(i % playersCount);
                     playerTerritory.Player = p;
                     players.ElementAt(i % playersCount).AvailableArmies--;
                     playerTerritory.Territory = territories.ElementAt(randomInd);
@@ -223,12 +211,20 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
-                players.ForEach(element => {
+                players.ForEach(element =>
+                {
                     unit.Players.Update(element);
                 });
 
                 unit.Complete();
 
+                List<Card> cards = await unit.Cards.GetMapCards(mapID);
+                foreach (Card card in cards)
+                {
+                    await unit.PlayerCards.Add(new PlayerCard { Card = card, Player = null, GameID = game.ID });
+                }
+
+                unit.Complete();
                 return game.ID;
             }
         }

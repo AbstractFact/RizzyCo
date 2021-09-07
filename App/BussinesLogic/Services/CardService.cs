@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using DataAccess;
-using DataAccess.Models;
+﻿using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
-
-
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BussinesLogic.Services
 {
@@ -25,7 +19,7 @@ namespace BussinesLogic.Services
         {
             using (unit)
             {
-                Card card =  unit.Cards.Delete(id);
+                Card card = unit.Cards.Delete(id);
 
                 unit.Complete();
 

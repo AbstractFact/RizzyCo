@@ -108,6 +108,7 @@ namespace BussinesLogic.Services
                 Player player = await unit.Players.GetPlayerInfo(gameID, userID);
                 List<GameParticipantInfoDTO> participants = new List<GameParticipantInfoDTO>();
                 List<Player> p = await unit.Players.GetPlayers(gameID);
+
                 p.ForEach(pl =>
                 {
                     participants.Add(new GameParticipantInfoDTO() { Username = pl.User.Username, PlayerColor = pl.PlayerColor.Value, OnTurn = pl.OnTurn == 0 ? true : false });
@@ -128,6 +129,7 @@ namespace BussinesLogic.Services
             {
                 List<GameParticipantInfoDTO> participants = new List<GameParticipantInfoDTO>();
                 List<Player> p = await unit.Players.GetPlayers(el.Game.ID);
+
                 p.ForEach(pl =>
                 {
                     participants.Add(new GameParticipantInfoDTO() { Username = pl.User.Username, PlayerColor = pl.PlayerColor.Value });
@@ -143,6 +145,7 @@ namespace BussinesLogic.Services
         {
             List<Player> players = await GetPlayers(gameID);
             List<string> playerUsernames = new List<string>();
+
             players.ForEach(el =>
             {
                 playerUsernames.Add(el.User.Username);
@@ -151,15 +154,11 @@ namespace BussinesLogic.Services
             bool result = false;
             if (playerUsernames.Intersect(playersJoined).Count() == playerUsernames.Count())
             {
-                await hubService.NotifyOnWaitingLobbyChanges(gameID, "ReceiveGameContinued", new GameContinuedDTO { Stage=players[0].Game.Stage, MapID= players[0].Game.Map.ID });
+                await hubService.NotifyOnWaitingLobbyChanges(gameID, "ReceiveGameContinued", new GameContinuedDTO { Stage = players[0].Game.Stage, MapID = players[0].Game.Map.ID });
                 result = true;
             }
 
             return result;
         }
-
-       
-
-
     }
 }

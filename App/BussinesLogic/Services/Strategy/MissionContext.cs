@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace BussinesLogic.Services.Strategy
 {
-    public class MissionContext: IMissionContext
+    public class MissionContext : IMissionContext
     {
         private IMissionStrategy _strategy;
 
-        public MissionContext()
-        { }
+        public MissionContext(){ }
 
         public MissionContext(IMissionStrategy strategy)
         {

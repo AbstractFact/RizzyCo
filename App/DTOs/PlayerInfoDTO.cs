@@ -1,7 +1,5 @@
 ﻿using DataAccess.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DTOs
 {
@@ -12,7 +10,7 @@ namespace DTOs
         public string Mission { get; set; }
         public int AvailableArmies { get; set; }
         public bool OnTurn { get; set; }
-        public List<GameParticipantInfoDTO> Participants {get;set;}
+        public List<GameParticipantInfoDTO> Participants { get; set; }
         public PlayerInfoDTO(Player player, List<GameParticipantInfoDTO> participants)
         {
             this.PlayerID = player.ID;

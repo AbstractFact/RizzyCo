@@ -30,7 +30,6 @@ namespace RizzyCoBE
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
@@ -51,7 +50,7 @@ namespace RizzyCoBE
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
-            // configure jwt authentication
+            
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             services.AddAuthentication(x =>
@@ -72,7 +71,7 @@ namespace RizzyCoBE
                 };
             });
 
-            // configure DI for application services
+            
             services.AddTransient<IUserAuthService,UserAuthService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -118,7 +117,6 @@ namespace RizzyCoBE
             services.AddSingleton<MessageHub>(); 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

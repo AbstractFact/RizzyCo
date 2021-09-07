@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
+﻿using DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
-using DataAccess.Models;
 
 namespace DataAccess
 {
@@ -25,6 +20,6 @@ namespace DataAccess
         public RizzyCoContext(DbContextOptions options) : base(options)
         {
         }
-        
+
     }
 }

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+
 using DataAccess.Models;
 using BussinesLogic.Services;
 using DTOs;
-using Microsoft.AspNetCore.SignalR;
 using BussinesLogic.Messaging;
 
 namespace RizzyCoBE.Controllers
@@ -43,7 +40,6 @@ namespace RizzyCoBE.Controllers
                 return Ok();
             }
                 
-
             return NotFound();
         }
 

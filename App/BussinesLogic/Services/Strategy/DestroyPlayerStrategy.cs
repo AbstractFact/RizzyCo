@@ -1,8 +1,6 @@
 ﻿using DataAccess.Models;
 using Domain;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BussinesLogic.Services.Strategy
@@ -28,9 +26,9 @@ namespace BussinesLogic.Services.Strategy
         {
             bool completed = false;
             int numTerr = await this.unit.PlayerTerritories.GetPlayerTerritoriesByColor(this.color, gameID);
-            if(numTerr == 0 && playerID == conqID && color == targetColor)
+            if (numTerr == 0 && playerID == conqID && color == targetColor)
                 completed = true;
-            else if(numTerr == 0 || color==playerColor)
+            else if (numTerr == 0 || color == playerColor)
             {
                 List<PlayerTerritory> playerTerritories = await unit.PlayerTerritories.GetPlayerTerritories(playerID);
 

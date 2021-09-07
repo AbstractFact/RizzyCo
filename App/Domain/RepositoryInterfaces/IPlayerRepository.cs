@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccess.Models;
+﻿using DataAccess.Models;
 using DTOs;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Domain.RepositoryInterfaces
 {
@@ -16,5 +14,6 @@ namespace Domain.RepositoryInterfaces
         Task<Player> UpdateAvailableReinforcements(int playerID, int numArmies);
         Task<List<Player>> GetUserPlayers(int userID);
         Task<NextPlayerDTO> EndTurn(int gameID);
+        Task<Player> WonCard(int playerID, bool won);
     }
 }

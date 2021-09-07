@@ -11,7 +11,6 @@ class GameSelect extends Component {
 
     this.onContinueGame = this.onContinueGame.bind(this);
     this.getUserGames = this.getUserGames.bind(this);
-    
   }
 
   async componentDidMount() {  

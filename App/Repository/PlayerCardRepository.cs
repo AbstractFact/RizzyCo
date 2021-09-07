@@ -1,12 +1,11 @@
-﻿using DataAccess;
-using DataAccess.Models;
-using Domain.RepositoryInterfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+
+using DataAccess;
+using DataAccess.Models;
+using Domain.RepositoryInterfaces;
 
 namespace Repository
 {
@@ -19,7 +18,18 @@ namespace Repository
 
         public async Task<List<PlayerCard>> GetPlayerCards(int playerID)
         {
-            return await context.Set<PlayerCard>().Where(t => t.Player.ID == playerID).Include(t=>t.Card).ToListAsync();
+            return await context.Set<PlayerCard>().Where(t => t.Player.ID == playerID).Include(t=>t.Card).Include(t => t.Card.Territory).Include(t => t.Player).ToListAsync();
         }
+
+        public async Task<List<PlayerCard>> GetAvailableCards(int gameID)
+        {
+            return await context.Set<PlayerCard>().Where(t => t.Player == null && t.GameID==gameID).Include(t => t.Card).Include(t => t.Card.Territory).ToListAsync();
+        }
+
+        public async Task<PlayerCard> GetCard(int playerCardID)
+        {
+            return (await context.Set<PlayerCard>().Where(t => t.ID == playerCardID).Include(t => t.Card).Include(t => t.Card.Territory).Include(t => t.Player).ToListAsync()).FirstOrDefault();
+        }
+
     }
 }

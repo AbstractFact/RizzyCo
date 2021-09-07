@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using DataAccess;
-using DataAccess.Models;
+﻿using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BussinesLogic.Services
 {
@@ -25,7 +21,6 @@ namespace BussinesLogic.Services
                 List<PlayerColor> playerColors = await unit.PlayerColors.GetAll();
 
                 return playerColors;
-                
             }
         }
         public async Task<PlayerColor> Get(int id)
@@ -60,7 +55,7 @@ namespace BussinesLogic.Services
 
                 unit.Complete();
 
-                return  playerColor;
+                return playerColor;
             }
         }
 

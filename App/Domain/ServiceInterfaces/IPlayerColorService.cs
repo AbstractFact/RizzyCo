@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DataAccess.Models;
+﻿using DataAccess.Models;
 
 namespace Domain.ServiceInterfaces
 {

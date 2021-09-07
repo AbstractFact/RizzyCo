@@ -1,9 +1,7 @@
 ﻿using DataAccess.Models;
 using Domain;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BussinesLogic.Services.Strategy
@@ -14,7 +12,6 @@ namespace BussinesLogic.Services.Strategy
         private string continent1;
         private string continent2;
         private bool continent3;
-
         private int mapID;
         public ContinentStrategy(IUnitOfWork unit, string continent1, string continent2, bool continent3, int mapID)
         {
@@ -42,9 +39,8 @@ namespace BussinesLogic.Services.Strategy
             if (continent2Territories.Intersect(territories).Count() == continent2Territories.Count())
                 res++;
 
-            if(continent3)
+            if (continent3)
             {
-
                 List<Continent> continents = await unit.Continents.GetMapContinents(mapID);
 
                 foreach (Continent c in continents)
@@ -62,7 +58,6 @@ namespace BussinesLogic.Services.Strategy
                 return res >= 3;
             else
                 return res >= 2;
-
         }
     }
 }

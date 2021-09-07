@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using DataAccess;
-using DataAccess.Models;
+﻿using DataAccess.Models;
 using Domain;
 using Domain.ServiceInterfaces;
 using DTOs;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BussinesLogic.Services
 {
@@ -18,7 +14,7 @@ namespace BussinesLogic.Services
         public NeighbourService(IUnitOfWork unit)
         {
             this.unit = unit;
-        } 
+        }
         public async Task<List<Neighbour>> GetAll()
         {
             using (unit)
@@ -82,7 +78,7 @@ namespace BussinesLogic.Services
             {
                 Territory src = await unit.Territories.Get(srcID);
                 Territory dst = await unit.Territories.Get(dstID);
-               
+
                 Neighbour neighbour1 = new Neighbour();
                 neighbour1.Src = src;
                 neighbour1.Dst = dst;
@@ -112,7 +108,7 @@ namespace BussinesLogic.Services
                 foreach (Neighbour n in neighbours)
                 {
                     PlayerTerritory pt = await unit.PlayerTerritories.GetTargetTerritory(playerID, n.Dst.ID, gameID);
-                    if(pt != null)
+                    if (pt != null)
                         result.Add(new PlayerTerritoryDTO(pt));
                 };
 

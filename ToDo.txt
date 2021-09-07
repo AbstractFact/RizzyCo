@@ -1,2 +1,0 @@
--Videti folder Patterns u DataAccess
--Kartice

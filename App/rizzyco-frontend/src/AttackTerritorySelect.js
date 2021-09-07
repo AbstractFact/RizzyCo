@@ -3,6 +3,7 @@ import React, { Component } from "react";
 class AttackTerritorySelect extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       attackTerritories : this.props.dataParentToChild,
       targetTerritories : []
@@ -11,6 +12,7 @@ class AttackTerritorySelect extends Component {
     this.onChangeAttackTerritory = this.onChangeAttackTerritory.bind(this);
     this.onChangeTargetTerritory = this.onChangeTargetTerritory.bind(this);
     this.getNeighbours = this.getNeighbours.bind(this);
+
     localStorage.attackFromTerritory = 0;
     localStorage.attackFromTerritoryName = "";
     localStorage.attackTargetTerritory = 0;
@@ -19,7 +21,9 @@ class AttackTerritorySelect extends Component {
   async onChangeAttackTerritory(event) {
     localStorage.attackFromTerritory = parseInt(event.target.value);
     localStorage.attackFromTerritoryName = event.target[event.target.selectedIndex].text;
+
     await this.getNeighbours();
+
     this.setState((state) => {
       return {targetTerritories : JSON.parse(localStorage.getItem("targetTerritories"))}
     });
@@ -76,7 +80,7 @@ class AttackTerritorySelect extends Component {
               <select onChange={this.onChangeTargetTerritory} disabled={(parseInt(localStorage.attackFromTerritory) === 0) ? true : null}>
               <option key = "default" value={0}>Select Territory</option>
                 {
-                  this.state.targetTerritories.map((m, index) => {
+                  this.state.targetTerritories.map((m) => {
                   return <option key={m.territoryID} value={m.territoryID}>{m.territoryName}</option>;
                 })}
               </select>

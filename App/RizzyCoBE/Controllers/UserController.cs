@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+
 using DataAccess.Models;
 using BussinesLogic.Services;
 using BussinesLogic.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using DTOs;
 
 namespace RizzyCoBE.Controllers
@@ -24,7 +20,6 @@ namespace RizzyCoBE.Controllers
             _userService = userService;
         }
 
-        // POST: api/[controller]
         [HttpPost("CreateGame")]
         public async Task<ActionResult<int>> CreateGame([FromBody] CreateGameDTO entity)
         {
@@ -59,7 +54,6 @@ namespace RizzyCoBE.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            // only allow admins to access other user records
             var currentUserId = int.Parse(User.Identity.Name);
             if (id != currentUserId && !User.IsInRole(Role.Admin))
                 return Forbid();

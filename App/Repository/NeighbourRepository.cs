@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,7 +15,6 @@ namespace Repository
         {
 
         }
-        
         public async Task<List<Neighbour>> GetTerritoryNeighbours(Territory terr)
         {
             return await context.Set<Neighbour>().Include(p => p.Dst).Where(p => p.Src == terr).ToListAsync();

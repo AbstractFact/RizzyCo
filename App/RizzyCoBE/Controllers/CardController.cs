@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
 using DataAccess.Models;
 using BussinesLogic.Services;
 
@@ -20,6 +16,7 @@ namespace RizzyCoBE.Controllers
 
         }
 
+        #region AddCard
         [HttpPost("AddCard/{mapID}/{territoryID}")]
         public async Task<ActionResult<Card>> AddCard([FromBody] Card entity, int mapID, int territoryID)
         {
@@ -39,5 +36,8 @@ namespace RizzyCoBE.Controllers
 
             return BadRequest("Bad request!");
         }
+        #endregion
+
+
     }
 }
